@@ -2,14 +2,14 @@
 <sim-project version="12.79" multi-file="no" uid="simp47494f7bc9154c3da30c4d2defb47321">
   <meta>
     <name>phase0</name>
-    <authors> </authors>
+    <authors> Danielo</authors>
     <description />
   </meta>
   <counters models="1">
     <entity-names>
       <counter>
         <item-type type-id="class" type="Class" />
-        <value>33</value>
+        <value>35</value>
       </counter>
       <counter>
         <item-type type-id="package" type="Package" />
@@ -23,23 +23,23 @@
     <entity-ids>
       <counter>
         <item-type type-id="group" type="Group" />
-        <value>1607</value>
+        <value>1802</value>
       </counter>
       <counter>
         <item-type type-id="class" type="Class" />
-        <value>35</value>
+        <value>37</value>
       </counter>
       <counter>
         <item-type type-id="generalization" type="Generalization" />
-        <value>7</value>
+        <value>8</value>
       </counter>
       <counter>
         <item-type type-id="property" type="Property" />
-        <value>274</value>
+        <value>314</value>
       </counter>
       <counter>
         <item-type type-id="relationship" type="Association" />
-        <value>17</value>
+        <value>22</value>
       </counter>
       <counter>
         <item-type type-id="package" type="Package" />
@@ -67,7 +67,7 @@
     <fields>
       <counter>
         <type>SoftwareIdeasModeler.Core.DiagramItems.Fields.OperationField</type>
-        <value>93</value>
+        <value>98</value>
       </counter>
       <counter>
         <type>SoftwareIdeasModeler.Core.DiagramItems.Fields.EnumerationItemField</type>
@@ -92,6 +92,15 @@
         <description />
         <color>#00000000</color>
         <working-schedule uid="ws-4d50c5b042fc4971b27a05c027e3bde5" hours="8" monday="8" tuesday="8" wednesday="8" thursday="8" friday="8" saturday="0" sunday="0" />
+      </person>
+      <person id="">
+        <first-name />
+        <last-name>Danielo</last-name>
+        <role />
+        <e-mail />
+        <phone-number />
+        <description />
+        <color>#00000000</color>
       </person>
     </persons>
     <teams />
@@ -595,7 +604,7 @@
       </meta>
       <abstract-items />
       <sub-models />
-      <diagram type="uml-class" id="pc600bf40d7a549d1bf382128a1b54bc9_741201479" name="ClassDiagram1" order-index="1" uid="" show-id="false" show-name="true" show-parent-name="false" name-style="local-auto-parents" show-stereotypes="true" show-tagged-values="false" show-template-parameters="true" show-fields="true" show-field-tags="true" show-empty-compartments="true" show-special-indicators="false" show-rules="true" show-attributes="true" show-attribute-visibility="true" show-operations="true" show-operation-parameters="true" show-operation-visibility="true" show-visibility-sign="true" show-nullability="true" show-sequence-number="false" show-extension-points="false" show-relationship-texts="true" show-data="true" show-description="false" show-field-description="false" auto-routed-paths="false" default-line-style="default" view-location="-741,-289" zoom="0.2">
+      <diagram type="uml-class" id="pc600bf40d7a549d1bf382128a1b54bc9_741201479" name="ClassDiagram1" order-index="1" uid="" show-id="false" show-name="true" show-parent-name="false" name-style="local-auto-parents" show-stereotypes="true" show-tagged-values="false" show-template-parameters="true" show-fields="true" show-field-tags="true" show-empty-compartments="true" show-special-indicators="false" show-rules="true" show-attributes="true" show-attribute-visibility="true" show-operations="true" show-operation-parameters="true" show-operation-visibility="true" show-visibility-sign="true" show-nullability="true" show-sequence-number="false" show-extension-points="false" show-relationship-texts="true" show-data="true" show-description="false" show-field-description="false" auto-routed-paths="false" default-line-style="default" view-location="404,-242" zoom="0.5">
         <style>
           <background-color index="1" color="#FFFFFFFF" />
           <background-color index="2" color="#FFFFFFFF" />
@@ -607,13 +616,22 @@
           </authors>
           <description />
           <creation-date>04/12/2021 20:21:28</creation-date>
-          <change-date>04/15/2021 13:12:25</change-date>
+          <change-date>04/16/2021 09:52:22</change-date>
           <revision-count>0</revision-count>
           <version />
         </meta>
         <abstract-items>
           <item id="d9270ef8a1764ff091dd8d384bfee839" cid="C001" type="class" name="User" style-class="" change-tracking-state="added" creator="" creation-date="04/12/2021 20:21:32" visibility="undefined">
             <owned-items>
+              <owned-item ref="f2547da5f96847c3bab79aed7e7cb8b8" />
+              <owned-item ref="f3bcc1516c5c48ebbd0ccc942379ca65" />
+              <owned-item ref="58b2bddf5f3e4783ae771355e0e2ada7" />
+              <owned-item ref="543d4754c8684be9927e587ea3907b83" />
+              <owned-item ref="8bd9d52842af48f0918591ecc2ec02a3" />
+              <owned-item ref="2b42194148d74a8eb03486a8aca57e3f" />
+              <owned-item ref="c6df2af68ddc43269b3fb7f95a50262a" />
+              <owned-item ref="29166cd323d74acbbac60a7f5d603a0f" />
+              <owned-item ref="f040dda8f4ed4d5eb6976bc6f765f314" />
               <owned-item ref="f2547da5f96847c3bab79aed7e7cb8b8" />
               <owned-item ref="f3bcc1516c5c48ebbd0ccc942379ca65" />
               <owned-item ref="58b2bddf5f3e4783ae771355e0e2ada7" />
@@ -812,6 +830,9 @@
               <owned-item ref="428124299c2648599ae71be694a2b852" />
               <owned-item ref="ec0acfc69bb944cdb03aa6f0cb2cfc9f" />
               <owned-item ref="8fb6e7d59f684a85886ad3baad06e957" />
+              <owned-item ref="428124299c2648599ae71be694a2b852" />
+              <owned-item ref="ec0acfc69bb944cdb03aa6f0cb2cfc9f" />
+              <owned-item ref="8fb6e7d59f684a85886ad3baad06e957" />
             </owned-items>
             <attributes>
               <attribute id="acd892fe3dacc4299ba8b958f31aeb50b274" cid="PROP213" name="name" creation-date="04/12/2021 20:56:31" property-ref="428124299c2648599ae71be694a2b852" />
@@ -858,6 +879,7 @@
               <owned-item ref="dfe1ee6a7e6b4631a2d6dbd2f1a786c7" />
               <owned-item ref="dfe1ee6a7e6b4631a2d6dbd2f1a786c7" />
               <owned-item ref="dfe1ee6a7e6b4631a2d6dbd2f1a786c7" />
+              <owned-item ref="dfe1ee6a7e6b4631a2d6dbd2f1a786c7" />
             </owned-items>
             <attributes>
               <attribute id="ad069c4c83a2f4f89b5e6ac2713a035c9568" cid="PROP094" name="user" creation-date="04/12/2021 21:20:04" property-ref="dfe1ee6a7e6b4631a2d6dbd2f1a786c7" />
@@ -895,6 +917,7 @@
           </item>
           <item id="585ea1c27ce8480ca8ea900fd01d757e" cid="C012" type="class" name="DeckMenu" style-class="" owner="a95f1b8438ef49818dc19fbe9f4a36b3" change-tracking-state="added" creator="" creation-date="04/12/2021 21:28:59" visibility="undefined">
             <owned-items>
+              <owned-item ref="b24b131681974767876421a9857e97fb" />
               <owned-item ref="b24b131681974767876421a9857e97fb" />
               <owned-item ref="b24b131681974767876421a9857e97fb" />
               <owned-item ref="b24b131681974767876421a9857e97fb" />
@@ -948,6 +971,7 @@
               <owned-item ref="ac42afe5f3a24d40bf8af285c6da85bd" />
               <owned-item ref="222e568294b94a78b2711efa1744e842" />
               <owned-item ref="69a4d47c93fc4b9d8a150928ca5e22d6" />
+              <owned-item ref="ac42afe5f3a24d40bf8af285c6da85bd" />
             </owned-items>
             <attributes>
               <attribute id="a0d0a3aa2450647bda6a39e2232d09c1e889" cid="PROP220" name="level" creation-date="04/12/2021 22:45:34" property-ref="ac42afe5f3a24d40bf8af285c6da85bd" />
@@ -972,6 +996,8 @@
               <owned-item ref="94d8e3b3e83b48a29c559a321a0a8269" />
               <owned-item ref="e8caf11d280642938868a44d0b94e1f8" />
               <owned-item ref="94d8e3b3e83b48a29c559a321a0a8269" />
+              <owned-item ref="e8caf11d280642938868a44d0b94e1f8" />
+              <owned-item ref="94d8e3b3e83b48a29c559a321a0a8269" />
             </owned-items>
             <attributes>
               <attribute id="aac78a23ec4d942ebb44adac71cda60f2112" cid="PROP230" name="icon" creation-date="04/12/2021 23:10:42" property-ref="e8caf11d280642938868a44d0b94e1f8" />
@@ -985,8 +1011,8 @@
           <item id="760002ecea7a419cb2f0bc28f3224d36" cid="C016" type="class" name="Trap" style-class="" change-tracking-state="added" creation-date="04/12/2021 22:28:26" visibility="undefined" />
           <item id="617883cd346a425fbd92b35b46ae5c17" cid="REL007" type="relationship" name="" style-class="" change-tracking-state="added" creation-date="04/12/2021 23:14:29" from="cf2f25e84b46486d8426bfc21d884610" to="1a1f0f5b72fa498b9493bf5bea432a3d" visibility="package">
             <relation from="cf2f25e84b46486d8426bfc21d884610" to="1a1f0f5b72fa498b9493bf5bea432a3d" derived="false">
-              <start-role id="umlar-fb9ce6a2-b2cf-44ff-9d31-5b8c1a4d8c44" name="" navigability="" association-type="association" visibility="private" />
-              <end-role id="umlar-2c193b60-9194-423f-851c-aa1951f3b458" name="" navigability="" association-type="association" visibility="private" />
+              <start-role id="umlar-01b248d8-4809-499f-b45c-75a9e970b8fa" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="umlar-51a03d69-6f5e-472a-a1d1-8a20c28f440a" name="" navigability="" association-type="association" visibility="private" />
             </relation>
           </item>
           <item id="847afa02ea984c7b820f597b8ee01d3a" cid="PROP219" type="property" name="description" style-class="" owner="db854b239810411d8aee42ca93121e93" creation-date="04/12/2021 22:28:54" visibility="protected">
@@ -1016,8 +1042,8 @@
           </item>
           <item id="5777d5e413764f9cbf0854485750b257" cid="REL005" type="relationship" name="" style-class="" change-tracking-state="added" creation-date="04/12/2021 22:50:59" from="f5e9300726c4483cb49a5c1444d3238f" to="14add09b8abd4bd6b69214e59f3eb103" visibility="package">
             <relation from="f5e9300726c4483cb49a5c1444d3238f" to="14add09b8abd4bd6b69214e59f3eb103" derived="false">
-              <start-role id="umlar-8462bc12-ea13-4706-8766-3535c12cae68" name="" navigability="" association-type="association" visibility="private" />
-              <end-role id="umlar-8c7fa959-e8d2-4d44-a487-a8be580bbfcd" name="" navigability="" association-type="association" visibility="private" />
+              <start-role id="umlar-2aa6d0a1-f026-4bab-b3c9-3f8830aa96f2" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="umlar-a23fc17f-4890-4684-a095-7e04a4fad179" name="" navigability="" association-type="association" visibility="private" />
             </relation>
           </item>
           <item id="8ab0c5763749436cb9096972ca2d5f6b" cid="E002" type="enumeration" name="MonsterType" style-class="" change-tracking-state="added" creation-date="04/12/2021 22:51:36" visibility="undefined">
@@ -1050,8 +1076,8 @@
           </item>
           <item id="b8d649c338b94fa6b6a7b5a7d986b1e5" cid="REL006" type="relationship" name="" style-class="" change-tracking-state="added" creation-date="04/12/2021 22:51:36" from="f5e9300726c4483cb49a5c1444d3238f" to="8ab0c5763749436cb9096972ca2d5f6b" visibility="package">
             <relation from="f5e9300726c4483cb49a5c1444d3238f" to="8ab0c5763749436cb9096972ca2d5f6b" derived="false">
-              <start-role id="umlar-6ffa50a6-57d8-447c-9ed2-9750ea3964a5" name="" navigability="" association-type="association" visibility="private" />
-              <end-role id="umlar-2dfdc47f-e462-4f7e-8256-3c239c72daa9" name="" navigability="" association-type="association" visibility="private" />
+              <start-role id="umlar-74731d63-20b4-422a-bbcf-2e220341e2d4" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="umlar-9efaab04-61b2-4856-a432-98d189017783" name="" navigability="" association-type="association" visibility="private" />
             </relation>
           </item>
           <item id="012d45ae0e654deb8fb767778100e352" cid="PROP223" type="property" name="attackPoints" style-class="" owner="f5e9300726c4483cb49a5c1444d3238f" creation-date="04/12/2021 22:52:10" visibility="private">
@@ -1093,6 +1119,7 @@
               <attribute id="a98b8d3fb8b564c8ab1bc9deb743a8edc750" cid="PROP232" name="user" creation-date="04/12/2021 23:27:13" property-ref="520c3ee8ed6f43c985ac4ae33ba19ac3" />
             </attributes>
             <operations>
+              <operation id="odc8d4ccfdb3c47dabd4a8fab6bc9328c175" cid="OP097" name="run" creation-date="04/16/2021 09:45:44" type="" type-id="" visibility="public" />
               <operation id="o68e32638307d425082bdb5016d8d8bdf73" cid="OP033" name="ShopMenu" creation-date="04/13/2021 20:23:34" type="" type-id="" visibility="public">
                 <parameters>
                   <parameter id="p702fb1e140b1415fb2f3fab44125b537" name="user" type="User" type-id="Class:d9270ef8a1764ff091dd8d384bfee839">
@@ -1131,8 +1158,8 @@
           </item>
           <item id="c9107d78d90244e3bf024a178b938895" cid="REL008" type="relationship" name="" style-class="" change-tracking-state="added" creation-date="04/12/2021 23:21:51" from="cf2f25e84b46486d8426bfc21d884610" to="4e25683ba6b14fdfbd4f85c6a5c53528" visibility="package">
             <relation from="cf2f25e84b46486d8426bfc21d884610" to="4e25683ba6b14fdfbd4f85c6a5c53528" derived="false">
-              <start-role id="umlar-4bd86869-4361-42d9-9b57-ab712e879d1d" name="" navigability="" association-type="association" visibility="private" />
-              <end-role id="umlar-5ec7b5f5-ab3f-4518-a31d-fcedf1cf65d1" name="" navigability="" association-type="association" visibility="private" />
+              <start-role id="umlar-d5de3334-d209-4bb0-8892-3b3290c59914" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="umlar-9d364589-1706-43a9-b07d-c15c260f68ad" name="" navigability="" association-type="association" visibility="private" />
             </relation>
           </item>
           <item id="c4a1919b6389485084646273d5ce9f83" cid="C018" type="class" name="ProgramController" style-class="" change-tracking-state="added" creation-date="04/13/2021 20:11:20" visibility="undefined">
@@ -1168,7 +1195,7 @@
               <enumeration-item id="a45ec26b7721043899cbd8e476543d8ac827" cid="ENI024" name="IMPORT_EXPORT_MENU" creation-date="04/13/2021 20:14:20" />
             </enumeration-items>
           </item>
-          <item id="2c4cf33458eb4249bc7a6beafe44be35" cid="PKG007" type="package" name="Gameplay" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:04:46" />
+          <item id="2c4cf33458eb4249bc7a6beafe44be35" cid="PKG007" type="package" name="Gameplay" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:04:46" visibility="undefined" />
           <item id="8917fd3105bb42f29ffefe82348a00b3" cid="C019" type="class" name="Main" style-class="" change-tracking-state="added" creation-date="04/13/2021 20:14:59" visibility="undefined">
             <operations>
               <operation id="oc88f13ad35f84e8a9d838e2c26d87250701" cid="OP030" name="main" creation-date="04/13/2021 20:18:11" type="void" type-id="void" visibility="public" static="true" />
@@ -1351,8 +1378,8 @@
           </item>
           <item id="c359408aa71a4b46bcdc5897c4fef986" cid="REL010" type="relationship" name="" style-class="" change-tracking-state="added" creation-date="04/13/2021 21:58:51" from="963230ab8c6a4d0fb675095e00b147c7" to="6497d57daace4c6b99407d89ea500554" visibility="package">
             <relation from="963230ab8c6a4d0fb675095e00b147c7" to="6497d57daace4c6b99407d89ea500554" derived="false">
-              <start-role id="umlar-2ae216c6-3c89-4e3d-9ef9-6613d4b258af" name="" navigability="" association-type="association" visibility="private" />
-              <end-role id="umlar-06d33840-5e25-4be8-9c34-4e7f0ef5d657" name="" navigability="" association-type="association" visibility="private" />
+              <start-role id="umlar-dc3cc4ab-02df-4b18-8953-55a39918976a" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="umlar-59305434-8eba-48cc-8abe-aea29e4b843f" name="" navigability="" association-type="association" visibility="private" />
             </relation>
           </item>
           <item id="44a86410d4a74e898d0577690e4ce864" cid="PROP249" type="property" name="spellAndTrapField" style-class="" owner="963230ab8c6a4d0fb675095e00b147c7" creation-date="04/13/2021 21:59:45" visibility="private">
@@ -1488,7 +1515,7 @@
             <structural-feature type="boolean" type-id="boolean" />
             <property />
           </item>
-          <item id="6806c040e222416da04e762482add327" cid="E011" type="enumeration" name="Error" style-class="" owner="4ecc07d187bd4846a9ab8224160bcd83" change-tracking-state="added" creation-date="04/15/2021 12:04:18">
+          <item id="6806c040e222416da04e762482add327" cid="E011" type="enumeration" name="Error" style-class="" owner="4ecc07d187bd4846a9ab8224160bcd83" change-tracking-state="added" creation-date="04/15/2021 12:04:18" visibility="undefined">
             <enumeration-items>
               <enumeration-item id="a970b89c019254990801ffd64d3c907f0811" cid="ENI066" name="INVALID_COMMAND" creation-date="04/15/2021 12:06:55" />
               <enumeration-item id="a6fb12bfa02d34359b17a5d84e786436184" cid="ENI067" name="NOT_LOGGED_IN" creation-date="04/15/2021 12:07:38" />
@@ -1546,10 +1573,11 @@
             <structural-feature type="HashMap&lt;Error, String&gt;" type-id="HashMap&lt;Error, String&gt;" />
             <property />
           </item>
-          <item id="a5ad4e23462a409c86431799407f7554" cid="C031" type="class" name="MessageView" style-class="" owner="4ecc07d187bd4846a9ab8224160bcd83" change-tracking-state="added" creation-date="04/15/2021 12:01:30">
+          <item id="a5ad4e23462a409c86431799407f7554" cid="C031" type="class" name="MessageView" style-class="" owner="4ecc07d187bd4846a9ab8224160bcd83" change-tracking-state="added" creation-date="04/15/2021 12:01:30" visibility="undefined">
             <owned-items>
               <owned-item ref="ec07df34a2f345f3b5fe299a7f400759" />
               <owned-item ref="e7704a9a7954437aa6465ca65c0a5405" />
+              <owned-item ref="ec07df34a2f345f3b5fe299a7f400759" />
             </owned-items>
             <attributes>
               <attribute id="ac1e563bd474e4f70b9f20873c2d7b0f6819" cid="PROP270" name="errorMessage" creation-date="04/15/2021 12:01:37" property-ref="ec07df34a2f345f3b5fe299a7f400759" />
@@ -1564,7 +1592,7 @@
               </operation>
             </operations>
           </item>
-          <item id="49cf65b88f5d46c7bafc2fea37d7b816" cid="E009" type="enumeration" name="SummonType" style-class="" change-tracking-state="added" creation-date="04/15/2021 11:43:32">
+          <item id="49cf65b88f5d46c7bafc2fea37d7b816" cid="E009" type="enumeration" name="SummonType" style-class="" change-tracking-state="added" creation-date="04/15/2021 11:43:32" visibility="undefined">
             <enumeration-items>
               <enumeration-item id="ab0e34ef3fd8d41a6b5c6dbe50b948704357" cid="ENI055" name="NORMAL_SUMMON" creation-date="04/15/2021 11:43:52" />
               <enumeration-item id="af9eeac6b9b774a4294720753733b5c069" cid="ENI056" name="RITUAL_SUMMON" creation-date="04/15/2021 11:44:01" />
@@ -1577,7 +1605,7 @@
             <structural-feature type="SummonType" type-id="Class:49cf65b88f5d46c7bafc2fea37d7b816" />
             <property />
           </item>
-          <item id="4960c4096d5a4c3393b9e88db62e29af" cid="E010" type="enumeration" name="EffectType" style-class="" change-tracking-state="added" creation-date="04/15/2021 11:48:23">
+          <item id="4960c4096d5a4c3393b9e88db62e29af" cid="E010" type="enumeration" name="EffectType" style-class="" change-tracking-state="added" creation-date="04/15/2021 11:48:23" visibility="undefined">
             <enumeration-items>
               <enumeration-item id="a17efe763cba94d5883f1935b3b72dfb3871" cid="ENI061" name="NORMAL" creation-date="04/15/2021 11:48:42" />
               <enumeration-item id="a60416dcf8ee648818c4693400dee7aa793" cid="ENI064" name="QUICK" creation-date="04/15/2021 11:49:20" />
@@ -1594,24 +1622,27 @@
           </item>
           <item id="89ba233a27644a9b8dc3574b8134e1e5" cid="REL011" type="relationship" name="" style-class="" change-tracking-state="added" creation-date="04/15/2021 11:54:10" from="f5e9300726c4483cb49a5c1444d3238f" to="49cf65b88f5d46c7bafc2fea37d7b816" visibility="package">
             <relation from="f5e9300726c4483cb49a5c1444d3238f" to="49cf65b88f5d46c7bafc2fea37d7b816" derived="false">
-              <start-role id="umlar-52e94629-2453-4018-8a42-242c5eb6b46f" name="" navigability="" association-type="association" visibility="private" />
-              <end-role id="umlar-6b5d4fd8-bac9-412b-9af8-62fec1502398" name="" navigability="" association-type="association" visibility="private" />
+              <start-role id="umlar-53c70825-1f7e-4988-a72c-84877e8bd7ca" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="umlar-eda32dc8-e3ec-4513-ae2c-6082ee4eec05" name="" navigability="" association-type="association" visibility="private" />
             </relation>
           </item>
           <item id="dd3717cfe072407e8694f63731b7119a" cid="REL012" type="relationship" name="" style-class="" change-tracking-state="added" creation-date="04/15/2021 11:54:14" from="f5e9300726c4483cb49a5c1444d3238f" to="4960c4096d5a4c3393b9e88db62e29af" visibility="package">
             <relation from="f5e9300726c4483cb49a5c1444d3238f" to="4960c4096d5a4c3393b9e88db62e29af" derived="false">
-              <start-role id="umlar-b0fe76f7-aa4f-4110-afdb-3d8f367be471" name="" navigability="" association-type="association" visibility="private" />
-              <end-role id="umlar-5ee758f6-5ec1-4927-81fe-30c9c2f5d3db" name="" navigability="" association-type="association" visibility="private" />
+              <start-role id="umlar-c725ec64-b822-4483-a6cc-d8255a66d6ac" name="" navigability="" association-type="association" visibility="private" />
+              <end-role id="umlar-bfb2a2e0-d47f-4b3d-94c1-1c398b7fd7ef" name="" navigability="" association-type="association" visibility="private" />
             </relation>
           </item>
-          <item id="1f29a8b7b88d4096bd27493188945ebe" cid="PKG005" type="package" name="Cards" style-class="" change-tracking-state="added" creation-date="04/15/2021 11:57:53">
+          <item id="1f29a8b7b88d4096bd27493188945ebe" cid="PKG005" type="package" name="Cards" style-class="" change-tracking-state="added" creation-date="04/15/2021 11:57:53" visibility="undefined">
             <owned-items>
+              <owned-item ref="cf2f25e84b46486d8426bfc21d884610" />
+              <owned-item ref="1a1f0f5b72fa498b9493bf5bea432a3d" />
+              <owned-item ref="4e25683ba6b14fdfbd4f85c6a5c53528" />
               <owned-item ref="cf2f25e84b46486d8426bfc21d884610" />
               <owned-item ref="1a1f0f5b72fa498b9493bf5bea432a3d" />
               <owned-item ref="4e25683ba6b14fdfbd4f85c6a5c53528" />
             </owned-items>
           </item>
-          <item id="b87d8b1063294b768c37167cd7efb69f" cid="E012" type="enumeration" name="Success" style-class="" owner="4ecc07d187bd4846a9ab8224160bcd83" change-tracking-state="added" creation-date="04/15/2021 12:09:09">
+          <item id="b87d8b1063294b768c37167cd7efb69f" cid="E012" type="enumeration" name="Success" style-class="" owner="4ecc07d187bd4846a9ab8224160bcd83" change-tracking-state="added" creation-date="04/15/2021 12:09:09" visibility="undefined">
             <enumeration-items>
               <enumeration-item id="ae2acd495b37a4ee5a7e7f479e92fad9f736" cid="ENI069" name="USER_CREATE" creation-date="04/15/2021 12:10:48" />
               <enumeration-item id="a345bbcfaf67a4fe78a55eaaf2d228d70204" cid="ENI070" name="USER_LOGIN" creation-date="04/15/2021 12:11:06" />
@@ -1652,7 +1683,7 @@
             <structural-feature type="HashMap&lt;Success, String&gt;" type-id="HashMap&lt;Success, String&gt;" />
             <property />
           </item>
-          <item id="12ecfcf48af14f35b594299afee43f5e" cid="C032" type="class" name="Scoreboard" style-class="" owner="a95f1b8438ef49818dc19fbe9f4a36b3" change-tracking-state="added" creation-date="04/15/2021 12:13:47">
+          <item id="12ecfcf48af14f35b594299afee43f5e" cid="C032" type="class" name="Scoreboard" style-class="" owner="a95f1b8438ef49818dc19fbe9f4a36b3" change-tracking-state="added" creation-date="04/15/2021 12:13:47" visibility="undefined">
             <owned-items>
               <owned-item ref="e6b762fdc004481094ba957787154a7d" />
             </owned-items>
@@ -1669,7 +1700,7 @@
             <structural-feature type="ArrayList&lt;User&gt;" type-id="ArrayList&lt;User&gt;" />
             <property />
           </item>
-          <item id="d0e5e56f34a4417bacc1dc230b037c03" cid="C033" type="class" name="PrintScoreboard" style-class="" owner="a95f1b8438ef49818dc19fbe9f4a36b3" change-tracking-state="added" creation-date="04/15/2021 12:15:42">
+          <item id="d0e5e56f34a4417bacc1dc230b037c03" cid="C033" type="class" name="PrintScoreboard" style-class="" owner="a95f1b8438ef49818dc19fbe9f4a36b3" change-tracking-state="added" creation-date="04/15/2021 12:15:42" visibility="undefined">
             <operations>
               <operation id="o59fba2d62c254dc5b786fd72c7e61f2f404" cid="OP091" name="Print" creation-date="04/15/2021 12:16:31" type="void" type-id="void" visibility="public" />
             </operations>
@@ -1679,7 +1710,7 @@
             <structural-feature type="Integer" type-id="Uml.Integer" />
             <property />
           </item>
-          <item id="a95f1b8438ef49818dc19fbe9f4a36b3" cid="PKG006" type="package" name="Menu" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:01:00">
+          <item id="a95f1b8438ef49818dc19fbe9f4a36b3" cid="PKG006" type="package" name="Menu" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:01:00" visibility="undefined">
             <owned-items>
               <owned-item ref="450f84e47fa44e66baf561e4689bf88b" />
               <owned-item ref="72a542d4acaa409293bf1b07c1ced070" />
@@ -1689,17 +1720,118 @@
               <owned-item ref="585ea1c27ce8480ca8ea900fd01d757e" />
               <owned-item ref="12ecfcf48af14f35b594299afee43f5e" />
               <owned-item ref="d0e5e56f34a4417bacc1dc230b037c03" />
+              <owned-item ref="450f84e47fa44e66baf561e4689bf88b" />
+              <owned-item ref="bacdfaf9d62848a6a785b330dd77aaab" />
+              <owned-item ref="585ea1c27ce8480ca8ea900fd01d757e" />
+              <owned-item ref="72a542d4acaa409293bf1b07c1ced070" />
+              <owned-item ref="545c1db763fb46728dca5025c0c8918b" />
+              <owned-item ref="53e099b6e84d4aa6b5cd10be95b872d7" />
+              <owned-item ref="12ecfcf48af14f35b594299afee43f5e" />
+              <owned-item ref="d0e5e56f34a4417bacc1dc230b037c03" />
+              <owned-item ref="59234cbdd38a4ea8af80e9d71c8bb5dd" />
             </owned-items>
           </item>
-          <item id="4ecc07d187bd4846a9ab8224160bcd83" cid="PKG008" type="package" name="MessageView" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:06:44">
+          <item id="4ecc07d187bd4846a9ab8224160bcd83" cid="PKG008" type="package" name="MessageView" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:06:44" visibility="undefined">
             <owned-items>
               <owned-item ref="a5ad4e23462a409c86431799407f7554" />
               <owned-item ref="6806c040e222416da04e762482add327" />
               <owned-item ref="b87d8b1063294b768c37167cd7efb69f" />
+              <owned-item ref="6806c040e222416da04e762482add327" />
+              <owned-item ref="a5ad4e23462a409c86431799407f7554" />
+              <owned-item ref="b87d8b1063294b768c37167cd7efb69f" />
             </owned-items>
           </item>
-          <item id="0d5a7413e0794efca7cb4cb97f04a159" cid="C034" type="class" name="Regex" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:06:58" />
-          <item id="aa9eaebbab004959932b5601b5830c1d" cid="PKG009" type="package" name="Database" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:08:30" />
+          <item id="0d5a7413e0794efca7cb4cb97f04a159" cid="C034" type="class" name="Regex" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:06:58" visibility="undefined">
+            <owned-items>
+              <owned-item ref="3fbf06ebb45b457588bf2f706c8b42f8" />
+              <owned-item ref="c699f1a94563482ba31def19d95b39e2" />
+              <owned-item ref="546c2cca8d1d487ba1a0551d7af85ec2" />
+              <owned-item ref="9c56e69f3c274ee085cf843078dbe425" />
+              <owned-item ref="5fa45a02cd294127bdcdd19def7b3d96" />
+              <owned-item ref="5f2bad105ce84bc6a9110b7681f6c1e0" />
+              <owned-item ref="36030ed7baac44febf3dd5ce0d52c215" />
+              <owned-item ref="1b4906848bac447da42888a9bd1c346d" />
+              <owned-item ref="aed757792eb24771af4f797b02e63bc5" />
+              <owned-item ref="d7cd048f46804d109a2c6761373ecf34" />
+              <owned-item ref="219b4aa7cc334b07a516e6c3450bff89" />
+              <owned-item ref="367841c4c9984d8b9187c2cdf0209d2a" />
+              <owned-item ref="6b55fbb0d5334662b45c8bc97da83686" />
+              <owned-item ref="057004ab3bba4401988fa63eaa995c00" />
+              <owned-item ref="6ba3b5a89761487c9f8eaafcfb9353b5" />
+              <owned-item ref="2701a8406d4f476895a769fb317561d6" />
+              <owned-item ref="7ba55bea9dd04b0a8fa2b0217a7e6584" />
+              <owned-item ref="97352ae6327c442594cf4305a0034c14" />
+              <owned-item ref="ed36cca8bc07421598a56743a3cd4839" />
+              <owned-item ref="1f58b0b3dae3459984ec07e4f9d7ad0f" />
+              <owned-item ref="dddffaf3980a46709899eb40a289cf06" />
+              <owned-item ref="a4dd151522de4828b9de273b2b6f91fd" />
+              <owned-item ref="7bb874295fb0464983af1139256897f5" />
+              <owned-item ref="e1f6986d747847359ce22d6c3e408226" />
+              <owned-item ref="3c8f01f8b1af45f0a5d03d0d45ae21a1" />
+              <owned-item ref="227ce09da50e40df954cc71d0081939e" />
+              <owned-item ref="8c847582069a48b093b42cecf44cbb8d" />
+              <owned-item ref="fade0e696af445adb88abdb0935adb9a" />
+              <owned-item ref="b5f81ac58f22465b9047515019fbeeab" />
+              <owned-item ref="67ed52bf538e4be2837a82e18ac22d50" />
+              <owned-item ref="42c6f4060e6f4fe78f152cdcf1fac236" />
+              <owned-item ref="461268ca7d8f43d2979ffb236baeda3e" />
+              <owned-item ref="4b66c57dcde042af82c98e5f1a7bdcc3" />
+              <owned-item ref="f3b5a6f642a64dc1bdd0e3a4747ab009" />
+              <owned-item ref="bdb3ba5847714aea9f513ec28ed1216d" />
+              <owned-item ref="0a55849abf1741159b15f93748e29455" />
+              <owned-item ref="31d2d53167024fa8a89bf434a473a8a9" />
+              <owned-item ref="c7fabd509c7b4e38b4c5f6dc2922a092" />
+            </owned-items>
+            <attributes>
+              <attribute id="a69d778f4c9804f00844b738b7351c2bb740" cid="PROP275" name="Login" creation-date="04/16/2021 09:19:54" property-ref="3fbf06ebb45b457588bf2f706c8b42f8" />
+              <attribute id="a6d0fd824fdd4448c988defdead9f8eee948" cid="PROP276" name="UserCreate" creation-date="04/16/2021 09:25:06" property-ref="c699f1a94563482ba31def19d95b39e2" />
+              <attribute id="a90f80c8dbcc64b59993038273a895dff578" cid="PROP277" name="MenuNavigation" creation-date="04/16/2021 09:25:37" property-ref="546c2cca8d1d487ba1a0551d7af85ec2" />
+              <attribute id="ae068215fa6f04dfc951efc4b35cdb83a716" cid="PROP278" name="Logout" creation-date="04/16/2021 09:25:58" property-ref="9c56e69f3c274ee085cf843078dbe425" />
+              <attribute id="ac49920064a994f5888fbf090bfc5183b716" cid="PROP279" name="ShowScoreboard" creation-date="04/16/2021 09:26:16" property-ref="5fa45a02cd294127bdcdd19def7b3d96" />
+              <attribute id="a28c8d9fa574e4b31a242dd45aff02d05668" cid="PROP280" name="changeNickname" creation-date="04/16/2021 09:27:52" property-ref="5f2bad105ce84bc6a9110b7681f6c1e0" />
+              <attribute id="adca51b2e2da541b58240747c5ae5a388118" cid="PROP281" name="changePassword" creation-date="04/16/2021 09:28:06" property-ref="36030ed7baac44febf3dd5ce0d52c215" />
+              <attribute id="a9bafcf54663644169c759c6ec9b5d4a3707" cid="PROP282" name="showCard" creation-date="04/16/2021 09:28:17" property-ref="1b4906848bac447da42888a9bd1c346d" />
+              <attribute id="a3b8f405e89f04ad0a863b624f99cf7e9777" cid="PROP283" name="createDeck" creation-date="04/16/2021 09:28:29" property-ref="aed757792eb24771af4f797b02e63bc5" />
+              <attribute id="abf437d2e9186466eb118ddf5b902cab1509" cid="PROP284" name="deleteDeck" creation-date="04/16/2021 09:28:58" property-ref="d7cd048f46804d109a2c6761373ecf34" />
+              <attribute id="afbb5822dccf14ada99c89463c1e4f91e504" cid="PROP285" name="activateDeck" creation-date="04/16/2021 09:29:07" property-ref="219b4aa7cc334b07a516e6c3450bff89" />
+              <attribute id="a9a18eccfbbdf4f97a041f65a30246391337" cid="PROP286" name="addCardToDeck" creation-date="04/16/2021 09:29:33" property-ref="367841c4c9984d8b9187c2cdf0209d2a" />
+              <attribute id="aa87a49aaeace4733ab20272458abdd7f449" cid="PROP287" name="removeCardFromDeck" creation-date="04/16/2021 09:29:43" property-ref="6b55fbb0d5334662b45c8bc97da83686" />
+              <attribute id="a236a9abc22a04edf822d60c44801b441870" cid="PROP288" name="showAllDeck" creation-date="04/16/2021 09:30:16" property-ref="057004ab3bba4401988fa63eaa995c00" />
+              <attribute id="a89a9b7f041544be8a024a7697aae5711235" cid="PROP289" name="showOneDeck" creation-date="04/16/2021 09:30:25" property-ref="6ba3b5a89761487c9f8eaafcfb9353b5" />
+              <attribute id="ab93a570973f747708a5dcbab97a4b01b481" cid="PROP290" name="showDeckCards" creation-date="04/16/2021 09:30:38" property-ref="2701a8406d4f476895a769fb317561d6" />
+              <attribute id="a579b27927c104eaf99bfe0c5213fa14d529" cid="PROP291" name="shopBuy" creation-date="04/16/2021 09:30:51" property-ref="7ba55bea9dd04b0a8fa2b0217a7e6584" />
+              <attribute id="a6b02b08a185e40408e89bb959044df6e14" cid="PROP292" name="shopShowAll" creation-date="04/16/2021 09:31:09" property-ref="97352ae6327c442594cf4305a0034c14" />
+              <attribute id="afccd03454b54459eb88b312c1c812b1c913" cid="PROP293" name="startPlayerDuel" creation-date="04/16/2021 09:31:20" property-ref="ed36cca8bc07421598a56743a3cd4839" />
+              <attribute id="a6492d50132b84c3b8a41efc848c0022c21" cid="PROP294" name="startAIDuel" creation-date="04/16/2021 09:31:32" property-ref="1f58b0b3dae3459984ec07e4f9d7ad0f" />
+              <attribute id="a71af9930ed274b38af71952c2f1b07e3617" cid="PROP295" name="selectCard" creation-date="04/16/2021 09:32:12" property-ref="dddffaf3980a46709899eb40a289cf06" />
+              <attribute id="a002613e16cd64b0d903462c8cced7a7f175" cid="PROP296" name="deselectCard" creation-date="04/16/2021 09:32:35" property-ref="a4dd151522de4828b9de273b2b6f91fd" />
+              <attribute id="a9c183c1adce64bb6a8805fcdd155243c170" cid="PROP297" name="summon" creation-date="04/16/2021 09:33:16" property-ref="7bb874295fb0464983af1139256897f5" />
+              <attribute id="aa2f35736ee5749728e4f480e0f56165d87" cid="PROP298" name="set" creation-date="04/16/2021 09:33:28" property-ref="e1f6986d747847359ce22d6c3e408226" />
+              <attribute id="a702a1682ed0549a0a9869bd43146773d990" cid="PROP299" name="setPosition" creation-date="04/16/2021 09:33:32" property-ref="3c8f01f8b1af45f0a5d03d0d45ae21a1" />
+              <attribute id="afb4b7502faf54b2693929e87c3bcb87d456" cid="PROP300" name="flipSummon" creation-date="04/16/2021 09:33:45" property-ref="227ce09da50e40df954cc71d0081939e" />
+              <attribute id="ae797aadda2ad44929191aec9fbc43cc9883" cid="PROP301" name="attack" creation-date="04/16/2021 09:33:56" property-ref="8c847582069a48b093b42cecf44cbb8d" />
+              <attribute id="a8a6bccf45c29466abe88237143e51f85899" cid="PROP302" name="directAttack" creation-date="04/16/2021 09:34:05" property-ref="fade0e696af445adb88abdb0935adb9a" />
+              <attribute id="a3adfd3a971974b8881c57217bc3fbf0478" cid="PROP303" name="activateEffect" creation-date="04/16/2021 09:34:18" property-ref="b5f81ac58f22465b9047515019fbeeab" />
+              <attribute id="ae7f51c93bf5b4b338d72e56c7b4e0a12479" cid="PROP304" name="showGraveyard" creation-date="04/16/2021 09:34:30" property-ref="67ed52bf538e4be2837a82e18ac22d50" />
+              <attribute id="a9e70e643b9d94e6f8bbd6f8478b69684977" cid="PROP305" name="showSelectedCard" creation-date="04/16/2021 09:35:06" property-ref="42c6f4060e6f4fe78f152cdcf1fac236" />
+              <attribute id="a0be829d57a9148e69f0ee9ff68559dae563" cid="PROP306" name="surrender" creation-date="04/16/2021 09:35:16" property-ref="461268ca7d8f43d2979ffb236baeda3e" />
+              <attribute id="aaab2a981a445471097f03aa0cb60078a56" cid="PROP307" name="increaseMoneyCheatCode" creation-date="04/16/2021 09:35:24" property-ref="4b66c57dcde042af82c98e5f1a7bdcc3" />
+              <attribute id="a6604f70432bb4f3faba49d175b399f7e932" cid="PROP308" name="forceAddCardCheatCode" creation-date="04/16/2021 09:35:52" property-ref="f3b5a6f642a64dc1bdd0e3a4747ab009" />
+              <attribute id="a0a012240dd774e2e81eef86a2f9e08a785" cid="PROP309" name="increaseLifePointCheatCode" creation-date="04/16/2021 09:36:30" property-ref="bdb3ba5847714aea9f513ec28ed1216d" />
+              <attribute id="ad1bc70211cc042ae91be221f65153fbc458" cid="PROP310" name="setWinnerCheatCode" creation-date="04/16/2021 09:36:46" property-ref="0a55849abf1741159b15f93748e29455" />
+              <attribute id="af8f686db438c4257b0b088d804377bdf709" cid="PROP311" name="importCard" creation-date="04/16/2021 09:36:46" property-ref="31d2d53167024fa8a89bf434a473a8a9" />
+              <attribute id="a178a561740fe4c79b2398b4cefc8f1b1940" cid="PROP312" name="exportCard" creation-date="04/16/2021 09:37:23" property-ref="c7fabd509c7b4e38b4c5f6dc2922a092" />
+            </attributes>
+            <operations>
+              <operation id="o82ccdaa895334885a5fafae42f48a60d827" cid="OP093" name="getCommandMatcher" creation-date="04/16/2021 09:41:00" type="Matcher" type-id="Matcher" visibility="public">
+                <parameters>
+                  <parameter id="pf00eede74473431494afff438798162f" name="command" type="String" type-id="Uml.String" />
+                  <parameter id="pa9f0590f2d0a4408a119f195191acf0a" name="regex" type="String" type-id="Uml.String" />
+                </parameters>
+              </operation>
+            </operations>
+          </item>
+          <item id="aa9eaebbab004959932b5601b5830c1d" cid="PKG009" type="package" name="Database" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:08:30" visibility="undefined" />
           <item id="e3c6437532c74f5e82737932cc536417" cid="CMT001" type="comment" name="" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:12:25">
             <comment>TODO:
 IMPORT/EXPORT
@@ -1708,6 +1840,211 @@ EFFECT
 REGEX
 
 MVC Cleanup</comment>
+          </item>
+          <item id="3fbf06ebb45b457588bf2f706c8b42f8" cid="PROP275" type="property" name="Login" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:19:54" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="c699f1a94563482ba31def19d95b39e2" cid="PROP276" type="property" name="UserCreate" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:25:06" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="546c2cca8d1d487ba1a0551d7af85ec2" cid="PROP277" type="property" name="MenuNavigation" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:25:37" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="9c56e69f3c274ee085cf843078dbe425" cid="PROP278" type="property" name="Logout" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:25:58" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="5fa45a02cd294127bdcdd19def7b3d96" cid="PROP279" type="property" name="ShowScoreboard" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:26:16" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="5f2bad105ce84bc6a9110b7681f6c1e0" cid="PROP280" type="property" name="changeNickname" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:27:52" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="36030ed7baac44febf3dd5ce0d52c215" cid="PROP281" type="property" name="changePassword" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:28:06" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="1b4906848bac447da42888a9bd1c346d" cid="PROP282" type="property" name="showCard" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:28:17" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="aed757792eb24771af4f797b02e63bc5" cid="PROP283" type="property" name="createDeck" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:28:29" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="d7cd048f46804d109a2c6761373ecf34" cid="PROP284" type="property" name="deleteDeck" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:28:58" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="219b4aa7cc334b07a516e6c3450bff89" cid="PROP285" type="property" name="activateDeck" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:29:07" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="367841c4c9984d8b9187c2cdf0209d2a" cid="PROP286" type="property" name="addCardToDeck" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:29:33" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="6b55fbb0d5334662b45c8bc97da83686" cid="PROP287" type="property" name="removeCardFromDeck" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:29:43" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="057004ab3bba4401988fa63eaa995c00" cid="PROP288" type="property" name="showAllDeck" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:30:16" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="6ba3b5a89761487c9f8eaafcfb9353b5" cid="PROP289" type="property" name="showOneDeck" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:30:25" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="2701a8406d4f476895a769fb317561d6" cid="PROP290" type="property" name="showDeckCards" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:30:38" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="7ba55bea9dd04b0a8fa2b0217a7e6584" cid="PROP291" type="property" name="shopBuy" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:30:51" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="97352ae6327c442594cf4305a0034c14" cid="PROP292" type="property" name="shopShowAll" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:31:09" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="ed36cca8bc07421598a56743a3cd4839" cid="PROP293" type="property" name="startPlayerDuel" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:31:20" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="1f58b0b3dae3459984ec07e4f9d7ad0f" cid="PROP294" type="property" name="startAIDuel" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:31:32" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="dddffaf3980a46709899eb40a289cf06" cid="PROP295" type="property" name="selectCard" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:32:12" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="a4dd151522de4828b9de273b2b6f91fd" cid="PROP296" type="property" name="deselectCard" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:32:35" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="7bb874295fb0464983af1139256897f5" cid="PROP297" type="property" name="summon" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:33:16" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="e1f6986d747847359ce22d6c3e408226" cid="PROP298" type="property" name="set" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:33:28" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="3c8f01f8b1af45f0a5d03d0d45ae21a1" cid="PROP299" type="property" name="setPosition" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:33:32" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="227ce09da50e40df954cc71d0081939e" cid="PROP300" type="property" name="flipSummon" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:33:45" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="8c847582069a48b093b42cecf44cbb8d" cid="PROP301" type="property" name="attack" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:33:56" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="fade0e696af445adb88abdb0935adb9a" cid="PROP302" type="property" name="directAttack" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:34:05" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="b5f81ac58f22465b9047515019fbeeab" cid="PROP303" type="property" name="activateEffect" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:34:18" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="67ed52bf538e4be2837a82e18ac22d50" cid="PROP304" type="property" name="showGraveyard" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:34:30" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="42c6f4060e6f4fe78f152cdcf1fac236" cid="PROP305" type="property" name="showSelectedCard" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:35:06" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="461268ca7d8f43d2979ffb236baeda3e" cid="PROP306" type="property" name="surrender" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:35:16" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="4b66c57dcde042af82c98e5f1a7bdcc3" cid="PROP307" type="property" name="increaseMoneyCheatCode" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:35:24" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="f3b5a6f642a64dc1bdd0e3a4747ab009" cid="PROP308" type="property" name="forceAddCardCheatCode" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:35:52" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="bdb3ba5847714aea9f513ec28ed1216d" cid="PROP309" type="property" name="increaseLifePointCheatCode" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:36:30" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="0a55849abf1741159b15f93748e29455" cid="PROP310" type="property" name="setWinnerCheatCode" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:36:46" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="31d2d53167024fa8a89bf434a473a8a9" cid="PROP311" type="property" name="importCard" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:36:46" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="c7fabd509c7b4e38b4c5f6dc2922a092" cid="PROP312" type="property" name="exportCard" style-class="" owner="0d5a7413e0794efca7cb4cb97f04a159" creator="" creation-date="04/16/2021 09:37:23" visibility="public">
+            <feature static="true" />
+            <structural-feature type="String" type-id="Uml.String" />
+            <property />
+          </item>
+          <item id="59234cbdd38a4ea8af80e9d71c8bb5dd" cid="C035" type="class" name="Import/Export" style-class="" owner="a95f1b8438ef49818dc19fbe9f4a36b3" change-tracking-state="added" creator="" creation-date="04/16/2021 09:42:35">
+            <operations>
+              <operation id="o38eb9b424fe542dbbbb9f095a453e50249" cid="OP096" name="run" creation-date="04/16/2021 09:43:49" type="" type-id="" visibility="public" />
+              <operation id="oec289d478b8b4d80be5c6aed9e77bd65411" cid="OP094" name="Import" creation-date="04/16/2021 09:42:56" type="void" type-id="void" visibility="private">
+                <parameters>
+                  <parameter id="pc4cbbc0465214de49ef3ddef1bce3286" name="matcher" type="Menu" type-id="Menu" />
+                </parameters>
+              </operation>
+              <operation id="o441795ee4fa3479587f2fa62be33fc97139" cid="OP095" name="export" creation-date="04/16/2021 09:43:28" type="void" type-id="void" visibility="private">
+                <parameters>
+                  <parameter id="p3a687a55973d4722a361a1db68bffe27" name="matcher" type="Matcher" type-id="Matcher" />
+                </parameters>
+              </operation>
+            </operations>
           </item>
         </abstract-items>
         <layer id="6f2ae3ff0ad747f3820d60624f29cd94" name="Default" visible="true" enabled="true" locked="false">
@@ -1812,7 +2149,7 @@ MVC Cleanup</comment>
             <class />
           </item>
           <item id="617883cd346a425fbd92b35b46ae5c17" iid="1a873a729dfd40e4a81df81542c088f6" creation-date="04/12/2021 23:14:29" order-index="18" type="relation">
-            <layout start-role-position="25,15" end-role-position="25,-15" start-multiplicity-position="25,-15" end-multiplicity-position="25,15" line-style="oblique" lock-to-fields="false" auto-path="" x1="1632" y1="293" x2="1472" y2="476" start-border-pos="0.687171661596504" end-border-pos="0.256963997048326" name-position="0,20">
+            <layout start-role-position="25,15" end-role-position="25,-15" start-multiplicity-position="25,-15" end-multiplicity-position="25,15" line-style="oblique" lock-to-fields="false" auto-path="" x1="1632" y1="293" x2="1472" y2="476" start-border-pos="0.687171661596504" end-border-pos="0.256963955458774" name-position="0,20">
               <points>
                 <point x="1632" y="293" />
                 <point x="1472" y="476" />
@@ -1862,7 +2199,7 @@ MVC Cleanup</comment>
             <class />
           </item>
           <item id="c359408aa71a4b46bcdc5897c4fef986" iid="e7c93e8afde848c9a65eeba2156dc16a" creation-date="04/13/2021 21:58:51" order-index="32" type="relation">
-            <layout start-role-position="25,15" end-role-position="25,-15" start-multiplicity-position="25,-15" end-multiplicity-position="25,15" line-style="oblique" lock-to-fields="false" auto-path="" x1="1397" y1="1191" x2="1488" y2="1191" start-border-pos="0.37463775882876" end-border-pos="0.87536224117124" name-position="-1,4">
+            <layout start-role-position="25,15" end-role-position="25,-15" start-multiplicity-position="25,-15" end-multiplicity-position="25,15" line-style="oblique" lock-to-fields="false" auto-path="" x1="1397" y1="1191" x2="1488" y2="1191" start-border-pos="0.374638255049543" end-border-pos="0.875361744950457" name-position="-1,4">
               <points>
                 <point x="1397" y="1191" />
                 <point x="1488" y="1191" />
@@ -1875,7 +2212,7 @@ MVC Cleanup</comment>
             <class />
           </item>
           <item id="4571f2b9bf1541e38edfe457598fbf16" iid="67af8c7ddb744172a9f0f2ed543655d3" creation-date="04/14/2021 14:30:36" order-index="34" type="relation">
-            <layout line-style="oblique" lock-to-fields="false" auto-path="" x1="1659" y1="1618" x2="1659" y2="1314" start-border-pos="0.124716969025441" end-border-pos="0.625321813644543" name-position="0,20">
+            <layout line-style="oblique" lock-to-fields="false" auto-path="" x1="1659" y1="1618" x2="1659" y2="1314" start-border-pos="0.124716656024639" end-border-pos="0.625322169534667" name-position="0,20">
               <points>
                 <point x="1659" y="1618" />
                 <point x="1659" y="1314" />
@@ -1888,7 +2225,7 @@ MVC Cleanup</comment>
             <class />
           </item>
           <item id="465bba9bf3b54a25b72cc2f743b2dd5d" iid="bfccf28f82b3466694702cdf96374aec" creation-date="04/14/2021 14:30:51" order-index="36" type="relation">
-            <layout line-style="oblique" lock-to-fields="false" auto-path="" x1="2033" y1="1598" x2="1772" y2="1314" start-border-pos="0.040052076001783" end-border-pos="0.542945172279291" name-position="0,20">
+            <layout line-style="oblique" lock-to-fields="false" auto-path="" x1="2033" y1="1598" x2="1772" y2="1314" start-border-pos="0.0400519843574043" end-border-pos="0.542945528169415" name-position="0,20">
               <points>
                 <point x="2033" y="1598" />
                 <point x="1772" y="1314" />
@@ -1913,7 +2250,7 @@ MVC Cleanup</comment>
             <enumeration />
           </item>
           <item id="89ba233a27644a9b8dc3574b8134e1e5" iid="6d1f417fbe7c46378f575d890f3746dc" creation-date="04/15/2021 11:54:10" order-index="43" type="relation">
-            <layout start-role-position="25,15" end-role-position="25,-15" start-multiplicity-position="25,-15" end-multiplicity-position="25,15" line-style="oblique" lock-to-fields="false" auto-path="" x1="1196" y1="273" x2="1040" y2="388" start-border-pos="0.732831447244548" end-border-pos="0.279291820526123" name-position="0,20">
+            <layout start-role-position="25,15" end-role-position="25,-15" start-multiplicity-position="25,-15" end-multiplicity-position="25,15" line-style="oblique" lock-to-fields="false" auto-path="" x1="1196" y1="273" x2="1040" y2="388" start-border-pos="0.732831447244548" end-border-pos="0.279291868209839" name-position="0,20">
               <points>
                 <point x="1196" y="273" />
                 <point x="1040" y="388" />
@@ -1922,7 +2259,7 @@ MVC Cleanup</comment>
             <relation from="f5e9300726c4483cb49a5c1444d3238f" from-iid="3349a0a5bf37495a93bed3c8c59d20ea" to="49cf65b88f5d46c7bafc2fea37d7b816" to-iid="f909594dc5774d689ada57f7f3bfa98f" />
           </item>
           <item id="dd3717cfe072407e8694f63731b7119a" iid="161bde7605754111b37f14143cb37f9b" creation-date="04/15/2021 11:54:14" order-index="44" type="relation">
-            <layout start-role-position="25,15" end-role-position="25,-15" start-multiplicity-position="25,-15" end-multiplicity-position="25,15" line-style="oblique" lock-to-fields="false" auto-path="" x1="1251" y1="273" x2="1022" y2="584" start-border-pos="0.683554450385005" end-border-pos="0.222634331202951" name-position="0,20">
+            <layout start-role-position="25,15" end-role-position="25,-15" start-multiplicity-position="25,-15" end-multiplicity-position="25,15" line-style="oblique" lock-to-fields="false" auto-path="" x1="1251" y1="273" x2="1022" y2="584" start-border-pos="0.683554450385005" end-border-pos="0.222634270176698" name-position="0,20">
               <points>
                 <point x="1251" y="273" />
                 <point x="1022" y="584" />
@@ -1943,7 +2280,7 @@ MVC Cleanup</comment>
             <package name-in-body="false" />
           </item>
           <item id="0d5a7413e0794efca7cb4cb97f04a159" iid="8a2562e6cd414afdbd8cfcf41415c5ea" creation-date="04/15/2021 13:06:58" order-index="54" type="entity">
-            <layout ax="-1027" ay="-217.6412" awidth="140" aheight="160" x="-1027" y="-217.6412" width="140" height="160" />
+            <layout ax="-858.3189" ay="-190.031" awidth="358" aheight="805" x="-858.3189" y="-190.031" width="263" height="160" rotation-center="-59.5,0" />
             <class />
           </item>
           <item id="a5ad4e23462a409c86431799407f7554" iid="b24b03b3460443649c03ef65eab3b06d" container="4ecc07d187bd4846a9ab8224160bcd83" container-iid="b435c8ac6ace4557a11c839bbd6952d3" creation-date="04/15/2021 12:01:30" order-index="46" type="entity">
@@ -1960,6 +2297,10 @@ MVC Cleanup</comment>
           </item>
           <item id="e3c6437532c74f5e82737932cc536417" iid="1695451e14084b509de44a3538172464" creation-date="04/15/2021 13:12:25" order-index="56" type="entity">
             <layout ax="-998" ay="714" awidth="180" aheight="140" x="-998" y="714" width="140" height="100" />
+          </item>
+          <item id="59234cbdd38a4ea8af80e9d71c8bb5dd" iid="5a81833ac838494e9ce9e824f6d6d229" container="a95f1b8438ef49818dc19fbe9f4a36b3" container-iid="acc0bf78a88f409bac102ca1f03ee2da" creation-date="04/16/2021 09:42:35" order-index="57" type="entity">
+            <layout ax="245.677" ay="82.96896" awidth="140" aheight="160" x="245.677" y="82.96896" width="140" height="160" />
+            <class />
           </item>
         </layer>
       </diagram>
