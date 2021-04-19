@@ -2193,7 +2193,7 @@
               <end-role id="umlar-5a09ea0e-e9bc-4322-9abe-b2c87e366c41" name="" navigability="" association-type="association" visibility="private" />
             </relation>
           </item>
-          <item id="1f29a8b7b88d4096bd27493188945ebe" cid="PKG005" type="package" name="Cards" style-class="" owner="aa9eaebbab004959932b5601b5830c1d" change-tracking-state="added" creation-date="04/15/2021 11:57:53" visibility="undefined">
+          <item id="1f29a8b7b88d4096bd27493188945ebe" cid="PKG005" type="package" name="Database.Cards" style-class="" owner="aa9eaebbab004959932b5601b5830c1d" change-tracking-state="added" creation-date="04/15/2021 11:57:53" visibility="undefined">
             <owned-items>
               <owned-item ref="f5e9300726c4483cb49a5c1444d3238f" />
               <owned-item ref="14add09b8abd4bd6b69214e59f3eb103" />

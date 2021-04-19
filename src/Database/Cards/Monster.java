@@ -1,24 +1,6 @@
-package Cards;
+package Database.Cards;
 
 public class Monster extends Card {
-
-    enum SummonType {
-        NORMAL_SUMMON, RITUAL_SUMMON, SPECIAL_SUMMON, TRIBUTE_SUMMON;
-    }
-
-    enum MonsterType {
-        WARRIOR, WARRIOR_EFFECT, WARRIOR_RITUAL, INSECT_EFFECT, BEAST, BEAST_WARRIOR, BEAST_WARRIOR_EFFECT, FIEND,
-        AQUA_EFFECT, AQUA_RITUAL, SEA_SERPENT, SPELLCASTER, SPELLCASTER_EFFECT, THUNDER, THUNDER_EFFECT, DRAGON,
-        DRAGON_EFFECT, MACHINE, MACHINE_EFFECT, PYRO, ROCK, CYBERSE, CYBERSE_EFFECT, FAIRY_EFFECT;
-    }
-
-    enum Attribute {
-        DARK, EARTH, FIRE, WATER, LIGHT, WIND;
-    }
-
-    enum EffectType {
-        NORMAL, QUICK, TRIGGER, IGNITION, CONTINUOUS, NONE;
-    }
 
     private Attribute attribute;
     private MonsterType monsterType;
@@ -98,7 +80,7 @@ public class Monster extends Card {
         return defensePoints;
     }
 
-    public void activateEffect(){
+    public void activateEffect() {
 
     }
 
