@@ -23,6 +23,21 @@ public class User {
         //TODO fix balance
         setBalance(10000);
     }
+    public static User getUserByName(String username){
+        for (User user: users
+             ) {
+            if (user.getUsername().equals(username)) return user;
+        }
+        return null;
+    }
+
+    public static User getUserByNickname(String nickname) {
+        for (User user: users
+        ) {
+            if (user.getUsername().equals(nickname)) return user;
+        }
+        return null;
+    }
 
     public void setUsername(String username) {
         this.username = username;
@@ -99,5 +114,4 @@ public class User {
     public void addCard(Card card){
         inactiveCards.add(card);
     }
-
 }

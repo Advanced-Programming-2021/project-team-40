@@ -7,7 +7,7 @@ public class Regex {
     public static String login = "^user login(?=.* --username)(?=.* --password)" +
                                  "(?: --username (?<username>.+?)(?!.*?--username)|" +
                                  " --password (?<password>.+?)(?!.*?--password)){2}$";
-    public static String creatUser = "^user create(?=.* --username)(?=.* --password)(?=.* --nickname)" +
+    public static String createUser = "^user create(?=.* --username)(?=.* --password)(?=.* --nickname)" +
                                      "(?: --username (?<username>.+?)(?!.*?--username)|" +
                                      " --nickname (?<nickname>.+?)(?!.*?--nickname)|" +
                                      " --password (?<password>.+?)(?!.*?--password)){3}$";
