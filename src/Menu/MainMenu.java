@@ -41,20 +41,23 @@ public class MainMenu {
     private void toLowerMenu(Matcher matcher) {
         String menuName = matcher.group("menu_name");
         switch (menuName) {
-            case "Duel" -> currentMenu = Menu.DuelMenu;
+            case "Duel" -> {
+                currentMenu = Menu.DUEL_MENU;
+            }
             case "Deck" -> {
                 deckMenu.setCurrentUser(this.currentUser);
                 currentMenu = Menu.DECK_MENU;
             }
             case "Scoreboard" -> {
 
-                currentMenu = Menu.Scoreboard_Menu;
+                currentMenu = Menu.SCOREBOARD_MENU;
             }
             case "Profile" -> {
                 profileMenu.setCurrentUser(this.currentUser);
                 currentMenu = Menu.PROFILE_MENU;
             }
             case "Shop" -> {
+                shopMenu.setCurrentUser(this.currentUser);
                 currentMenu = Menu.SHOP_MENU;
             }
             case "Import/Export" -> currentMenu = Menu.IMPORT_EXPORT_MENU;

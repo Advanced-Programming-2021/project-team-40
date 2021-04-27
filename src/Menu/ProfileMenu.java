@@ -1,9 +1,9 @@
 package Menu;
 
 import Database.User;
-import ProgramController.Exceptions.invalidPassword;
-import ProgramController.Exceptions.repetitiveNickname;
-import ProgramController.Exceptions.repetitivePassword;
+import ProgramController.Exceptions.InvalidPasswordException;
+import ProgramController.Exceptions.RepetitiveNicknameException;
+import ProgramController.Exceptions.RepetitivePasswordException;
 import ProgramController.Regex;
 
 import java.util.regex.Matcher;
@@ -16,13 +16,13 @@ public class ProfileMenu {
         if ((matcher = Regex.getCommandMatcher(command, Regex.changeNickname)).matches()) {
             try {
                 changeNickname(matcher);
-            } catch (repetitiveNickname e) {
+            } catch (RepetitiveNicknameException e) {
                 System.out.println(e.getMessage());
             }
         } else if ((matcher = Regex.getCommandMatcher(command, Regex.changePassword)).matches()) {
             try {
                 changePassword(matcher);
-            } catch (invalidPassword | repetitivePassword e) {
+            } catch (InvalidPasswordException | RepetitivePasswordException e) {
                 System.out.println(e.getMessage());
             }
         }
@@ -32,16 +32,16 @@ public class ProfileMenu {
         else System.out.println("invalid command");
     }
 
-    private void changePassword(Matcher matcher) throws repetitivePassword, invalidPassword {
+    private void changePassword(Matcher matcher) throws RepetitivePasswordException, InvalidPasswordException {
         String currentPassword = matcher.group("current_pass");
         String newPassword = matcher.group("new_pass");
-        if (!currentUser.getPassword().equals(currentPassword)) throw new invalidPassword();
-        else if (currentPassword.equals(newPassword)) throw new repetitivePassword();
+        if (!currentUser.getPassword().equals(currentPassword)) throw new InvalidPasswordException();
+        else if (currentPassword.equals(newPassword)) throw new RepetitivePasswordException();
     }
 
-    private void changeNickname(Matcher matcher) throws repetitiveNickname {
+    private void changeNickname(Matcher matcher) throws RepetitiveNicknameException {
         String newNickname = matcher.group("nickname");
-        if (User.getUserByNickname(newNickname) != null) throw new repetitiveNickname(newNickname);
+        if (User.getUserByNickname(newNickname) != null) throw new RepetitiveNicknameException(newNickname);
         else currentUser.setNickname(newNickname);
     }
 

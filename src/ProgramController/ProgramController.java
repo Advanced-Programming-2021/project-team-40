@@ -3,6 +3,7 @@ import Menu.LoginMenu;
 import Menu.MainMenu;
 import Menu.DeckMenu;
 import Menu.ProfileMenu;
+import Menu.ShopMenu;
 import java.util.Scanner;
 
 public class ProgramController {
@@ -15,6 +16,7 @@ public class ProgramController {
     public static MainMenu mainMenu = new MainMenu();
     public static DeckMenu deckMenu = new DeckMenu();
     public static ProfileMenu profileMenu = new ProfileMenu();
+    public static ShopMenu shopMenu = new ShopMenu();
     public Scanner sc = new Scanner(System.in);
     public void run() {
         while (currentMenu != Menu.EXIT) {
@@ -30,6 +32,7 @@ public class ProgramController {
                     deckMenu.run(command);
                     break;
                 case SHOP_MENU:
+                    shopMenu.run(command);
                     break;
                 case PROFILE_MENU:
                     profileMenu.run(command);

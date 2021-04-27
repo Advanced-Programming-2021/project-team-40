@@ -7,5 +7,7 @@ public enum Menu {
     DECK_MENU,
     PROFILE_MENU,
     IMPORT_EXPORT_MENU,
-    EXIT, DuelMenu, Scoreboard_Menu,
+    EXIT,
+    DUEL_MENU,
+    SCOREBOARD_MENU,
 }

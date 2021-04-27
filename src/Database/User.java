@@ -23,6 +23,13 @@ public class User {
         //TODO fix balance
         setBalance(10000);
     }
+    public Deck getDeckByName(String deckName){
+        for (Deck deck: decks
+             ) {
+            if (deck.getName().equals(deckName)) return deck;
+        }
+        return null;
+    }
     public static User getUserByName(String username){
         for (User user: users
              ) {

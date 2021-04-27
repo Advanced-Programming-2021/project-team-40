@@ -1,6 +1,8 @@
 package Database;
 
 import Database.Cards.*;
+import ProgramController.Exceptions.DeckIsFullException;
+
 import java.util.*;
 
 public class Deck {
@@ -30,13 +32,21 @@ public class Deck {
         return false;
     }
 
-    public void addCard(Card cardToAdd, String deck){
+    public void addCard(Card cardToAdd, String deck) throws DeckIsFullException {
         switch (deck){
             case "Main":
-                mainCards.add(cardToAdd);
+                if (mainIsFull()) throw new DeckIsFullException("main");
+                else {
+                    mainCards.add(cardToAdd);
+                    //TODO missing success message
+                }
                 break;
             case "Side":
-                sideCards.add(cardToAdd);
+                if (sideIsFull()) throw new DeckIsFullException("side");
+                else {
+                    sideCards.add(cardToAdd);
+                    //TODO missing success message
+                }
                 break;
         }
     }
@@ -68,4 +78,11 @@ public class Deck {
     }
 
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
