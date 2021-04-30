@@ -1,4 +1,4 @@
-package ProgramController.Exceptions;
+package Exceptions;
 
 public class InvalidPasswordException extends Exception{
     public InvalidPasswordException(){

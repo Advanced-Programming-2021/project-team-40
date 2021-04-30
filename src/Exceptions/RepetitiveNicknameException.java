@@ -1,4 +1,4 @@
-package ProgramController.Exceptions;
+package Exceptions;
 
 public class RepetitiveNicknameException extends Exception {
     public RepetitiveNicknameException(String nickname){

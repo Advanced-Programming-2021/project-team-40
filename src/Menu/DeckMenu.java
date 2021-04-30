@@ -3,10 +3,10 @@ package Menu;
 import Database.Cards.Card;
 import Database.Deck;
 import Database.User;
-import ProgramController.Exceptions.DeckIsFullException;
-import ProgramController.Exceptions.InvalidCardNameException;
-import ProgramController.Exceptions.InvalidDeckNameException;
-import ProgramController.Exceptions.RepetitiveDeckNameException;
+import Exceptions.DeckIsFullException;
+import Exceptions.InvalidCardNameException;
+import Exceptions.InvalidDeckNameException;
+import Exceptions.RepetitiveDeckNameException;
 import ProgramController.Regex;
 
 import java.util.regex.Matcher;
@@ -22,37 +22,37 @@ public class DeckMenu {
             } catch (RepetitiveDeckNameException e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.deleteDeck)).matches()) {
+        } else if ((matcher = Regex.getCommandMatcher(command, Regex.deleteDeck)).matches()) {
             try {
                 deleteDeck(matcher);
             } catch (InvalidDeckNameException e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.activateDeck)).matches()) {
+        } else if ((matcher = Regex.getCommandMatcher(command, Regex.activateDeck)).matches()) {
             try {
                 activateDeck(matcher);
             } catch (InvalidDeckNameException e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToDeck)).matches()) {
+        } else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToDeck)).matches()) {
             try {
                 addCard(matcher);
             } catch (InvalidCardNameException | InvalidDeckNameException | DeckIsFullException e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.removeCardFromDeck)).matches())
-            removeCard(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.showAllDeck).matches())
+        } else if ((matcher = Regex.getCommandMatcher(command, Regex.removeCardFromDeck)).matches()) {
+            try {
+                removeCard(matcher);
+            } catch (InvalidCardNameException | InvalidDeckNameException | DeckIsFullException e) {
+                System.out.println(e.getMessage());
+            }
+        } else if (Regex.getCommandMatcher(command, Regex.showAllDeck).matches())
             showAllDecks();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.showOneDeck)).matches())
             showOneDeck(matcher);
         else if (Regex.getCommandMatcher(command, Regex.showCards).matches())
             showAllCards();
-
+        else System.out.println("invalid command");
     }
 
     private void showAllCards() {
@@ -67,19 +67,26 @@ public class DeckMenu {
 
     }
 
-    private void removeCard(Matcher matcher) {
-
+    private void removeCard(Matcher matcher) throws DeckIsFullException, InvalidCardNameException, InvalidDeckNameException {
+        String cardName = matcher.group("card_name");
+        String deckName = matcher.group("deck_name");
+        boolean isSide = false;
+        if (matcher.group("is_side") != null) isSide = true;
+        if (Card.getCardByName(cardName) == null) throw new InvalidCardNameException(cardName);
+        if (currentUser.getDeckByName(deckName) == null) throw new InvalidDeckNameException(deckName);
+        if (isSide) currentUser.getDeckByName(deckName).removeCard(Card.getCardByName(cardName), "Side");
+        else currentUser.getDeckByName(deckName).removeCard(Card.getCardByName(cardName), "Main");
     }
 
     private void addCard(Matcher matcher) throws InvalidCardNameException, InvalidDeckNameException, DeckIsFullException {
         String cardName = matcher.group("card_name");
-        String deckName = matcher.group("deck_name") ;
+        String deckName = matcher.group("deck_name");
         boolean isSide = false;
         if (matcher.group("is_side") != null) isSide = true;
         if (Card.getCardByName(cardName) == null) throw new InvalidCardNameException(cardName);
         else if (currentUser.getDeckByName(deckName) == null) throw new InvalidDeckNameException(deckName);
-        else if (isSide) currentUser.getDeckByName(deckName).addCard(Card.getCardByName(cardName),"Side");
-        else currentUser.getDeckByName(deckName).addCard(Card.getCardByName(cardName),"Main");
+        else if (isSide) currentUser.getDeckByName(deckName).addCard(Card.getCardByName(cardName), "Side");
+        else currentUser.getDeckByName(deckName).addCard(Card.getCardByName(cardName), "Main");
     }
 
     private void activateDeck(Matcher matcher) throws InvalidDeckNameException {
@@ -95,7 +102,7 @@ public class DeckMenu {
     private void deleteDeck(Matcher matcher) throws InvalidDeckNameException {
         String deckName = matcher.group("deck_name");
         if (currentUser.getDeckByName(deckName) == null) throw new InvalidDeckNameException(deckName);
-        else{
+        else {
             Deck deck = currentUser.getDeckByName(deckName);
             currentUser.getDecks().remove(deck);
             //TODO missing success message

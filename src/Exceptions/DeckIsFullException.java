@@ -1,4 +1,4 @@
-package ProgramController.Exceptions;
+package Exceptions;
 
 public class DeckIsFullException extends Exception {
     public DeckIsFullException(String deckPart){

@@ -1,10 +1,17 @@
 package ProgramController;
+
 import Menu.LoginMenu;
 import Menu.MainMenu;
 import Menu.DeckMenu;
 import Menu.ProfileMenu;
 import Menu.ShopMenu;
+
 import java.util.Scanner;
+import java.util.regex.Matcher;
+
+import Menu.MenuNavigationController;
+import Exceptions.MenuNavigationNotPossibleException;
+
 
 public class ProgramController {
     /*TODO
@@ -18,10 +25,21 @@ public class ProgramController {
     public static ProfileMenu profileMenu = new ProfileMenu();
     public static ShopMenu shopMenu = new ShopMenu();
     public Scanner sc = new Scanner(System.in);
+
     public void run() {
         while (currentMenu != Menu.EXIT) {
             String command = sc.nextLine();
-            switch (currentMenu) {
+            Matcher matcher;
+            if ((matcher = Regex.getCommandMatcher(command, Regex.menuNavigation)).matches()) {
+                try {
+                    MenuNavigationController.toLowerMenu(matcher);
+                } catch (MenuNavigationNotPossibleException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
+                MenuNavigationController.toUpperMenu();
+            else switch (currentMenu) {
                 case LOGIN_MENU:
                     loginMenu.run(command);
                     break;

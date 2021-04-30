@@ -1,9 +1,9 @@
 package Menu;
 
 import Database.User;
-import ProgramController.Exceptions.InvalidPasswordException;
-import ProgramController.Exceptions.RepetitiveNicknameException;
-import ProgramController.Exceptions.RepetitivePasswordException;
+import Exceptions.InvalidPasswordException;
+import Exceptions.RepetitiveNicknameException;
+import Exceptions.RepetitivePasswordException;
 import ProgramController.Regex;
 
 import java.util.regex.Matcher;
@@ -25,9 +25,6 @@ public class ProfileMenu {
             } catch (InvalidPasswordException | RepetitivePasswordException e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else if (Regex.getCommandMatcher(command, Regex.showCurrentMenu).matches()) {
-            System.out.println("Profile");
         }
         else System.out.println("invalid command");
     }

@@ -9,7 +9,7 @@ abstract public class Card {
     protected String name;
     protected String description;
     protected String cardNumber;
-    protected int cardPrice;
+    protected int cardPrice = 0;
 
     public Card(String name, String description, String cardNumber, int cardPrice) {
         setName(name);

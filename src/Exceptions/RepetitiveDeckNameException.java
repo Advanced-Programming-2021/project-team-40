@@ -1,4 +1,4 @@
-package ProgramController.Exceptions;
+package Exceptions;
 
 public class RepetitiveDeckNameException extends Exception{
     public RepetitiveDeckNameException(String deckName){

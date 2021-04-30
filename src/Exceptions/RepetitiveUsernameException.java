@@ -1,4 +1,4 @@
-package ProgramController.Exceptions;
+package Exceptions;
 
 public class RepetitiveUsernameException extends Exception{
     public RepetitiveUsernameException(String username){

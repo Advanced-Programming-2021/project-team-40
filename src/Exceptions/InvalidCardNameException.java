@@ -1,4 +1,4 @@
-package ProgramController.Exceptions;
+package Exceptions;
 
 public class InvalidCardNameException extends Exception {
     public InvalidCardNameException(String cardName){

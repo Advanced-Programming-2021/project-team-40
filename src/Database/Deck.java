@@ -1,7 +1,7 @@
 package Database;
 
 import Database.Cards.*;
-import ProgramController.Exceptions.DeckIsFullException;
+import Exceptions.DeckIsFullException;
 
 import java.util.*;
 
@@ -51,10 +51,11 @@ public class Deck {
         }
     }
 
-    private void removeCard(Card cardToRemove, String deck){
+    public void removeCard(Card cardToRemove, String deck) throws DeckIsFullException {
         switch (deck){
             case "Main":
-                for (int i = 0; i < mainCards.size(); i++) {
+                if (mainIsFull()) throw new DeckIsFullException("main");
+                else for (int i = 0; i < mainCards.size(); i++) {
                     if (mainCards.get(i).equals(cardToRemove)){
                         mainCards.remove(i);
                         return;
@@ -62,7 +63,8 @@ public class Deck {
                 }
                 break;
             case "Side":
-                for (int i = 0; i < sideCards.size(); i++) {
+                if (mainIsFull()) throw new DeckIsFullException("side");
+                else for (int i = 0; i < sideCards.size(); i++) {
                     if (sideCards.get(i).equals(cardToRemove)){
                         sideCards.remove(i);
                         return;

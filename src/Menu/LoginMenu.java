@@ -2,15 +2,11 @@ package Menu;
 
 import Database.User;
 import ProgramController.Regex;
-import ProgramController.Menu;
-import ProgramController.Exceptions.InvalidLoginException;
-import ProgramController.Exceptions.RepetitiveNicknameException;
-import ProgramController.Exceptions.RepetitiveUsernameException;
+import Exceptions.InvalidLoginException;
+import Exceptions.RepetitiveNicknameException;
+import Exceptions.RepetitiveUsernameException;
 
 import java.util.regex.Matcher;
-
-import static ProgramController.ProgramController.currentMenu;
-import static ProgramController.ProgramController.mainMenu;
 
 public class LoginMenu {
     public void run(String command) {
@@ -25,10 +21,9 @@ public class LoginMenu {
             try {
                 loginUser(matcher);
             } catch (InvalidLoginException e) {
-                System.out.println("Username and password didn't match!");
+                System.out.println(e.getMessage());
             }
-        } else if (Regex.getCommandMatcher(command, Regex.showCurrentMenu).matches())
-            System.out.println("Login Menu");
+        }
         else System.out.println("invalid command");
     }
 
@@ -38,8 +33,7 @@ public class LoginMenu {
         if (User.getUserByName(username) == null) throw new InvalidLoginException();
         User currentUser = User.getUserByName(username);
         if (!currentUser.getPassword().equals(password)) throw new InvalidLoginException();
-        currentMenu = Menu.MAIN_MENU;
-        mainMenu.setCurrentUser(currentUser);
+        MenuNavigationController.login(currentUser);
         //TODO success message missing
     }
 
