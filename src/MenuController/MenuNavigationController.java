@@ -1,64 +1,76 @@
-package Menu;
+package MenuController;
 
 import Database.User;
 import Exceptions.MenuNavigationNotPossibleException;
-import ProgramController.Menu;
+import MenuController.ProgramController.Menu;
 
 import java.util.regex.Matcher;
 
-import static ProgramController.ProgramController.*;
+import static MenuController.ProgramController.ProgramController.*;
 
 public class MenuNavigationController {
-    public static void toUpperMenu() {
-        switch (currentMenu) {
+
+    public Menu toUpperMenu(Menu menu) {
+        switch (menu) {
             case LOGIN_MENU:
-                currentMenu = Menu.EXIT;
+                menu = Menu.EXIT;
                 resetMenusForLogout();
+                break;
             case MAIN_MENU: {
-                currentMenu = Menu.LOGIN_MENU;
+                menu = Menu.LOGIN_MENU;
                 mainMenu.setCurrentUser(null);
+                break;
             }
             default:
-                currentMenu = Menu.MAIN_MENU;
+                menu = Menu.MAIN_MENU;
         }
+        return menu;
     }
 
-    public static void toLowerMenu(Matcher matcher) throws MenuNavigationNotPossibleException {
+    public Menu toLowerMenu(Matcher matcher, Menu menu) throws MenuNavigationNotPossibleException {
         String menuName = matcher.group("menu_name");
-        if (currentMenu == Menu.MAIN_MENU)
+        if (menu == Menu.MAIN_MENU)
             switch (menuName) {
                 case "Duel":
-                    currentMenu = Menu.DUEL_MENU;
+                    menu = Menu.DUEL_MENU;
+                    break;
                 case "Deck":
                     deckMenu.setCurrentUser(mainMenu.currentUser);
-                    currentMenu = Menu.DECK_MENU;
+                    menu = Menu.DECK_MENU;
+                    break;
                 case "Scoreboard":
 
-                    currentMenu = Menu.SCOREBOARD_MENU;
+                    menu = Menu.SCOREBOARD_MENU;
+                    break;
                 case "Profile":
                     profileMenu.setCurrentUser(mainMenu.currentUser);
-                    currentMenu = Menu.PROFILE_MENU;
+                    menu = Menu.PROFILE_MENU;
+                    break;
                 case "Shop":
                     shopMenu.setCurrentUser(mainMenu.currentUser);
-                    currentMenu = Menu.SHOP_MENU;
+                    menu = Menu.SHOP_MENU;
+                    break;
                 case "Import/Export":
-                    currentMenu = Menu.IMPORT_EXPORT_MENU;
+                    menu = Menu.IMPORT_EXPORT_MENU;
+                    break;
             }
         else throw new MenuNavigationNotPossibleException();
+        return menu;
     }
 
-    public static void resetMenusForLogout() {
+    public void resetMenusForLogout() {
         deckMenu.setCurrentUser(null);
         profileMenu.setCurrentUser(null);
         shopMenu.setCurrentUser(null);
         //TODO complete list
     }
 
-    public static void login(User currentUser) {
+    public void login(User currentUser) {
         currentMenu = Menu.MAIN_MENU;
         mainMenu.setCurrentUser(currentUser);
     }
-    public static void logout(){
+
+    public void logout() {
         mainMenu.setCurrentUser(null);
         currentMenu = Menu.LOGIN_MENU;
     }

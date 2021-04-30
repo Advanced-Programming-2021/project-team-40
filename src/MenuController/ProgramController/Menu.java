@@ -1,4 +1,4 @@
-package ProgramController;
+package MenuController.ProgramController;
 
 public enum Menu {
     LOGIN_MENU,

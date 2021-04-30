@@ -1,4 +1,4 @@
-package ProgramController;
+package MenuController.ProgramController;
 
 import Menu.LoginMenu;
 import Menu.MainMenu;
@@ -9,7 +9,7 @@ import Menu.ShopMenu;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
-import Menu.MenuNavigationController;
+import MenuController.MenuNavigationController;
 import Exceptions.MenuNavigationNotPossibleException;
 
 
@@ -24,6 +24,7 @@ public class ProgramController {
     public static DeckMenu deckMenu = new DeckMenu();
     public static ProfileMenu profileMenu = new ProfileMenu();
     public static ShopMenu shopMenu = new ShopMenu();
+    public static MenuNavigationController menuNavigator = new MenuNavigationController();
     public Scanner sc = new Scanner(System.in);
 
     public void run() {
@@ -32,13 +33,13 @@ public class ProgramController {
             Matcher matcher;
             if ((matcher = Regex.getCommandMatcher(command, Regex.menuNavigation)).matches()) {
                 try {
-                    MenuNavigationController.toLowerMenu(matcher);
+                    currentMenu = menuNavigator.toLowerMenu(matcher,currentMenu);
                 } catch (MenuNavigationNotPossibleException e) {
                     System.out.println(e.getMessage());
                 }
             }
             else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
-                MenuNavigationController.toUpperMenu();
+                currentMenu = menuNavigator.toUpperMenu(currentMenu);
             else switch (currentMenu) {
                 case LOGIN_MENU:
                     loginMenu.run(command);

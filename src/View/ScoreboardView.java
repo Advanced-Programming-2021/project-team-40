@@ -1,4 +1,4 @@
-package Menu;
+package View;
 
 public class ScoreboardView {
 }

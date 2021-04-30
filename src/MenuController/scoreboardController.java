@@ -1,4 +1,4 @@
-package Menu;
+package MenuController;
 
 public class scoreboardController {
 
