@@ -1,33 +1,33 @@
 package Menu;
 
 import Database.User;
-import Exceptions.InvalidPasswordException;
-import Exceptions.RepetitiveNicknameException;
-import Exceptions.RepetitivePasswordException;
-import MenuController.ProfileController;
-import MenuController.ProgramController.Regex;
+import View.Exceptions.InvalidPasswordException;
+import View.Exceptions.RepetitiveNicknameException;
+import View.Exceptions.RepetitivePasswordException;
+import Controller.DatabaseController.UserController;
+import Controller.ProgramController.Regex;
 
 import java.util.regex.Matcher;
 
 public class ProfileMenu {
     User currentUser;
-    private final ProfileController profileController = new ProfileController();
+    private final UserController userController = new UserController();
+
     public void run(String command) {
         Matcher matcher;
         if ((matcher = Regex.getCommandMatcher(command, Regex.changeNickname)).matches()) {
             try {
-                profileController.changeNickname(matcher,currentUser);
+                userController.changeNickname(matcher, currentUser);
             } catch (RepetitiveNicknameException e) {
                 System.out.println(e.getMessage());
             }
         } else if ((matcher = Regex.getCommandMatcher(command, Regex.changePassword)).matches()) {
             try {
-                profileController.changePassword(matcher,currentUser);
+                userController.changePassword(matcher, currentUser);
             } catch (InvalidPasswordException | RepetitivePasswordException e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else System.out.println("invalid command");
+        } else System.out.println("invalid command");
     }
 
     public void setCurrentUser(User currentUser) {

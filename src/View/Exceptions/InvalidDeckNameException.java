@@ -1,4 +1,4 @@
-package Exceptions;
+package View.Exceptions;
 
 public class InvalidDeckNameException extends Exception {
     public InvalidDeckNameException(String deckName){

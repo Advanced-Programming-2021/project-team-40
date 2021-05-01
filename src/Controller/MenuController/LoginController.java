@@ -1,22 +1,22 @@
-package MenuController;
+package Controller.MenuController;
 
 import Database.User;
-import Exceptions.InvalidLoginException;
-import Exceptions.RepetitiveNicknameException;
-import Exceptions.RepetitiveUsernameException;
+import View.Exceptions.InvalidLoginException;
+import View.Exceptions.RepetitiveNicknameException;
+import View.Exceptions.RepetitiveUsernameException;
 
 import java.util.regex.Matcher;
 
-import MenuController.ProgramController.ProgramController;
+import Controller.ProgramController.ProgramController;
 
 public class LoginController {
     public static void loginUser(Matcher matcher) throws InvalidLoginException {
         String username = matcher.group("username");
         String password = matcher.group("nickname");
-        if (User.getUserByName(username) == null) throw new InvalidLoginException();
-        User currentUser = User.getUserByName(username);
+        User currentUser;
+        if ((currentUser = User.getUserByName(username)) == null) throw new InvalidLoginException();
         if (!currentUser.getPassword().equals(password)) throw new InvalidLoginException();
-        ProgramController.menuNavigator.login(currentUser);
+        ProgramController.setCurrentMenu(ProgramController.menuNavigator.login(currentUser));
     }
 
     public static void registerUser(Matcher matcher) throws RepetitiveUsernameException, RepetitiveNicknameException {

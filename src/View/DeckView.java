@@ -1,13 +1,13 @@
 package View;
 
-import java.util.regex.Matcher;
+import Database.Deck;
 
 public class DeckView {
-    public void showAllDecks() {
+
+    public void showDeck(Deck deck) {
 
     }
-
-    public void showOneDeck(Matcher matcher) {
+    public void showDetailedDeck(Deck deck){
 
     }
 }

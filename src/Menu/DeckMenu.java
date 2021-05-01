@@ -1,12 +1,13 @@
 package Menu;
 
+import Database.Deck;
 import Database.User;
-import Exceptions.DeckIsFullException;
-import Exceptions.InvalidCardNameException;
-import Exceptions.InvalidDeckNameException;
-import Exceptions.RepetitiveDeckNameException;
-import MenuController.ProgramController.Regex;
-import MenuController.DeckController;
+import View.Exceptions.DeckIsFullException;
+import View.Exceptions.InvalidCardNameException;
+import View.Exceptions.InvalidDeckNameException;
+import View.Exceptions.RepetitiveDeckNameException;
+import Controller.ProgramController.Regex;
+import Controller.DatabaseController.DeckController;
 import View.DeckView;
 import View.UserView;
 
@@ -56,12 +57,23 @@ public class DeckMenu {
                 System.out.println(e.getMessage());
             }
         } else if (Regex.getCommandMatcher(command, Regex.showAllDeck).matches())
-            deckView.showAllDecks();
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.showOneDeck)).matches())
-            deckView.showOneDeck(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.showCards).matches())
-            userView.showAllCards(currentUser);
+            userView.showUserDecks(currentUser);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.showOneDeck)).matches()) {
+            try {
+                showOneDeck(matcher);
+            } catch (InvalidDeckNameException e) {
+                System.out.println(e.getMessage());
+            }
+        } else if (Regex.getCommandMatcher(command, Regex.showCards).matches())
+            userView.showUserCards(currentUser);
         else System.out.println("invalid command");
+    }
+
+    public void showOneDeck(Matcher matcher) throws InvalidDeckNameException {
+        String deckName = matcher.group("deckName");
+        Deck deck;
+        if ((deck = currentUser.getDeckByName(deckName)) == null) throw new InvalidDeckNameException(deckName);
+        deckView.showDetailedDeck(deck);
     }
 
     public void setCurrentUser(User currentUser) {

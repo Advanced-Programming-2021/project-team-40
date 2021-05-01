@@ -11,7 +11,7 @@ public class User {
     private String nickname;
     private int score;
     private int balance;
-    private ArrayList<Deck> decks = new ArrayList<>();
+    private final ArrayList<Deck> decks = new ArrayList<>();
     private Deck activeDeck;
     private ArrayList<Card> inactiveCards = new ArrayList<>();
 
@@ -23,13 +23,7 @@ public class User {
         //TODO fix balance
         setBalance(10000);
     }
-    public Deck getDeckByName(String deckName){
-        for (Deck deck: decks
-             ) {
-            if (deck.getName().equals(deckName)) return deck;
-        }
-        return null;
-    }
+
     public static User getUserByName(String username){
         for (User user: users
              ) {
@@ -46,6 +40,17 @@ public class User {
         return null;
     }
 
+    public static ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public Deck getDeckByName(String deckName){
+        for (Deck deck: decks
+        ) {
+            if (deck.getName().equals(deckName)) return deck;
+        }
+        return null;
+    }
     public void setUsername(String username) {
         this.username = username;
     }

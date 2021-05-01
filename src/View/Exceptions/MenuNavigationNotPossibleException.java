@@ -1,4 +1,4 @@
-package Exceptions;
+package View.Exceptions;
 
 public class MenuNavigationNotPossibleException extends Exception{
     public MenuNavigationNotPossibleException(){

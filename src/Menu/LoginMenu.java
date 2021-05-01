@@ -1,10 +1,10 @@
 package Menu;
 
-import MenuController.ProgramController.Regex;
-import Exceptions.InvalidLoginException;
-import Exceptions.RepetitiveNicknameException;
-import Exceptions.RepetitiveUsernameException;
-import MenuController.LoginController;
+import Controller.ProgramController.Regex;
+import View.Exceptions.InvalidLoginException;
+import View.Exceptions.RepetitiveNicknameException;
+import View.Exceptions.RepetitiveUsernameException;
+import Controller.MenuController.LoginController;
 
 import java.util.regex.Matcher;
 
@@ -25,7 +25,6 @@ public class LoginMenu {
             } catch (InvalidLoginException e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else System.out.println("invalid command");
+        } else System.out.println("invalid command");
     }
 }
