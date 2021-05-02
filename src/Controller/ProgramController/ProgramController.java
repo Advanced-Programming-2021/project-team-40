@@ -1,12 +1,12 @@
 package Controller.ProgramController;
 
-import Menu.LoginMenu;
-import Menu.MainMenu;
-import Menu.DeckMenu;
-import Menu.ProfileMenu;
-import Menu.ShopMenu;
-import Menu.Scoreboard;
-import Menu.ImportExport;
+import View.Menu.LoginMenu;
+import View.Menu.MainMenu;
+import View.Menu.DeckMenu;
+import View.Menu.ProfileMenu;
+import View.Menu.ShopMenu;
+import View.Menu.Scoreboard;
+import View.Menu.ImportExport;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;

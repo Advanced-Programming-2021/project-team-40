@@ -1,4 +1,4 @@
-package Menu;
+package View.Menu;
 
 import Controller.MenuController.ScoreboardController;
 

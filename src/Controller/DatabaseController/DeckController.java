@@ -85,7 +85,7 @@ public class DeckController {
                 }
                 break;
             case "Side":
-                if (mainIsFull(currentDeck)) throw new DeckIsFullException("side");
+                if (sideIsFull(currentDeck)) throw new DeckIsFullException("side");
                 else for (int i = 0; i < currentDeck.getSideCards().size(); i++) {
                     if (currentDeck.getSideCards().get(i).equals(cardToRemove)) {
                         currentDeck.getSideCards().remove(i);

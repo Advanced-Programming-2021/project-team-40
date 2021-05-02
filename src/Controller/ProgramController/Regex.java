@@ -47,6 +47,7 @@ public class Regex {
                                        "(?: --ai(?!.*?--ai)|" +
                                        " --new(?!.*?--new)|" +
                                        " --rounds (?<rounds>.+?)(?!.*?--rounds)){3}$";
+    public static String nextPhase = "next phase";
     public static String selectCard = "^select(?<oppo1>.*? --opponent(?!.* --opponent))?(?:" +
                                       " --monster (?<monsterId>.+?)|" +
                                       " --spell (?<spellId>.+?)(?! --spell)|" +

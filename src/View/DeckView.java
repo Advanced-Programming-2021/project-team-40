@@ -9,5 +9,6 @@ public class DeckView {
     }
     public void showDetailedDeck(Deck deck){
 
+
     }
 }

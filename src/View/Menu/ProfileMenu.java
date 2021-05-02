@@ -1,4 +1,4 @@
-package Menu;
+package View.Menu;
 
 import Database.User;
 import View.Exceptions.InvalidPasswordException;

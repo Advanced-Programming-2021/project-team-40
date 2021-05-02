@@ -166,8 +166,8 @@
       <type id="Class:4e25683ba6b14fdfbd4f85c6a5c53528" tid="" name="SpellAndTrapType" description="" class-ref="4e25683ba6b14fdfbd4f85c6a5c53528" />
       <type id="Scanner" tid="" name="Scanner" description="" />
       <type id="Class:585ea1c27ce8480ca8ea900fd01d757e" tid="" name="DeckMenu" description="" class-ref="585ea1c27ce8480ca8ea900fd01d757e" />
-      <type id="Menu" tid="" name="Menu" description="" />
-      <type id="Class:545c1db763fb46728dca5025c0c8918b" tid="" name="Menu" description="" class-ref="545c1db763fb46728dca5025c0c8918b" />
+      <type id="View.Menu" tid="" name="View.Menu" description="" />
+      <type id="Class:545c1db763fb46728dca5025c0c8918b" tid="" name="View.Menu" description="" class-ref="545c1db763fb46728dca5025c0c8918b" />
       <type id="Class:09d5929e320d4994a115d93493833904" tid="" name="Player" description="" class-ref="09d5929e320d4994a115d93493833904" />
       <type id="Class:963230ab8c6a4d0fb675095e00b147c7" tid="" name="Field" description="" class-ref="963230ab8c6a4d0fb675095e00b147c7" />
       <type id="ArrayList&lt;FieldArea&gt;" tid="" name="ArrayList&lt;FieldArea&gt;" description="" />
@@ -1723,10 +1723,10 @@
           </item>
           <item id="50681b66c946422f9dd45cd50c5deb9a" cid="PROP234" type="property" name="currentMenu" style-class="" owner="c4a1919b6389485084646273d5ce9f83" creation-date="04/13/2021 20:12:28" visibility="public">
             <feature static="true" />
-            <structural-feature type="Menu" type-id="Class:545c1db763fb46728dca5025c0c8918b" />
+            <structural-feature type="View.Menu" type-id="Class:545c1db763fb46728dca5025c0c8918b" />
             <property />
           </item>
-          <item id="545c1db763fb46728dca5025c0c8918b" cid="E006" type="enumeration" name="Menu" style-class="" owner="d26e4f5be8a14b369c8b9de1883b85f9" change-tracking-state="added" creation-date="04/13/2021 20:13:24" visibility="undefined">
+          <item id="545c1db763fb46728dca5025c0c8918b" cid="E006" type="enumeration" name="View.Menu" style-class="" owner="d26e4f5be8a14b369c8b9de1883b85f9" change-tracking-state="added" creation-date="04/13/2021 20:13:24" visibility="undefined">
             <enumeration-items>
               <enumeration-item id="a824924f5c8eb4bf68e14881a57ef30c6742" cid="ENI019" name="LOGIN_MENU" creation-date="04/13/2021 20:13:36" />
               <enumeration-item id="ac800a683c0c642a18c1419040365fdef148" cid="ENI020" name="MAIN_MENU" creation-date="04/13/2021 20:13:42" />
@@ -2288,7 +2288,7 @@
             <structural-feature type="Integer" type-id="Uml.Integer" />
             <property />
           </item>
-          <item id="a95f1b8438ef49818dc19fbe9f4a36b3" cid="PKG006" type="package" name="Menu" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:01:00" visibility="undefined">
+          <item id="a95f1b8438ef49818dc19fbe9f4a36b3" cid="PKG006" type="package" name="View.Menu" style-class="" change-tracking-state="added" creation-date="04/15/2021 13:01:00" visibility="undefined">
             <owned-items>
               <owned-item ref="450f84e47fa44e66baf561e4689bf88b" />
               <owned-item ref="72a542d4acaa409293bf1b07c1ced070" />
@@ -2661,7 +2661,7 @@ MVC Cleanup</comment>
               <operation id="o38eb9b424fe542dbbbb9f095a453e50249" cid="OP096" name="run" creation-date="04/16/2021 09:43:49" type="" type-id="" visibility="public" />
               <operation id="oec289d478b8b4d80be5c6aed9e77bd65411" cid="OP094" name="Import" creation-date="04/16/2021 09:42:56" type="void" type-id="void" visibility="private">
                 <parameters>
-                  <parameter id="pc4cbbc0465214de49ef3ddef1bce3286" name="matcher" type="Menu" type-id="Menu" />
+                  <parameter id="pc4cbbc0465214de49ef3ddef1bce3286" name="matcher" type="View.Menu" type-id="View.Menu" />
                 </parameters>
               </operation>
               <operation id="o441795ee4fa3479587f2fa62be33fc97139" cid="OP095" name="export" creation-date="04/16/2021 09:43:28" type="void" type-id="void" visibility="private">
