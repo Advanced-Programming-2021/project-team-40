@@ -8,9 +8,19 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ScoreboardController {
+    private static ScoreboardController scoreboardController;
     private List<User> users;
     private final ScoreboardView scoreboardView = new ScoreboardView();
 
+    private ScoreboardController() {
+
+    }
+
+    public static ScoreboardController getInstance() {
+        if (scoreboardController == null)
+            scoreboardController = new ScoreboardController();
+        return scoreboardController;
+    }
     private void sortUsers() {
         Comparator<User> byScore = Comparator.comparing(User::getScore);
         users.sort(byScore);

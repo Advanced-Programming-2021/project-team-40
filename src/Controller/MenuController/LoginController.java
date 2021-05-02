@@ -10,13 +10,23 @@ import java.util.regex.Matcher;
 import Controller.ProgramController.ProgramController;
 
 public class LoginController {
+    private static LoginController loginController;
+    private LoginController() {
+
+    }
+
+    public static LoginController getInstance() {
+        if (loginController == null)
+            loginController = new LoginController();
+        return loginController;
+    }
     public static void loginUser(Matcher matcher) throws InvalidLoginException {
         String username = matcher.group("username");
         String password = matcher.group("nickname");
         User currentUser;
         if ((currentUser = User.getUserByName(username)) == null) throw new InvalidLoginException();
         if (!currentUser.getPassword().equals(password)) throw new InvalidLoginException();
-        ProgramController.setCurrentMenu(ProgramController.menuNavigator.login(currentUser));
+        ProgramController.setCurrentMenu(MenuNavigationController.getInstance().login(currentUser));
     }
 
     public static void registerUser(Matcher matcher) throws RepetitiveUsernameException, RepetitiveNicknameException {

@@ -11,19 +11,18 @@ import java.util.regex.Matcher;
 
 public class ProfileMenu {
     User currentUser;
-    private final UserController userController = new UserController();
 
     public void run(String command) {
         Matcher matcher;
         if ((matcher = Regex.getCommandMatcher(command, Regex.changeNickname)).matches()) {
             try {
-                userController.changeNickname(matcher, currentUser);
+                UserController.getInstance().changeNickname(matcher, currentUser);
             } catch (RepetitiveNicknameException e) {
                 System.out.println(e.getMessage());
             }
         } else if ((matcher = Regex.getCommandMatcher(command, Regex.changePassword)).matches()) {
             try {
-                userController.changePassword(matcher, currentUser);
+                UserController.getInstance().changePassword(matcher, currentUser);
             } catch (InvalidPasswordException | RepetitivePasswordException e) {
                 System.out.println(e.getMessage());
             }

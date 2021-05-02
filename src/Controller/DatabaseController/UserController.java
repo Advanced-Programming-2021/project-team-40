@@ -8,6 +8,15 @@ import View.Exceptions.RepetitivePasswordException;
 import java.util.regex.Matcher;
 
 public class UserController {
+    private static UserController userController;
+    private UserController() {
+    }
+
+    public static UserController getInstance() {
+        if (userController == null)
+            userController = new UserController();
+        return userController;
+    }
     public void changePassword(Matcher matcher, User currentUser) throws RepetitivePasswordException, InvalidPasswordException {
         String currentPassword = matcher.group("currentPass");
         String newPassword = matcher.group("newPass");

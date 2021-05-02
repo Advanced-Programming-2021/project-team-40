@@ -10,4 +10,5 @@ public enum Menu {
     EXIT,
     DUEL_MENU,
     SCOREBOARD_MENU,
+    GAMEPLAY,
 }

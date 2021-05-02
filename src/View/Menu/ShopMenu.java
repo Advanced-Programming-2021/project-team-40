@@ -11,14 +11,13 @@ import java.util.regex.Matcher;
 
 public class ShopMenu {
     User currentUser;
-    private final ShopController shopController = new ShopController();
     private final ShopView shopView = new ShopView();
 
     public void run(String command) {
         Matcher matcher;
         if ((matcher = Regex.getCommandMatcher(command, Regex.shopBuy)).matches()) {
             try {
-                shopController.buy(matcher, currentUser);
+                ShopController.getInstance().buy(matcher, currentUser);
             } catch (InvalidCardNameException | NotEnoughMoneyException e) {
                 System.out.println(e.getMessage());
             }

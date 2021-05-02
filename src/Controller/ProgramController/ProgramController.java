@@ -1,5 +1,6 @@
 package Controller.ProgramController;
 
+import Controller.DuelController.GameplayController;
 import View.Menu.LoginMenu;
 import View.Menu.MainMenu;
 import View.Menu.DeckMenu;
@@ -23,7 +24,6 @@ public class ProgramController {
     public static DeckMenu deckMenu = new DeckMenu();
     public static ProfileMenu profileMenu = new ProfileMenu();
     public static ShopMenu shopMenu = new ShopMenu();
-    public static MenuNavigationController menuNavigator = new MenuNavigationController();
     public static Scoreboard scoreboard = new Scoreboard();
     public static ImportExport importExport = new ImportExport();
     public Scanner sc = new Scanner(System.in);
@@ -39,12 +39,12 @@ public class ProgramController {
             Matcher matcher;
             if ((matcher = Regex.getCommandMatcher(command, Regex.menuNavigation)).matches()) {
                 try {
-                    currentMenu = menuNavigator.toLowerMenu(matcher, currentMenu);
+                    currentMenu = MenuNavigationController.getInstance().toLowerMenu(matcher, currentMenu);
                 } catch (MenuNavigationNotPossibleException e) {
                     System.out.println(e.getMessage());
                 }
             } else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
-                currentMenu = menuNavigator.toUpperMenu(currentMenu);
+                currentMenu = MenuNavigationController.getInstance().toUpperMenu(currentMenu);
             else switch (currentMenu) {
                     case LOGIN_MENU:
                         loginMenu.run(command);
@@ -70,6 +70,8 @@ public class ProgramController {
                     case SCOREBOARD_MENU:
                         scoreboard.run();
                         break;
+                    case GAMEPLAY:
+                        GameplayController.getInstance().run(command);
                 }
         }
     }

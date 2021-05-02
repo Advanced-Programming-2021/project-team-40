@@ -9,7 +9,16 @@ import java.util.regex.Matcher;
 import static Controller.ProgramController.ProgramController.*;
 
 public class MenuNavigationController {
+    private static MenuNavigationController menuNavigator;
+    private MenuNavigationController() {
 
+    }
+
+    public static MenuNavigationController getInstance() {
+        if (menuNavigator == null)
+            menuNavigator = new MenuNavigationController();
+        return menuNavigator;
+    }
     public Menu toUpperMenu(Menu menu) {
         switch (menu) {
             case LOGIN_MENU -> menu = Menu.EXIT;

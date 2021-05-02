@@ -51,7 +51,7 @@ public class Regex {
     public static String selectCard = "^select(?<oppo1>.*? --opponent(?!.* --opponent))?(?:" +
                                       " --monster (?<monsterId>.+?)|" +
                                       " --spell (?<spellId>.+?)(?! --spell)|" +
-                                      " --field)" +
+                                      " (?<isField>--field))" +
                                       "(?<oppo2> --opponent)?$";
     public static String deselectCard = "^select -d$";
     public static String summon = "^summon$";

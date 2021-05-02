@@ -12,7 +12,15 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 
 public class DeckController {
+    private static DeckController deckController;
+    private DeckController() {
+    }
 
+    public static DeckController getInstance() {
+        if (deckController == null)
+            deckController = new DeckController();
+        return deckController;
+    }
     public void removeCard(Matcher matcher, User currentUser) throws DeckIsFullException, InvalidCardNameException, InvalidDeckNameException {
         String cardName = matcher.group("cardName");
         String deckName = matcher.group("deckName");
@@ -107,5 +115,11 @@ public class DeckController {
 
     private boolean sideIsFull(Deck currentDeck) {
         return currentDeck.getSideCards().size() >= 15;
+    }
+
+    public boolean isDeckValid(Deck activeDeck) {
+        int mainCount = activeDeck.getMainCards().size();
+        int sideCount = activeDeck.getSideCards().size();
+        return mainCount >= 40 && mainCount <= 60 && sideCount <= 15;
     }
 }

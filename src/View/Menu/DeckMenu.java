@@ -15,7 +15,6 @@ import java.util.regex.Matcher;
 
 public class DeckMenu {
     private User currentUser;
-    private final DeckController deckController = new DeckController();
     private final DeckView deckView = new DeckView();
     private final UserView userView = new UserView();
 
@@ -23,35 +22,35 @@ public class DeckMenu {
         Matcher matcher;
         if ((matcher = Regex.getCommandMatcher(command, Regex.createDeck)).matches()) {
             try {
-                deckController.createDeck(matcher, currentUser);
+                DeckController.getInstance().createDeck(matcher, currentUser);
                 System.out.println("deck created successfully!");
             } catch (RepetitiveDeckNameException e) {
                 System.out.println(e.getMessage());
             }
         } else if ((matcher = Regex.getCommandMatcher(command, Regex.deleteDeck)).matches()) {
             try {
-                deckController.deleteDeck(matcher, currentUser);
+                DeckController.getInstance().deleteDeck(matcher, currentUser);
                 System.out.println("deck deleted successfully");
             } catch (InvalidDeckNameException e) {
                 System.out.println(e.getMessage());
             }
         } else if ((matcher = Regex.getCommandMatcher(command, Regex.activateDeck)).matches()) {
             try {
-                deckController.activateDeck(matcher, currentUser);
+                DeckController.getInstance().activateDeck(matcher, currentUser);
                 System.out.println("deck activated successfully");
             } catch (InvalidDeckNameException e) {
                 System.out.println(e.getMessage());
             }
         } else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToDeck)).matches()) {
             try {
-                deckController.addCard(matcher, currentUser);
+                DeckController.getInstance().addCard(matcher, currentUser);
                 System.out.println("card added to deck successfully");
             } catch (InvalidCardNameException | InvalidDeckNameException | DeckIsFullException e) {
                 System.out.println(e.getMessage());
             }
         } else if ((matcher = Regex.getCommandMatcher(command, Regex.removeCardFromDeck)).matches()) {
             try {
-                deckController.removeCard(matcher, currentUser);
+                DeckController.getInstance().removeCard(matcher, currentUser);
                 System.out.println("card removed form deck successfully");
             } catch (InvalidCardNameException | InvalidDeckNameException | DeckIsFullException e) {
                 System.out.println(e.getMessage());
