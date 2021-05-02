@@ -8,6 +8,7 @@ public class Gameplay {
     private Player playerOne;
     private Player playerTwo;
     private Player currentPlayer;
+    private Player opponentPlayer;
     private FieldArea selectedCard;
     private Phase currentPhase;
     private int rounds;
@@ -19,43 +20,51 @@ public class Gameplay {
         this.rounds = rounds;
     }
 
-    public void run(String command) {
-        Matcher matcher;
-        if ((matcher = Regex.getCommandMatcher(command, Regex.selectCard)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.deselectCard)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.nextPhase)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.showGraveyard)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.showSelectedCard)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.surrender)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
-        else switch (currentPhase) {
-                case DRAW_PHASE:
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
 
-                    break;
-                case STANDBY_PHASE:
+    public Player getOpponentPlayer() {
+        return opponentPlayer;
+    }
 
-                    break;
-                case MAIN_PHASE_ONE:
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.summon)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.set)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.setPosition)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.flipSummon)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.activateEffect)).matches()) ;
-                    else System.out.println("invalid command");
-                    break;
-                case BATTLE_PHASE:
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.flipSummon)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.directAttack)).matches()) ;
-                    else System.out.println("invalid command");
-                    break;
-                case MAIN_PHASE_TW0:
-                    break;
-                case END_PHASE:
-                    break;
-            }
+    public Phase getCurrentPhase() {
+        return currentPhase;
+    }
+
+    public void setCurrentPhase(Phase currentPhase) {
+        this.currentPhase = currentPhase;
+    }
+
+    public FieldArea getSelectedCard() {
+        return selectedCard;
+    }
+
+    public void setSelectedCard(FieldArea selectedCard) {
+        this.selectedCard = selectedCard;
+    }
+
+    public void setOpponentPlayer(Player opponentPlayer) {
+        this.opponentPlayer = opponentPlayer;
+    }
+
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    public int getRounds() {
+        return rounds;
+    }
+
+    public void setRounds(int rounds) {
+        this.rounds = rounds;
+    }
+
+    public boolean isHasPlacedMonster() {
+        return hasPlacedMonster;
+    }
+
+    public void setHasPlacedMonster(boolean hasPlacedMonster) {
+        this.hasPlacedMonster = hasPlacedMonster;
     }
 }
