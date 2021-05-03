@@ -11,7 +11,7 @@ import Controller.ProgramController.ProgramController;
 
 public class LoginController {
     private static LoginController loginController;
-    private LoginController() {
+    protected LoginController() {
 
     }
 
@@ -22,7 +22,7 @@ public class LoginController {
     }
     public static void loginUser(Matcher matcher) throws InvalidLoginException {
         String username = matcher.group("username");
-        String password = matcher.group("nickname");
+        String password = matcher.group("password");
         User currentUser;
         if ((currentUser = User.getUserByName(username)) == null) throw new InvalidLoginException();
         if (!currentUser.getPassword().equals(password)) throw new InvalidLoginException();

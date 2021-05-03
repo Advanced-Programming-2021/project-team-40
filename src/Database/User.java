@@ -22,6 +22,7 @@ public class User {
         setScore(0);
         //TODO fix balance
         setBalance(10000);
+        users.add(this);
     }
 
     public static User getUserByName(String username){

@@ -64,8 +64,7 @@ public class DeckController {
     public void createDeck(Matcher matcher, User currentUser) throws RepetitiveDeckNameException {
         String deckName = matcher.group("deckName");
         if (currentUser.getDeckByName(deckName) != null) throw new RepetitiveDeckNameException(deckName);
-        Deck deck = new Deck(deckName);
-        currentUser.getDecks().add(deck);
+        currentUser.getDecks().add(new Deck(deckName));
     }
 
     public void addCardToDeck(Card cardToAdd, String deck, Deck currentDeck) throws DeckIsFullException {
@@ -117,9 +116,9 @@ public class DeckController {
         return currentDeck.getSideCards().size() >= 15;
     }
 
-    public boolean isDeckValid(Deck activeDeck) {
+    public boolean isDeckInValid(Deck activeDeck) {
         int mainCount = activeDeck.getMainCards().size();
         int sideCount = activeDeck.getSideCards().size();
-        return mainCount >= 40 && mainCount <= 60 && sideCount <= 15;
+        return mainCount < 40 || mainCount > 60 || sideCount > 15;
     }
 }

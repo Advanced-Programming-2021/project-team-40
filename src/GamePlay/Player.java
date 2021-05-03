@@ -1,6 +1,7 @@
 package GamePlay;
 
 
+import Controller.DatabaseController.DeckController;
 import Database.Cards.Card;
 import Database.Deck;
 import Database.User;
@@ -15,7 +16,8 @@ public class Player {
     private ArrayList<Card> playingHand = new ArrayList<>();
     public Player(User user){
         this.user = user;
-        playingDeck = user.getActiveDeck();
+        playingDeck = (Deck) user.getActiveDeck().clone();
+        DeckController.getInstance().shuffleDeck(playingDeck);
     }
 
     public User getUser() {
