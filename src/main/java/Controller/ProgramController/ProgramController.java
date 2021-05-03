@@ -1,23 +1,23 @@
-package Controller.ProgramController;
+package main.java.Controller.ProgramController;
 
-import Controller.DuelController.GameplayController;
-import View.Menu.LoginMenu;
-import View.Menu.MainMenu;
-import View.Menu.DeckMenu;
-import View.Menu.ProfileMenu;
-import View.Menu.ShopMenu;
-import View.Menu.Scoreboard;
-import View.Menu.ImportExport;
+import main.java.Controller.DuelController.GameplayController;
+import main.java.View.Menu.LoginMenu;
+import main.java.View.Menu.MainMenu;
+import main.java.View.Menu.DeckMenu;
+import main.java.View.Menu.ProfileMenu;
+import main.java.View.Menu.ShopMenu;
+import main.java.View.Menu.Scoreboard;
+import main.java.View.Menu.ImportExport;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
-import Controller.MenuController.MenuNavigationController;
-import View.Exceptions.MenuNavigationNotPossibleException;
+import main.java.Controller.MenuController.MenuNavigationController;
+import main.java.View.Exceptions.MenuNavigationNotPossibleException;
 
 
 public class ProgramController {
-    //TODO initialize Database
+    //TODO initialize main.java.Database
     private static Menu currentMenu = Menu.LOGIN_MENU;
     public static LoginMenu loginMenu = new LoginMenu();
     public static MainMenu mainMenu = new MainMenu();

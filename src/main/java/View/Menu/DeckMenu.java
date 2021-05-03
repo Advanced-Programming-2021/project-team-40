@@ -1,15 +1,15 @@
-package View.Menu;
+package main.java.View.Menu;
 
-import Database.Deck;
-import Database.User;
-import View.Exceptions.DeckIsFullException;
-import View.Exceptions.InvalidCardNameException;
-import View.Exceptions.InvalidDeckNameException;
-import View.Exceptions.RepetitiveDeckNameException;
-import Controller.ProgramController.Regex;
-import Controller.DatabaseController.DeckController;
-import View.DeckView;
-import View.UserView;
+import main.java.Database.Deck;
+import main.java.Database.User;
+import main.java.View.Exceptions.DeckIsFullException;
+import main.java.View.Exceptions.InvalidCardNameException;
+import main.java.View.Exceptions.InvalidDeckNameException;
+import main.java.View.Exceptions.RepetitiveDeckNameException;
+import main.java.Controller.ProgramController.Regex;
+import main.java.Controller.DatabaseController.DeckController;
+import main.java.View.DeckView;
+import main.java.View.UserView;
 
 import java.util.regex.Matcher;
 

@@ -1,4 +1,4 @@
-package Database.Cards;
+package main.java.Database.Cards;
 
 import java.util.*;
 

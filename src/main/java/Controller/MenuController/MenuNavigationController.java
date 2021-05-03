@@ -1,12 +1,12 @@
-package Controller.MenuController;
+package main.java.Controller.MenuController;
 
-import Database.User;
-import View.Exceptions.MenuNavigationNotPossibleException;
-import Controller.ProgramController.Menu;
+import main.java.Database.User;
+import main.java.View.Exceptions.MenuNavigationNotPossibleException;
+import main.java.Controller.ProgramController.Menu;
 
 import java.util.regex.Matcher;
 
-import static Controller.ProgramController.ProgramController.*;
+import static main.java.Controller.ProgramController.ProgramController.*;
 
 public class MenuNavigationController {
     private static MenuNavigationController menuNavigator;

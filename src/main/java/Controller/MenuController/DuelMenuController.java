@@ -1,16 +1,16 @@
-package Controller.MenuController;
+package main.java.Controller.MenuController;
 
-import Controller.DatabaseController.DeckController;
-import Controller.DuelController.GameplayController;
-import Controller.ProgramController.Menu;
-import Controller.ProgramController.ProgramController;
-import Database.User;
-import GamePlay.Gameplay;
-import GamePlay.Player;
-import View.Exceptions.ActiveDeckNotFoundException;
-import View.Exceptions.InvalidDeckException;
-import View.Exceptions.InvalidRoundNumberException;
-import View.Exceptions.UserNotFoundException;
+import main.java.Controller.DatabaseController.DeckController;
+import main.java.Controller.DuelController.GameplayController;
+import main.java.Controller.ProgramController.Menu;
+import main.java.Controller.ProgramController.ProgramController;
+import main.java.Database.User;
+import main.java.Gameplay.Gameplay;
+import main.java.Gameplay.Player;
+import main.java.View.Exceptions.ActiveDeckNotFoundException;
+import main.java.View.Exceptions.InvalidDeckException;
+import main.java.View.Exceptions.InvalidRoundNumberException;
+import main.java.View.Exceptions.UserNotFoundException;
 
 import java.util.regex.Matcher;
 

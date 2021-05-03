@@ -1,12 +1,12 @@
-package Controller.DatabaseController;
+package main.java.Controller.DatabaseController;
 
-import Database.Cards.Card;
-import Database.Deck;
-import Database.User;
-import View.Exceptions.DeckIsFullException;
-import View.Exceptions.InvalidCardNameException;
-import View.Exceptions.InvalidDeckNameException;
-import View.Exceptions.RepetitiveDeckNameException;
+import main.java.Database.Cards.Card;
+import main.java.Database.Deck;
+import main.java.Database.User;
+import main.java.View.Exceptions.DeckIsFullException;
+import main.java.View.Exceptions.InvalidCardNameException;
+import main.java.View.Exceptions.InvalidDeckNameException;
+import main.java.View.Exceptions.RepetitiveDeckNameException;
 
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -31,7 +31,7 @@ public class DeckController {
         if ((currentCard = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         if ((currentDeck = currentUser.getDeckByName(deckName)) == null) throw new InvalidDeckNameException(deckName);
         if (isSide) removeCardFromDeck(currentCard, "Side", currentDeck);
-        else removeCardFromDeck(currentCard, "Main", currentDeck);
+        else removeCardFromDeck(currentCard, "main.java.Main", currentDeck);
     }
 
     public void addCard(Matcher matcher, User currentUser) throws InvalidCardNameException, InvalidDeckNameException, DeckIsFullException {
@@ -44,7 +44,7 @@ public class DeckController {
         if ((currentCard = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         if ((currentDeck = currentUser.getDeckByName(deckName)) == null) throw new InvalidDeckNameException(deckName);
         if (isSide) addCardToDeck(currentCard, "Side", currentDeck);
-        else addCardToDeck(currentCard, "Main", currentDeck);
+        else addCardToDeck(currentCard, "main.java.Main", currentDeck);
     }
 
     public void activateDeck(Matcher matcher, User currentUser) throws InvalidDeckNameException {
@@ -70,7 +70,7 @@ public class DeckController {
 
     public void addCardToDeck(Card cardToAdd, String deck, Deck currentDeck) throws DeckIsFullException {
         switch (deck) {
-            case "Main":
+            case "main.java.Main":
                 if (mainIsFull(currentDeck)) throw new DeckIsFullException("main");
                 else currentDeck.getMainCards().add(cardToAdd);
                 break;
@@ -83,7 +83,7 @@ public class DeckController {
 
     public void removeCardFromDeck(Card cardToRemove, String deck, Deck currentDeck) throws DeckIsFullException {
         switch (deck) {
-            case "Main":
+            case "main.java.Main":
                 if (mainIsFull(currentDeck)) throw new DeckIsFullException("main");
                 else for (int i = 0; i < currentDeck.getMainCards().size(); i++) {
                     if (currentDeck.getMainCards().get(i).equals(cardToRemove)) {

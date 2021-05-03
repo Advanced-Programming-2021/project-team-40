@@ -1,4 +1,4 @@
-package View.Exceptions;
+package main.java.View.Exceptions;
 
 public class MenuNavigationNotPossibleException extends Exception{
     public MenuNavigationNotPossibleException(){

@@ -1,4 +1,4 @@
-package Database.Cards;
+package main.java.Database.Cards;
 
 abstract public class SpellAndTrap extends Card{
 

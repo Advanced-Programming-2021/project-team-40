@@ -1,8 +1,9 @@
-package GamePlay;
+package main.java.Gameplay;
 
-import Database.Cards.Card;
+import main.java.Database.Cards.Card;
 
 public class FieldArea {
+    protected boolean canBePutOnBoard = false;
     private Card card;
     private boolean visibility;
     public FieldArea(Card card, boolean visibility){
@@ -18,7 +19,7 @@ public class FieldArea {
         this.card = card;
     }
 
-    public boolean isVisibility() {
+    public boolean isVisible() {
         return visibility;
     }
 

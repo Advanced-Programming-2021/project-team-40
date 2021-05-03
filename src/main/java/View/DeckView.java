@@ -1,6 +1,6 @@
-package View;
+package main.java.View;
 
-import Database.Deck;
+import main.java.Database.Deck;
 
 public class DeckView {
 

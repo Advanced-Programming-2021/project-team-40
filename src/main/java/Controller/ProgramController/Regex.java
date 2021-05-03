@@ -1,4 +1,4 @@
-package Controller.ProgramController;
+package main.java.Controller.ProgramController;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

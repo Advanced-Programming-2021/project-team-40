@@ -1,6 +1,6 @@
-package View.Menu;
+package main.java.View.Menu;
 
-import Controller.MenuController.ScoreboardController;
+import main.java.Controller.MenuController.ScoreboardController;
 
 public class Scoreboard {
 

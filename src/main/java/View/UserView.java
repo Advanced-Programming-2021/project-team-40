@@ -1,6 +1,6 @@
-package View;
+package main.java.View;
 
-import Database.User;
+import main.java.Database.User;
 
 public class UserView {
     public void showUserCards(User user) {

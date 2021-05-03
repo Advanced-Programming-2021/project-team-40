@@ -1,17 +1,17 @@
-package View;
+package main.java.View;
 
-import Database.Cards.Card;
+import main.java.Database.Cards.Card;
 
 public class CardView {
-    public void showCard(Card card) {
+    public static void showCard(Card card) {
 
     }
 
-    public void showDetailedCard(Card card) {
+    public static void showDetailedCard(Card card) {
 
     }
 
-    public void showCardInShop(Card card) {
+    public static void showCardInShop(Card card) {
 
     }
 }

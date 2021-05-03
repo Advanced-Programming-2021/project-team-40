@@ -1,4 +1,4 @@
-package Database.Cards;
+package main.java.Database.Cards;
 
 public enum MonsterType {
     WARRIOR, WARRIOR_EFFECT, WARRIOR_RITUAL, INSECT_EFFECT, BEAST, BEAST_WARRIOR, BEAST_WARRIOR_EFFECT, FIEND,

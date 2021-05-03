@@ -1,4 +1,4 @@
-package Controller.DuelController;
+package main.java.Controller.DuelController;
 
 public class EffectsController {
 }

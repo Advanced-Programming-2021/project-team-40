@@ -1,14 +1,16 @@
-package Controller.DuelController;
+package main.java.Controller.DuelController;
 
 
-import Controller.ProgramController.Regex;
-import GamePlay.FieldArea;
-import GamePlay.Gameplay;
-import GamePlay.Phase;
-import GamePlay.Player;
-import View.Exceptions.InvalidCardSelectionException;
-import View.Exceptions.NoCardFoundException;
-import View.Exceptions.NoCardIsSelectedException;
+import main.java.Controller.ProgramController.Regex;
+import main.java.Database.Cards.Card;
+import main.java.Gameplay.FieldArea;
+import main.java.Gameplay.Gameplay;
+import main.java.Gameplay.Phase;
+import main.java.View.CardView;
+import main.java.View.Exceptions.InvalidCardSelectionException;
+import main.java.View.Exceptions.NoCardFoundException;
+import main.java.View.Exceptions.NoCardIsSelectedException;
+import main.java.View.GraveyardView;
 
 import java.util.regex.Matcher;
 
@@ -25,6 +27,10 @@ public class GameplayController {
             gameplayController = new GameplayController();
         return gameplayController;
     }
+    public void setGameplay(Gameplay gameplay) {
+        this.gameplay = gameplay;
+    }
+
     public void run(String command) {
         Matcher matcher;
         if ((matcher = Regex.getCommandMatcher(command, Regex.selectCard)).matches()) {
@@ -44,8 +50,15 @@ public class GameplayController {
             }
         }
         else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches()) goToNextPhase();
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.showGraveyard)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.showSelectedCard)).matches()) ;
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.showGraveyard)).matches())
+            GraveyardView.showGraveyard(gameplay.getCurrentPlayer().getField().getGraveyard());
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.showSelectedCard)).matches()){
+            try {
+                showCard();
+            }catch (NoCardIsSelectedException e){
+                System.out.println(e.getMessage());
+            }
+        }
         else if ((matcher = Regex.getCommandMatcher(command, Regex.surrender)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
@@ -108,7 +121,6 @@ public class GameplayController {
             }
         }
     }
-
     private void selectCard(Matcher matcher) throws InvalidCardSelectionException, NoCardFoundException {
         FieldArea fieldArea;
         if (matcher.group("monsterId") != null) {
@@ -119,7 +131,7 @@ public class GameplayController {
                 fieldArea = gameplay.getCurrentPlayer().getField().getMonstersFieldById(id);
             else fieldArea = gameplay.getOpponentPlayer().getField().getMonstersFieldById(id);
             if (fieldArea.getCard() == null) throw new NoCardFoundException();
-            gameplay.setSelectedCard(fieldArea);
+            gameplay.setSelectedField(fieldArea);
         }
         if (matcher.group("spellId") != null) {
             String spellId = matcher.group("spellId");
@@ -129,29 +141,32 @@ public class GameplayController {
                 fieldArea = gameplay.getCurrentPlayer().getField().getSpellAndTrapFieldById(id);
             else fieldArea = gameplay.getOpponentPlayer().getField().getSpellAndTrapFieldById(id);
             if (fieldArea.getCard() == null) throw new NoCardFoundException();
-            gameplay.setSelectedCard(fieldArea);
+            gameplay.setSelectedField(fieldArea);
         }
         if (matcher.group("isField") != null) {
             if (matcher.group("oppo1") == null || matcher.group("oppo2") == null)
                 fieldArea = gameplay.getCurrentPlayer().getField().getFieldZone();
             else fieldArea = gameplay.getOpponentPlayer().getField().getFieldZone();
             if (fieldArea.getCard() == null) throw new NoCardFoundException();
-            gameplay.setSelectedCard(fieldArea);
+            gameplay.setSelectedField(fieldArea);
         }
     }
     private void deselectCard() throws NoCardIsSelectedException {
-        if (gameplay.getSelectedCard() == null) throw new NoCardIsSelectedException();
-        gameplay.setSelectedCard(null);
+        if (gameplay.getSelectedField().getCard() == null) throw new NoCardIsSelectedException();
+        gameplay.setSelectedField(null);
     }
+
+    private void showCard() throws NoCardIsSelectedException {
+        Card card = gameplay.getSelectedField().getCard();
+        if (card == null) throw new NoCardIsSelectedException();
+        CardView.showCard(card);
+    }
+
     private boolean isNumberInvalid(String string) {
         if (string.matches("^\\d+$")) {
             int id = Integer.parseInt(string);
             return id <= 0 || id >= 6;
         }
         return true;
-    }
-
-    public void setGameplay(Gameplay gameplay) {
-        this.gameplay = gameplay;
     }
 }

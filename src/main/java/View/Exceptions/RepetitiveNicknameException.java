@@ -1,4 +1,4 @@
-package View.Exceptions;
+package main.java.View.Exceptions;
 
 public class RepetitiveNicknameException extends Exception {
     public RepetitiveNicknameException(String nickname){

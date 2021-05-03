@@ -1,9 +1,9 @@
-package GamePlay;
+package main.java.Gameplay;
 
 
-import Database.Cards.Card;
-import Database.Deck;
-import Database.User;
+import main.java.Database.Cards.Card;
+import main.java.Database.Deck;
+import main.java.Database.User;
 
 import java.util.ArrayList;
 
@@ -12,7 +12,7 @@ public class Player {
     private Deck playingDeck;
     private int lifePoints = 8000;
     private Field field = new Field();
-    private ArrayList<Card> playingHand = new ArrayList<>();
+    private ArrayList<HandFieldArea> playingHand = new ArrayList<>();
     public Player(User user){
         this.user = user;
         playingDeck = user.getActiveDeck();
@@ -50,11 +50,8 @@ public class Player {
         this.field = field;
     }
 
-    public ArrayList<Card> getPlayingHand() {
+    public ArrayList<HandFieldArea> getPlayingHand() {
         return playingHand;
     }
 
-    public void setPlayingHand(ArrayList<Card> playingHand) {
-        this.playingHand = playingHand;
-    }
 }

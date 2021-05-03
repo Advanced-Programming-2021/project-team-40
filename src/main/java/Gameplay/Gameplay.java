@@ -1,15 +1,11 @@
-package GamePlay;
-
-import Controller.ProgramController.Regex;
-
-import java.util.regex.Matcher;
+package main.java.Gameplay;
 
 public class Gameplay {
     private Player playerOne;
     private Player playerTwo;
     private Player currentPlayer;
     private Player opponentPlayer;
-    private FieldArea selectedCard;
+    private FieldArea selectedField;
     private Phase currentPhase;
     private int rounds;
     private boolean hasPlacedMonster;
@@ -36,12 +32,12 @@ public class Gameplay {
         this.currentPhase = currentPhase;
     }
 
-    public FieldArea getSelectedCard() {
-        return selectedCard;
+    public FieldArea getSelectedField() {
+        return selectedField;
     }
 
-    public void setSelectedCard(FieldArea selectedCard) {
-        this.selectedCard = selectedCard;
+    public void setSelectedField(FieldArea selectedField) {
+        this.selectedField = selectedField;
     }
 
     public void setOpponentPlayer(Player opponentPlayer) {

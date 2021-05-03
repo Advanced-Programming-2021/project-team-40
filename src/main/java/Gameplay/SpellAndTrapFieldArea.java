@@ -1,6 +1,6 @@
-package GamePlay;
+package main.java.Gameplay;
 
-import Database.Cards.Card;
+import main.java.Database.Cards.Card;
 
 public class SpellAndTrapFieldArea extends FieldArea{
     private boolean isActivated;

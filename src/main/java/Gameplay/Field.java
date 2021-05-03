@@ -1,11 +1,10 @@
-package GamePlay;
+package main.java.Gameplay;
 
-import Database.Cards.Card;
+import main.java.Database.Cards.Card;
 
 import java.util.ArrayList;
 
 public class Field {
-    private boolean direction;
     private MonsterFieldArea[] monstersField = new MonsterFieldArea[5];
     private SpellAndTrapFieldArea[] spellAndTrapField = new SpellAndTrapFieldArea[5];
     private ArrayList<Card> graveyard = new ArrayList<>();
@@ -15,28 +14,29 @@ public class Field {
         return monstersField[id];
     }
 
-    public void setMonstersField(MonsterFieldArea[] monstersField) {
-        this.monstersField = monstersField;
-    }
-
     public SpellAndTrapFieldArea getSpellAndTrapFieldById(int id) {
         return spellAndTrapField[id];
-    }
-
-    public void setSpellAndTrapField(SpellAndTrapFieldArea[] spellAndTrapField) {
-        this.spellAndTrapField = spellAndTrapField;
     }
 
     public ArrayList<Card> getGraveyard() {
         return graveyard;
     }
 
-    public void setGraveyard(ArrayList<Card> graveyard) {
-        this.graveyard = graveyard;
-    }
-
     public FieldArea getFieldZone() {
         return fieldZone;
+    }
+
+    //TODO delete useless setters
+    public void setSpellAndTrapField(SpellAndTrapFieldArea[] spellAndTrapField) {
+        this.spellAndTrapField = spellAndTrapField;
+    }
+
+    public void setMonstersField(MonsterFieldArea[] monstersField) {
+        this.monstersField = monstersField;
+    }
+
+    public void setGraveyard(ArrayList<Card> graveyard) {
+        this.graveyard = graveyard;
     }
 
     public void setFieldZone(FieldArea fieldZone) {

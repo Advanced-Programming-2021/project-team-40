@@ -1,7 +1,7 @@
-package Controller.MenuController;
+package main.java.Controller.MenuController;
 
-import Database.User;
-import View.ScoreboardView;
+import main.java.Database.User;
+import main.java.View.ScoreboardView;
 
 import java.util.ArrayList;
 import java.util.Comparator;

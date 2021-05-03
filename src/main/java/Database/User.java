@@ -1,6 +1,6 @@
-package Database;
+package main.java.Database;
 
-import Database.Cards.Card;
+import main.java.Database.Cards.Card;
 
 import java.util.*;
 

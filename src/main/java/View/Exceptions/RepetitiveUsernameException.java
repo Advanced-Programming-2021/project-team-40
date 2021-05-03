@@ -1,4 +1,4 @@
-package View.Exceptions;
+package main.java.View.Exceptions;
 
 public class RepetitiveUsernameException extends Exception{
     public RepetitiveUsernameException(String username){

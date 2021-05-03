@@ -1,6 +1,6 @@
-package GamePlay;
+package main.java.Gameplay;
 
-import Database.Cards.Card;
+import main.java.Database.Cards.Card;
 
 public class MonsterFieldArea extends FieldArea{
     private String attackOrDefense;

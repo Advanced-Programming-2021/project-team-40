@@ -1,7 +1,6 @@
-package Database;
+package main.java.Database;
 
-import Database.Cards.*;
-import View.Exceptions.DeckIsFullException;
+import main.java.Database.Cards.*;
 
 import java.util.*;
 

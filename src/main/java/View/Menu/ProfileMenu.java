@@ -1,11 +1,11 @@
-package View.Menu;
+package main.java.View.Menu;
 
-import Database.User;
-import View.Exceptions.InvalidPasswordException;
-import View.Exceptions.RepetitiveNicknameException;
-import View.Exceptions.RepetitivePasswordException;
-import Controller.DatabaseController.UserController;
-import Controller.ProgramController.Regex;
+import main.java.Database.User;
+import main.java.View.Exceptions.InvalidPasswordException;
+import main.java.View.Exceptions.RepetitiveNicknameException;
+import main.java.View.Exceptions.RepetitivePasswordException;
+import main.java.Controller.DatabaseController.UserController;
+import main.java.Controller.ProgramController.Regex;
 
 import java.util.regex.Matcher;
 
