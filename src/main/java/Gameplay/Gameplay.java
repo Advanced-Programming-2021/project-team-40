@@ -56,7 +56,7 @@ public class Gameplay {
         this.rounds = rounds;
     }
 
-    public boolean isHasPlacedMonster() {
+    public boolean hasPlacedMonster() {
         return hasPlacedMonster;
     }
 

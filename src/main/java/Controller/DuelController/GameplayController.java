@@ -5,11 +5,10 @@ import main.java.Controller.ProgramController.Regex;
 import main.java.Database.Cards.Card;
 import main.java.Gameplay.FieldArea;
 import main.java.Gameplay.Gameplay;
+import main.java.Gameplay.MonsterFieldArea;
 import main.java.Gameplay.Phase;
 import main.java.View.CardView;
-import main.java.View.Exceptions.InvalidCardSelectionException;
-import main.java.View.Exceptions.NoCardFoundException;
-import main.java.View.Exceptions.NoCardIsSelectedException;
+import main.java.View.Exceptions.*;
 import main.java.View.GraveyardView;
 
 import java.util.regex.Matcher;
@@ -27,6 +26,7 @@ public class GameplayController {
             gameplayController = new GameplayController();
         return gameplayController;
     }
+
     public void setGameplay(Gameplay gameplay) {
         this.gameplay = gameplay;
     }
@@ -40,26 +40,47 @@ public class GameplayController {
             } catch (InvalidCardSelectionException | NoCardFoundException e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else if (Regex.getCommandMatcher(command, Regex.deselectCard).matches()) {
+        } else if (Regex.getCommandMatcher(command, Regex.deselectCard).matches()) {
             try {
                 deselectCard();
                 System.out.println("card deselected");
-            } catch (NoCardIsSelectedException e){
+            } catch (NoCardIsSelectedException e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches()) goToNextPhase();
+        } else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches()) goToNextPhase();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.showGraveyard)).matches())
             GraveyardView.showGraveyard(gameplay.getCurrentPlayer().getField().getGraveyard());
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.showSelectedCard)).matches()){
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.showSelectedCard)).matches()) {
             try {
                 showCard();
-            }catch (NoCardIsSelectedException e){
+            } catch (NoCardIsSelectedException e) {
                 System.out.println(e.getMessage());
             }
-        }
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.surrender)).matches()) ;
+        } else if ((matcher = Regex.getCommandMatcher(command, Regex.summon)).matches()) {
+            try {
+                putMonsterCard(true);
+                System.out.println("summoned successfully");
+            } catch (NoCardIsSelectedException | AlreadySummonedException | InvalidSummonException | MonsterZoneFullException | WrongPhaseException e) {
+                System.out.println(e.getMessage());
+                ;
+            }
+        } else if ((matcher = Regex.getCommandMatcher(command, Regex.set)).matches()) {
+            try {
+                putMonsterCard(false);
+                System.out.println("set successfully");
+            } catch (NoCardIsSelectedException | AlreadySummonedException | InvalidSummonException | MonsterZoneFullException | WrongPhaseException e) {
+                System.out.println(e.getMessage());
+                ;
+            }
+        } else if ((matcher = Regex.getCommandMatcher(command, Regex.setPosition)).matches()) {
+            try {
+                boolean isAttack = matcher.group(1).matches("attack");
+                changePosition(isAttack);
+                System.out.println("monster card position changed successfully");
+            } catch (NoCardIsSelectedException | InvalidChangePositionException | WrongPhaseException | AlreadyInPositionException | AlreadySetPositionException e) {
+                System.out.println(e.getMessage());
+            }
+        } else if ((matcher = Regex.getCommandMatcher(command, Regex.surrender)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
@@ -72,9 +93,6 @@ public class GameplayController {
 
                     break;
                 case MAIN_PHASE_ONE:
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.summon)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.set)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.setPosition)).matches()) ;
                     if ((matcher = Regex.getCommandMatcher(command, Regex.flipSummon)).matches()) ;
                     if ((matcher = Regex.getCommandMatcher(command, Regex.activateEffect)).matches()) ;
                     else System.out.println("invalid command");
@@ -93,7 +111,7 @@ public class GameplayController {
     }
 
     private void goToNextPhase() {
-        switch (gameplay.getCurrentPhase()){
+        switch (gameplay.getCurrentPhase()) {
 
             case DRAW_PHASE -> {
                 gameplay.setCurrentPhase(Phase.STANDBY_PHASE);
@@ -121,6 +139,7 @@ public class GameplayController {
             }
         }
     }
+
     private void selectCard(Matcher matcher) throws InvalidCardSelectionException, NoCardFoundException {
         FieldArea fieldArea;
         if (matcher.group("monsterId") != null) {
@@ -151,6 +170,7 @@ public class GameplayController {
             gameplay.setSelectedField(fieldArea);
         }
     }
+
     private void deselectCard() throws NoCardIsSelectedException {
         if (gameplay.getSelectedField().getCard() == null) throw new NoCardIsSelectedException();
         gameplay.setSelectedField(null);
@@ -168,5 +188,29 @@ public class GameplayController {
             return id <= 0 || id >= 6;
         }
         return true;
+    }
+
+    private void putMonsterCard(boolean isAttack) throws NoCardIsSelectedException, AlreadySummonedException, InvalidSummonException, MonsterZoneFullException, WrongPhaseException {
+        if (gameplay.getSelectedField().getCard() == null) throw new NoCardIsSelectedException();
+        if (!gameplay.getSelectedField().canBePutOnBoard()) throw new InvalidSummonException();
+        if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
+            throw new WrongPhaseException();
+        MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
+        if (monsterFieldArea == null) throw new MonsterZoneFullException();
+        if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
+        monsterFieldArea.putCard(gameplay.getSelectedField().getCard(), isAttack);
+        gameplay.setHasPlacedMonster(true);
+        deselectCard();
+    }
+
+    private void changePosition(boolean isAttack) throws NoCardIsSelectedException, InvalidChangePositionException, WrongPhaseException, AlreadyInPositionException, AlreadySetPositionException {
+        FieldArea fieldArea = gameplay.getSelectedField();
+        if (fieldArea.getCard() == null) throw new NoCardIsSelectedException();
+        if (!(fieldArea instanceof MonsterFieldArea)) throw new InvalidChangePositionException();
+        if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
+            throw new WrongPhaseException();
+        if (((MonsterFieldArea) fieldArea).isAttack() == isAttack) throw new AlreadyInPositionException();
+        if (((MonsterFieldArea) fieldArea).hasSwitchedMode()) throw new AlreadySetPositionException();
+        ((MonsterFieldArea) fieldArea).changePosition();
     }
 }

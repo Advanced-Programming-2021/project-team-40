@@ -4,19 +4,19 @@ import main.java.Database.Cards.Card;
 
 public class FieldArea {
     protected boolean canBePutOnBoard = false;
-    private Card card;
-    private boolean visibility;
-    public FieldArea(Card card, boolean visibility){
-        this.card = card;
-        this.visibility = visibility;
+    protected Card card;
+    protected boolean visibility;
+    public FieldArea(){
+
     }
 
     public Card getCard() {
         return card;
     }
 
-    public void setCard(Card card) {
+    public void putCard(Card card, boolean visibility){
         this.card = card;
+        this.visibility = visibility;
     }
 
     public boolean isVisible() {
@@ -25,5 +25,9 @@ public class FieldArea {
 
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
+    }
+
+    public boolean canBePutOnBoard() {
+        return canBePutOnBoard;
     }
 }

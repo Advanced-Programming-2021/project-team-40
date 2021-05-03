@@ -14,6 +14,13 @@ public class Field {
         return monstersField[id];
     }
 
+    public MonsterFieldArea getFreeMonsterFieldArea(){
+        for (int i = 0; i < 5; i++) {
+            if (monstersField[i].getCard() == null) return monstersField[i];
+        }
+        return null;
+    }
+
     public SpellAndTrapFieldArea getSpellAndTrapFieldById(int id) {
         return spellAndTrapField[id];
     }
