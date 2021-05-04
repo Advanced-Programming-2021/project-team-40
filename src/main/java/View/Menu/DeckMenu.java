@@ -21,7 +21,8 @@ public class DeckMenu {
 
     public void run(String command) {
         Matcher matcher;
-        if ((matcher = Regex.getCommandMatcher(command, Regex.createDeck)).matches()) createDeck(matcher);
+        if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.createDeck)).matches()) createDeck(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.deleteDeck)).matches()) deleteDeck(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.activateDeck)).matches()) activateDeck(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToDeck)).matches()) addCard(matcher);
@@ -36,6 +37,7 @@ public class DeckMenu {
         String deckName = matcher.group("deckName");
         try {
             DeckController.getInstance().createDeck(deckName, currentUser);
+            System.out.println("deck created successfully!");
         } catch (RepetitiveDeckNameException e) {
             System.err.println(e.getMessage());
         }
@@ -45,6 +47,7 @@ public class DeckMenu {
         String deckName = matcher.group("deckName");
         try {
             DeckController.getInstance().deleteDeck(deckName, currentUser);
+            System.out.println("deck deleted successfully!");
         } catch (InvalidDeckNameException e) {
             System.err.println(e.getMessage());
         }
@@ -54,6 +57,7 @@ public class DeckMenu {
         String deckName = matcher.group("deckName");
         try {
             DeckController.getInstance().activateDeck(deckName, currentUser);
+            System.out.println("deck activated successfully");
         } catch (InvalidDeckNameException e) {
             System.err.println(e.getMessage());
         }
@@ -66,6 +70,7 @@ public class DeckMenu {
         if (matcher.group("isSide") == null) isSide = false;
         try {
             DeckController.getInstance().addCard(deckName, cardName, isSide, currentUser);
+            System.out.println("card added to deck successfully");
         } catch (DeckIsFullException | InvalidCardNameException | InvalidDeckNameException e) {
             System.err.println(e.getMessage());
         }
@@ -78,6 +83,7 @@ public class DeckMenu {
         if (matcher.group("isSide") == null) isSide = false;
         try {
             DeckController.getInstance().removeCard(deckName, cardName, isSide, currentUser);
+            System.out.println("card removed form deck successfully");
         } catch (DeckIsFullException | InvalidCardNameException | InvalidDeckNameException e) {
             System.err.println(e.getMessage());
         }
@@ -93,7 +99,18 @@ public class DeckMenu {
         }
         else deckView.showDetailedDeck(deck);
     }
-
+    public void help() {
+        System.out.println("menu exit");
+        System.out.println("menu show-current");
+        System.out.println("deck create <deck name>");
+        System.out.println("deck delete <deck name>");
+        System.out.println("deck set-activate <deck name>");
+        System.out.println("deck add-card --card <card name> --deck <deck name> --side(optional)");
+        System.out.println("deck rm-card --card <card name> --deck <deck name> --side(optional)");
+        System.out.println("deck show --all");
+        System.out.println("deck show --deck-name <deck name> --side(Opt)");
+        System.out.println("deck show --cards");
+    }
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
     }

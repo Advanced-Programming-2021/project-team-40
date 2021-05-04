@@ -15,15 +15,24 @@ public class ProfileMenu {
 
     public void run(String command) {
         Matcher matcher;
-        if ((matcher = Regex.getCommandMatcher(command, Regex.changeNickname)).matches()) changeNickname(matcher);
+        if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.changeNickname)).matches()) changeNickname(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.changePassword)).matches()) changePassword(matcher);
         else System.out.println("invalid command");
+    }
+
+    private void help() {
+        System.out.println("menu exit");
+        System.out.println("menu show-current");
+        System.out.println("profile change --nickname <nickname>");
+        System.out.println("profile change --password --current <current password> --new <new password>");
     }
 
     private void changeNickname(Matcher matcher) {
         String newNickname = matcher.group("nickname");
         try {
             UserController.getInstance().changeNickname(newNickname,currentUser);
+            System.out.println("nickname changed successfully!");
         } catch (RepetitiveNicknameException e) {
             System.err.println(e.getMessage());
         }
@@ -34,6 +43,7 @@ public class ProfileMenu {
         String newPassword = matcher.group("newPass");
         try {
             UserController.getInstance().changePassword(currentPassword,newPassword,currentUser);
+            System.out.println("password changed successfully!");
         } catch (RepetitivePasswordException | InvalidPasswordException e) {
             System.err.println(e.getMessage());
         }
