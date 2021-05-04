@@ -26,7 +26,7 @@ public class DeckController {
         if ((currentCard = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         if ((currentDeck = currentUser.getDeckByName(deckName)) == null) throw new InvalidDeckNameException(deckName);
         if (isSide) removeCardFromDeck(currentCard, "Side", currentDeck);
-        else removeCardFromDeck(currentCard, "main.java.Main", currentDeck);
+        else removeCardFromDeck(currentCard, "Main", currentDeck);
     }
 
     public void addCard(String deckName,String cardName,boolean isSide, User currentUser) throws InvalidCardNameException, InvalidDeckNameException, DeckIsFullException {
@@ -35,7 +35,7 @@ public class DeckController {
         if ((currentCard = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         if ((currentDeck = currentUser.getDeckByName(deckName)) == null) throw new InvalidDeckNameException(deckName);
         if (isSide) addCardToDeck(currentCard, "Side", currentDeck);
-        else addCardToDeck(currentCard, "main.java.Main", currentDeck);
+        else addCardToDeck(currentCard, "Main", currentDeck);
     }
 
     public void activateDeck(String deckName, User currentUser) throws InvalidDeckNameException {

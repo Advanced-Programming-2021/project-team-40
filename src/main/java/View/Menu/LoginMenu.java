@@ -43,7 +43,7 @@ public class LoginMenu {
         String password = matcher.group("password");
         String nickname = matcher.group("nickname");
         try {
-            LoginController.registerUser(username,password,password);
+            LoginController.registerUser(username,password,nickname);
             System.out.println("user created successfully!");
         } catch (RepetitiveUsernameException | RepetitiveNicknameException | WeakPasswordException e) {
             System.err.println(e.getMessage());

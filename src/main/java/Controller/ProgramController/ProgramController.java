@@ -1,5 +1,6 @@
 package Controller.ProgramController;
 
+import Controller.DatabaseController.DatabaseController;
 import Controller.DuelController.GameplayController;
 import View.Menu.LoginMenu;
 import View.Menu.MainMenu;
@@ -17,7 +18,6 @@ import View.Exceptions.MenuNavigationNotPossibleException;
 
 
 public class ProgramController {
-    //TODO initialize main.java.Database
     private static Menu currentMenu = Menu.LOGIN_MENU;
     public static LoginMenu loginMenu = new LoginMenu();
     public static MainMenu mainMenu = new MainMenu();
@@ -33,7 +33,7 @@ public class ProgramController {
     }
 
     public void run() {
-        initializeDatabase();
+        DatabaseController.getInstance();
         while (currentMenu != Menu.EXIT) {
             String command = sc.nextLine();
             Matcher matcher;
@@ -62,13 +62,13 @@ public class ProgramController {
                         profileMenu.run(command);
                         break;
                     case IMPORT_EXPORT_MENU:
-                        importExport.run();
+                        importExport.run(command);
                         break;
                     case DUEL_MENU:
 
                         break;
                     case SCOREBOARD_MENU:
-                        scoreboard.run();
+                        scoreboard.run(command);
                         break;
                     case GAMEPLAY:
                         GameplayController.getInstance().run(command);
@@ -76,7 +76,4 @@ public class ProgramController {
         }
     }
 
-    public void initializeDatabase() {
-
-    }
 }

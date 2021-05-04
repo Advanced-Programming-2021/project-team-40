@@ -1,5 +1,6 @@
 package Database;
 
+import Controller.DatabaseController.DatabaseController;
 import Database.Cards.Card;
 
 import java.util.*;
@@ -11,21 +12,19 @@ public class User {
     private String nickname;
     private int score;
     private int balance;
-    private final ArrayList<Deck> decks = new ArrayList<>();
+    private ArrayList<Deck> decks = new ArrayList<>();
     private Deck activeDeck;
     private ArrayList<Card> inactiveCards = new ArrayList<>();
 
-    public User(){
-
-    }
-
-    public User(String username, String password, String nickname){
+    public User(String username, String password, String nickname, int score, int balance, ArrayList<Deck> decks, Deck activeDeck, ArrayList<Card> inactiveCards){
         setUsername(username);
         setPassword(password);
         setNickname(nickname);
-        setScore(0);
-        //TODO fix balance
-        setBalance(10000);
+        setScore(score);
+        setBalance(balance);
+        setDecks(decks);
+        setActiveDeck(activeDeck);
+        this.inactiveCards = inactiveCards;
         users.add(this);
     }
 
@@ -122,6 +121,10 @@ public class User {
 
     public void setActiveDeck(Deck activeDeck) {
         this.activeDeck = activeDeck;
+    }
+
+    public void setDecks(ArrayList<Deck> decks){
+        this.decks = decks;
     }
 
     public ArrayList<Card> getInactiveCards() {

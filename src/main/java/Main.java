@@ -1,4 +1,3 @@
-package main.java;
 import Controller.ProgramController.ProgramController;
 
 public class Main {
