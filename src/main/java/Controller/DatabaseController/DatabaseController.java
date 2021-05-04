@@ -30,7 +30,7 @@ public class DatabaseController {
     }
 
     public void saveUser(User user){
-        File userFile = new File("./main/resources/Users/" + user.getUsername() + ".json");
+        File userFile = new File("./src/main/resources/Users/" + user.getUsername() + ".json");
         try {
             userFile.createNewFile();
             Gson gson = new GsonBuilder().create();
@@ -48,7 +48,7 @@ public class DatabaseController {
 
     private void initializeMonsterCards(){
         try{
-            File monsterCards = new File("./main/resources/Cards/Monster.csv");
+            File monsterCards = new File("./src/main/resources/Cards/Monster.csv");
             FileReader fileReader= new FileReader(monsterCards);
             CSVReader csvReader = new CSVReader(fileReader);
             csvReader.readNext();
