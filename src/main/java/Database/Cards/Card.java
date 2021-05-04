@@ -57,5 +57,4 @@ abstract public class Card {
         return cardPrice;
     }
 
-    abstract public void printCard();
 }

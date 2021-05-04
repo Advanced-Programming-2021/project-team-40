@@ -31,6 +31,10 @@ public class GameplayController {
         this.gameplay = gameplay;
     }
 
+    public Gameplay getGameplay() {
+        return gameplay;
+    }
+
     public void run(String command) {
         Matcher matcher;
         if ((matcher = Regex.getCommandMatcher(command, Regex.selectCard)).matches()) {
@@ -199,7 +203,6 @@ public class GameplayController {
         if (monsterFieldArea == null) throw new MonsterZoneFullException();
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
         monsterFieldArea.putCard(gameplay.getSelectedField().getCard(), isAttack);
-        gameplay.setHasPlacedMonster(true);
         deselectCard();
     }
 

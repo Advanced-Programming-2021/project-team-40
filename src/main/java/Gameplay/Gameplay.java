@@ -7,6 +7,7 @@ public class Gameplay {
     private Player opponentPlayer;
     private FieldArea selectedField;
     private Phase currentPhase;
+    private int currentRound;
     private int rounds;
     private boolean hasPlacedMonster;
 

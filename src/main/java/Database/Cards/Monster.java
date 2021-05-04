@@ -84,8 +84,4 @@ public class Monster extends Card {
 
     }
 
-    @Override
-    public void printCard() {
-        System.out.println("PRINT MONSTER CARDS HERE");
-    }
 }
