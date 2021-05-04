@@ -1,9 +1,9 @@
-package main.java.Controller.MenuController;
+package Controller.MenuController;
 
-import main.java.Database.Cards.Card;
-import main.java.Database.User;
-import main.java.View.Exceptions.InvalidCardNameException;
-import main.java.View.Exceptions.NotEnoughMoneyException;
+import Database.Cards.Card;
+import Database.User;
+import View.Exceptions.InvalidCardNameException;
+import View.Exceptions.NotEnoughMoneyException;
 
 import java.util.regex.Matcher;
 
@@ -17,8 +17,7 @@ public class ShopController {
             shopController = new ShopController();
         return shopController;
     }
-    public void buy(Matcher matcher, User currentUser) throws InvalidCardNameException, NotEnoughMoneyException {
-        String cardName = matcher.group("cardName");
+    public void buy(String cardName, User currentUser) throws InvalidCardNameException, NotEnoughMoneyException {
         Card card;
         if ((card = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         if (card.getCardPrice() > currentUser.getBalance()) throw new NotEnoughMoneyException();

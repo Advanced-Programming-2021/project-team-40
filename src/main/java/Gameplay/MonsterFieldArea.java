@@ -1,6 +1,6 @@
-package main.java.Gameplay;
+package Gameplay;
 
-import main.java.Database.Cards.Card;
+import Database.Cards.Card;
 
 public class MonsterFieldArea extends FieldArea{
     private boolean isAttack;

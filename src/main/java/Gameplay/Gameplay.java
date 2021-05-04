@@ -1,4 +1,4 @@
-package main.java.Gameplay;
+package Gameplay;
 
 public class Gameplay {
     private Player playerOne;

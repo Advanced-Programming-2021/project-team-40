@@ -1,9 +1,14 @@
-package main.java.View.Menu;
+package View.Menu;
 
-import main.java.Controller.MenuController.DuelMenuController;
-import main.java.Controller.ProgramController.Regex;
-import main.java.Database.User;
-import main.java.View.Exceptions.*;
+
+
+import Controller.MenuController.DuelMenuController;
+import Controller.ProgramController.Regex;
+import Database.User;
+import View.Exceptions.ActiveDeckNotFoundException;
+import View.Exceptions.InvalidDeckException;
+import View.Exceptions.InvalidRoundNumberException;
+import View.Exceptions.UserNotFoundException;
 
 import java.util.regex.Matcher;
 
@@ -12,16 +17,25 @@ public class DuelMenu {
 
     public void run(String command) {
         Matcher matcher;
-        if ((matcher = Regex.getCommandMatcher(command, Regex.startPlayerDuel)).matches()) {
-            try {
-                DuelMenuController.getInstance().startPlayerGame(matcher, currentUser);
-            } catch (UserNotFoundException | ActiveDeckNotFoundException | InvalidRoundNumberException | InvalidDeckException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-        if (Regex.getCommandMatcher(command,Regex.startAIDuel).matches()) {
-            DuelMenuController.getInstance().startAIGame();
+        if ((matcher = Regex.getCommandMatcher(command, Regex.startPlayerDuel)).matches()) startPlayerGame(matcher);
+        if ((matcher = Regex.getCommandMatcher(command,Regex.startAIDuel)).matches()) {
+            startAIGame(matcher);
         }
         else System.out.println("invalid command");
+    }
+
+    private void startAIGame(Matcher matcher) {
+        String roundCount = matcher.group("rounds");
+        DuelMenuController.getInstance().startAIGame(roundCount);
+    }
+
+    private void startPlayerGame(Matcher matcher) {
+        String userTwo = matcher.group("username");
+        String roundCount = matcher.group("rounds");
+        try {
+            DuelMenuController.getInstance().startPlayerGame(userTwo,roundCount,currentUser);
+        } catch (UserNotFoundException | InvalidRoundNumberException | ActiveDeckNotFoundException | InvalidDeckException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

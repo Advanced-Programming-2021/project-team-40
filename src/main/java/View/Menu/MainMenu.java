@@ -1,9 +1,10 @@
-package main.java.View.Menu;
+package View.Menu;
 
-import main.java.Controller.MenuController.MenuNavigationController;
-import main.java.Database.User;
-import main.java.Controller.ProgramController.Regex;
-import main.java.Controller.ProgramController.ProgramController;
+
+import Controller.MenuController.MenuNavigationController;
+import Controller.ProgramController.ProgramController;
+import Controller.ProgramController.Regex;
+import Database.User;
 
 public class MainMenu {
     public User currentUser;

@@ -1,4 +1,4 @@
-package main.java.View.Exceptions;
+package View.Exceptions;
 
 public class InvalidLoginException extends Exception{
     public InvalidLoginException(){

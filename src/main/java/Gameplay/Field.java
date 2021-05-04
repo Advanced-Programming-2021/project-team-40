@@ -1,6 +1,7 @@
-package main.java.Gameplay;
+package Gameplay;
 
-import main.java.Database.Cards.Card;
+
+import Database.Cards.Card;
 
 import java.util.ArrayList;
 

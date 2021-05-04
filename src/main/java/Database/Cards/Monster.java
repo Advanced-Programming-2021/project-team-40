@@ -1,4 +1,4 @@
-package main.java.Database.Cards;
+package Database.Cards;
 
 public class Monster extends Card {
 

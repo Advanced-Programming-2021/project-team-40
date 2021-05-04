@@ -1,14 +1,13 @@
-package main.java.Controller.DatabaseController;
+package Controller.DatabaseController;
 
-import main.java.Database.User;
-import main.java.View.Exceptions.InvalidPasswordException;
-import main.java.View.Exceptions.RepetitiveNicknameException;
-import main.java.View.Exceptions.RepetitivePasswordException;
-
-import java.util.regex.Matcher;
+import Database.User;
+import View.Exceptions.InvalidPasswordException;
+import View.Exceptions.RepetitiveNicknameException;
+import View.Exceptions.RepetitivePasswordException;
 
 public class UserController {
     private static UserController userController;
+
     private UserController() {
     }
 
@@ -17,16 +16,14 @@ public class UserController {
             userController = new UserController();
         return userController;
     }
-    public void changePassword(Matcher matcher, User currentUser) throws RepetitivePasswordException, InvalidPasswordException {
-        String currentPassword = matcher.group("currentPass");
-        String newPassword = matcher.group("newPass");
+
+    public void changePassword(String currentPassword, String newPassword, User currentUser) throws RepetitivePasswordException, InvalidPasswordException {
         if (!currentUser.getPassword().equals(currentPassword)) throw new InvalidPasswordException();
         if (currentPassword.equals(newPassword)) throw new RepetitivePasswordException();
         currentUser.setPassword(newPassword);
     }
 
-    public void changeNickname(Matcher matcher, User currentUser) throws RepetitiveNicknameException {
-        String newNickname = matcher.group("nickname");
+    public void changeNickname(String newNickname, User currentUser) throws RepetitiveNicknameException {
         if (User.getUserByNickname(newNickname) != null) throw new RepetitiveNicknameException(newNickname);
         currentUser.setNickname(newNickname);
     }

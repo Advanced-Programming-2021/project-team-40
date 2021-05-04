@@ -1,4 +1,4 @@
-package main.java.Controller.DuelController;
+package Controller.DuelController;
 
 public class FieldAreaController {
 }

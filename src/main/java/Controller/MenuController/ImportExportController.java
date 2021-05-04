@@ -1,4 +1,4 @@
-package main.java.Controller.MenuController;
+package Controller.MenuController;
 
 public class ImportExportController {
 

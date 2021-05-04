@@ -1,4 +1,4 @@
-package main.java.View.Exceptions;
+package View.Exceptions;
 
 public class DeckIsFullException extends Exception {
     public DeckIsFullException(String deckPart){

@@ -1,15 +1,14 @@
-package main.java.Controller.DatabaseController;
+package Controller.DatabaseController;
 
-import main.java.Database.Cards.Card;
-import main.java.Database.Deck;
-import main.java.Database.User;
-import main.java.View.Exceptions.DeckIsFullException;
-import main.java.View.Exceptions.InvalidCardNameException;
-import main.java.View.Exceptions.InvalidDeckNameException;
-import main.java.View.Exceptions.RepetitiveDeckNameException;
+import Database.Cards.Card;
+import Database.Deck;
+import Database.User;
+import View.Exceptions.DeckIsFullException;
+import View.Exceptions.InvalidCardNameException;
+import View.Exceptions.InvalidDeckNameException;
+import View.Exceptions.RepetitiveDeckNameException;
 
 import java.util.Collections;
-import java.util.regex.Matcher;
 
 public class DeckController {
     private static DeckController deckController;
@@ -21,48 +20,37 @@ public class DeckController {
             deckController = new DeckController();
         return deckController;
     }
-    public void removeCard(Matcher matcher, User currentUser) throws DeckIsFullException, InvalidCardNameException, InvalidDeckNameException {
-        String cardName = matcher.group("cardName");
-        String deckName = matcher.group("deckName");
-        boolean isSide = false;
+    public void removeCard(String deckName,String cardName,boolean isSide, User currentUser) throws DeckIsFullException, InvalidCardNameException, InvalidDeckNameException {
         Deck currentDeck;
         Card currentCard;
-        if (matcher.group("isSide") != null) isSide = true;
         if ((currentCard = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         if ((currentDeck = currentUser.getDeckByName(deckName)) == null) throw new InvalidDeckNameException(deckName);
         if (isSide) removeCardFromDeck(currentCard, "Side", currentDeck);
         else removeCardFromDeck(currentCard, "main.java.Main", currentDeck);
     }
 
-    public void addCard(Matcher matcher, User currentUser) throws InvalidCardNameException, InvalidDeckNameException, DeckIsFullException {
-        String cardName = matcher.group("cardName");
-        String deckName = matcher.group("deckName");
-        boolean isSide = false;
+    public void addCard(String deckName,String cardName,boolean isSide, User currentUser) throws InvalidCardNameException, InvalidDeckNameException, DeckIsFullException {
         Deck currentDeck;
         Card currentCard;
-        if (matcher.group("isSide") != null) isSide = true;
         if ((currentCard = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         if ((currentDeck = currentUser.getDeckByName(deckName)) == null) throw new InvalidDeckNameException(deckName);
         if (isSide) addCardToDeck(currentCard, "Side", currentDeck);
         else addCardToDeck(currentCard, "main.java.Main", currentDeck);
     }
 
-    public void activateDeck(Matcher matcher, User currentUser) throws InvalidDeckNameException {
-        String deckName = matcher.group("deckName");
+    public void activateDeck(String deckName, User currentUser) throws InvalidDeckNameException {
         Deck deck;
         if ((deck = currentUser.getDeckByName(deckName)) == null) throw new InvalidDeckNameException(deckName);
         currentUser.setActiveDeck(deck);
     }
 
-    public void deleteDeck(Matcher matcher, User currentUser) throws InvalidDeckNameException {
-        String deckName = matcher.group("deckName");
+    public void deleteDeck(String deckName, User currentUser) throws InvalidDeckNameException {
         Deck deck;
         if ((deck = currentUser.getDeckByName(deckName)) == null) throw new InvalidDeckNameException(deckName);
         currentUser.getDecks().remove(deck);
     }
 
-    public void createDeck(Matcher matcher, User currentUser) throws RepetitiveDeckNameException {
-        String deckName = matcher.group("deckName");
+    public void createDeck(String deckName, User currentUser) throws RepetitiveDeckNameException {
         if (currentUser.getDeckByName(deckName) != null) throw new RepetitiveDeckNameException(deckName);
         Deck deck = new Deck(deckName);
         currentUser.getDecks().add(deck);
@@ -117,9 +105,9 @@ public class DeckController {
         return currentDeck.getSideCards().size() >= 15;
     }
 
-    public boolean isDeckValid(Deck activeDeck) {
+    public boolean isDeckInvalid(Deck activeDeck) {
         int mainCount = activeDeck.getMainCards().size();
         int sideCount = activeDeck.getSideCards().size();
-        return mainCount >= 40 && mainCount <= 60 && sideCount <= 15;
+        return mainCount < 40 || mainCount > 60 || sideCount > 15;
     }
 }

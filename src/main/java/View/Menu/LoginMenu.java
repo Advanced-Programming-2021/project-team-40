@@ -1,31 +1,42 @@
-package main.java.View.Menu;
+package View.Menu;
 
-import main.java.Controller.ProgramController.Regex;
-import main.java.View.Exceptions.InvalidLoginException;
-import main.java.View.Exceptions.RepetitiveNicknameException;
-import main.java.View.Exceptions.RepetitiveUsernameException;
-import main.java.Controller.MenuController.LoginController;
-import main.java.View.Exceptions.WeakPasswordException;
+
+
+import Controller.MenuController.LoginController;
+import Controller.ProgramController.Regex;
+import View.Exceptions.InvalidLoginException;
+import View.Exceptions.RepetitiveNicknameException;
+import View.Exceptions.RepetitiveUsernameException;
+import View.Exceptions.WeakPasswordException;
 
 import java.util.regex.Matcher;
 
 public class LoginMenu {
     public void run(String command) {
         Matcher matcher;
-        if ((matcher = Regex.getCommandMatcher(command, Regex.createUser)).matches()) {
-            try {
-                LoginController.registerUser(matcher);
-                System.out.println("user created successfully!");
-            } catch (RepetitiveUsernameException | RepetitiveNicknameException | WeakPasswordException e) {
-                System.out.println(e.getMessage());
-            }
-        } else if ((matcher = Regex.getCommandMatcher(command, Regex.login)).matches()) {
-            try {
-                LoginController.loginUser(matcher);
-                System.out.println("user logged in successfully!");
-            } catch (InvalidLoginException e) {
-                System.out.println(e.getMessage());
-            }
-        } else System.out.println("invalid command");
+        if ((matcher = Regex.getCommandMatcher(command, Regex.createUser)).matches()) registerUser(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.login)).matches()) loginUser(matcher);
+        else System.out.println("invalid command");
+    }
+
+    private void loginUser(Matcher matcher) {
+        String username = matcher.group("username");
+        String password = matcher.group("password");
+        try {
+            LoginController.loginUser(username,password);
+        } catch (InvalidLoginException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private void registerUser(Matcher matcher) {
+        String username = matcher.group("username");
+        String password = matcher.group("password");
+        String nickname = matcher.group("nickname");
+        try {
+            LoginController.registerUser(username,password,password);
+        } catch (RepetitiveUsernameException | RepetitiveNicknameException | WeakPasswordException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

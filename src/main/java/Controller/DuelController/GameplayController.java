@@ -1,15 +1,15 @@
-package main.java.Controller.DuelController;
+package Controller.DuelController;
 
 
-import main.java.Controller.ProgramController.Regex;
-import main.java.Database.Cards.Card;
-import main.java.Gameplay.FieldArea;
-import main.java.Gameplay.Gameplay;
-import main.java.Gameplay.MonsterFieldArea;
-import main.java.Gameplay.Phase;
-import main.java.View.CardView;
-import main.java.View.Exceptions.*;
-import main.java.View.GraveyardView;
+import Controller.ProgramController.Regex;
+import Database.Cards.Card;
+import Gameplay.FieldArea;
+import Gameplay.Gameplay;
+import Gameplay.MonsterFieldArea;
+import Gameplay.Phase;
+import View.CardView;
+import View.Exceptions.*;
+import View.GraveyardView;
 
 import java.util.regex.Matcher;
 

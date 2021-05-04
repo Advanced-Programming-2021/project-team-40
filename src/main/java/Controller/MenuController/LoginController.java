@@ -1,12 +1,12 @@
-package main.java.Controller.MenuController;
+package Controller.MenuController;
 
-import main.java.Controller.ProgramController.Regex;
-import main.java.Database.User;
-import main.java.View.Exceptions.*;
+import Controller.ProgramController.Regex;
+import Database.User;
+import View.Exceptions.*;
 
 import java.util.regex.Matcher;
 
-import main.java.Controller.ProgramController.ProgramController;
+import Controller.ProgramController.ProgramController;
 
 public class LoginController {
     private static LoginController loginController;
@@ -21,9 +21,7 @@ public class LoginController {
         return loginController;
     }
 
-    public static void loginUser(Matcher matcher) throws InvalidLoginException {
-        String username = matcher.group("username");
-        String password = matcher.group("password");
+    public static void loginUser(String username,String password) throws InvalidLoginException {
         User currentUser;
         if ((currentUser = User.getUserByName(username)) == null) throw new InvalidLoginException();
         if (!currentUser.getPassword().equals(password)) throw new InvalidLoginException();
@@ -35,10 +33,7 @@ public class LoginController {
         return true;
     }
 
-    public static void registerUser(Matcher matcher) throws RepetitiveUsernameException, RepetitiveNicknameException, WeakPasswordException {
-        String username = matcher.group("username");
-        String password = matcher.group("password");
-        String nickname = matcher.group("nickname");
+    public static void registerUser(String username,String password,String nickname) throws RepetitiveUsernameException, RepetitiveNicknameException, WeakPasswordException {
         if (passwordIsWeak(password)) throw new WeakPasswordException();
         if (User.getUserByName(username) != null) throw new RepetitiveUsernameException(username);
         if (User.getUserByNickname(nickname) != null) throw new RepetitiveNicknameException(nickname);

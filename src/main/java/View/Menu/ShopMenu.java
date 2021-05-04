@@ -1,11 +1,12 @@
-package main.java.View.Menu;
+package View.Menu;
 
-import main.java.Database.User;
-import main.java.View.Exceptions.InvalidCardNameException;
-import main.java.View.Exceptions.NotEnoughMoneyException;
-import main.java.Controller.ProgramController.Regex;
-import main.java.Controller.MenuController.ShopController;
-import main.java.View.ShopView;
+
+import Controller.MenuController.ShopController;
+import Controller.ProgramController.Regex;
+import Database.User;
+import View.Exceptions.InvalidCardNameException;
+import View.Exceptions.NotEnoughMoneyException;
+import View.ShopView;
 
 import java.util.regex.Matcher;
 
@@ -15,15 +16,18 @@ public class ShopMenu {
 
     public void run(String command) {
         Matcher matcher;
-        if ((matcher = Regex.getCommandMatcher(command, Regex.shopBuy)).matches()) {
-            try {
-                ShopController.getInstance().buy(matcher, currentUser);
-            } catch (InvalidCardNameException | NotEnoughMoneyException e) {
-                System.out.println(e.getMessage());
-            }
-        } else if (Regex.getCommandMatcher(command, Regex.shopShowAll).matches()) {
-            shopView.showAll();
-        } else System.out.println("invalid command");
+        if ((matcher = Regex.getCommandMatcher(command, Regex.shopBuy)).matches()) buy(matcher);
+        else if (Regex.getCommandMatcher(command, Regex.shopShowAll).matches()) shopView.showAll();
+        else System.out.println("invalid command");
+    }
+
+    private void buy(Matcher matcher) {
+        String cardName = matcher.group("cardName");
+        try {
+            ShopController.getInstance().buy(cardName,currentUser);
+        } catch (InvalidCardNameException | NotEnoughMoneyException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public void setCurrentUser(User currentUser) {
