@@ -17,16 +17,23 @@ public class DuelMenu {
 
     public void run(String command) {
         Matcher matcher;
-        if ((matcher = Regex.getCommandMatcher(command, Regex.startPlayerDuel)).matches()) startPlayerGame(matcher);
-        if ((matcher = Regex.getCommandMatcher(command,Regex.startAIDuel)).matches()) {
-            startAIGame(matcher);
-        }
+        if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.startPlayerDuel)).matches()) startPlayerGame(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command,Regex.startAIDuel)).matches()) startAIGame(matcher);
         else System.out.println("invalid command");
+    }
+
+    private void help() {
+        System.out.println("menu exit");
+        System.out.println("menu show-current");
+        System.out.println("duel --new --second-player <player2 username> --rounds <1/3>");
+        System.out.println("duel --new --ai --rounds <1/3>");
     }
 
     private void startAIGame(Matcher matcher) {
         String roundCount = matcher.group("rounds");
         DuelMenuController.getInstance().startAIGame(roundCount);
+        System.out.println("AI game started for" + currentUser.getUsername());
     }
 
     private void startPlayerGame(Matcher matcher) {
@@ -34,6 +41,7 @@ public class DuelMenu {
         String roundCount = matcher.group("rounds");
         try {
             DuelMenuController.getInstance().startPlayerGame(userTwo,roundCount,currentUser);
+            System.out.println("game started between" + currentUser.getUsername() + "and" + User.getUserByName(userTwo).getUsername() + " !");
         } catch (UserNotFoundException | InvalidRoundNumberException | ActiveDeckNotFoundException | InvalidDeckException e) {
             System.err.println(e.getMessage());
         }
