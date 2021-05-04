@@ -8,13 +8,11 @@ abstract public class Card {
     protected static ArrayList<Card> allCards = new ArrayList<>();
     protected String name;
     protected String description;
-    protected String cardNumber;
     protected int cardPrice = 0;
 
-    public Card(String name, String description, String cardNumber, int cardPrice) {
+    public Card(String name, String description, int cardPrice) {
         setName(name);
         setDescription(description);
-        setCardNumber(cardNumber);
         setCardPrice(cardPrice);
     }
 
@@ -41,14 +39,6 @@ abstract public class Card {
         return description;
     }
 
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
-    }
-
-    public String getCardNumber() {
-        return cardNumber;
-    }
-
     public void setCardPrice(int cardPrice) {
         this.cardPrice = cardPrice;
     }
@@ -57,4 +47,7 @@ abstract public class Card {
         return cardPrice;
     }
 
+    public static ArrayList<Card> getAllCards() {
+        return allCards;
+    }
 }

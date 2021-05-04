@@ -4,20 +4,18 @@ public class Monster extends Card {
 
     private Attribute attribute;
     private MonsterType monsterType;
-    private SummonType summonType;
-    private EffectType effectType;
+    private CardType cardType;
     private int level;
     private int attackPoints;
     private int defensePoints;
 
-    public Monster(Attribute attribute, MonsterType monsterType, SummonType summonType, EffectType effectType,
-                   int level, int attackPoints, int defensePoints,
-                   String name, String description, String cardNumber, int cardPrice) {
-        super(name, description, cardNumber, cardPrice);
+    public Monster(String name, int level, Attribute attribute, MonsterType monsterType, CardType cardType,
+                   int attackPoints, int defensePoints,
+                   String description, int cardPrice) {
+        super(name, description, cardPrice);
         setAttribute(attribute);
         setMonsterType(monsterType);
-        setSummonType(summonType);
-        setEffectType(effectType);
+        setCardType(cardType);
         setLevel(level);
         setAttackPoints(attackPoints);
         setDefensePoints(defensePoints);
@@ -40,20 +38,12 @@ public class Monster extends Card {
         return monsterType;
     }
 
-    public void setSummonType(SummonType summonType) {
-        this.summonType = summonType;
+    public void setCardType(CardType cardType) {
+        this.cardType = cardType;
     }
 
-    public SummonType getSummonType() {
-        return summonType;
-    }
-
-    public void setEffectType(EffectType effectType) {
-        this.effectType = effectType;
-    }
-
-    public EffectType getEffectType() {
-        return effectType;
+    public CardType getCardType() {
+        return cardType;
     }
 
     public void setLevel(int level) {

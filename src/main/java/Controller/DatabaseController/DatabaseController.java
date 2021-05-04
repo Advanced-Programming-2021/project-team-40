@@ -1,9 +1,11 @@
 package Controller.DatabaseController;
 
+import Database.Cards.*;
 import Database.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.apache.commons.*;
+import com.opencsv.*;
+import java.lang.Integer.*;
 
 import java.io.*;
 import java.util.Scanner;
@@ -24,7 +26,7 @@ public class DatabaseController {
 
     private void initialize(){
         initializeUsers();
-        initializeCards();
+        initializeMonsterCards();
     }
 
     public void saveUser(User user){
@@ -44,20 +46,44 @@ public class DatabaseController {
 
     }
 
-    private void initializeCards(){
-        File monsterCards = new File("./main/resources/Cards/Monster.csv");
+    private void initializeMonsterCards(){
         try{
-            Scanner fileScanner = new Scanner(monsterCards);
-            while (fileScanner.hasNextLine()){
-                String currentCard = fileScanner.nextLine();
-                String[] properties = currentCard.split(",");
-                for (String string: properties) {
-                    System.out.println(string);
-                }
+            File monsterCards = new File("./main/resources/Cards/Monster.csv");
+            FileReader fileReader= new FileReader(monsterCards);
+            CSVReader csvReader = new CSVReader(fileReader);
+            csvReader.readNext();
+            String[] cardDetails;
+            while ((cardDetails = csvReader.readNext()) != null){
+                new Monster(cardDetails[0], Integer.parseInt(cardDetails[1]), getAttribute(cardDetails[2]), getMonsterType(cardDetails[3]),
+                        getCardType(cardDetails[4]), Integer.parseInt(cardDetails[5]), Integer.parseInt(cardDetails[6]), cardDetails[7], Integer.parseInt(cardDetails[8]));
             }
         }catch (IOException e){
             System.err.println(e.getMessage());
         }
+    }
+
+    private Attribute getAttribute(String name){
+        name = name.toUpperCase();
+        for (int i = 0; i < Attribute.values().length; i++) {
+            if (name.matches(Attribute.values()[i].toString())) return Attribute.values()[i];
+        }
+        return null;
+    }
+
+    private MonsterType getMonsterType(String name){
+        name = name.toUpperCase();
+        for (int i = 0; i < MonsterType.values().length; i++) {
+            if (name.matches(MonsterType.values()[i].toString())) return MonsterType.values()[i];
+        }
+        return null;
+    }
+
+    private CardType getCardType(String name){
+        name = name.toUpperCase();
+        for (int i = 0; i < MonsterType.values().length; i++) {
+            if (name.matches(MonsterType.values()[i].toString())) return CardType.values()[i];
+        }
+        return null;
     }
 
     private void initializeUsers(){

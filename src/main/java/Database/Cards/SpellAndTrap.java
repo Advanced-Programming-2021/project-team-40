@@ -4,8 +4,8 @@ abstract public class SpellAndTrap extends Card{
 
     protected Icon icon;
 
-    public SpellAndTrap(Icon icon, String name, String description, String cardNumber, int cardPrice){
-        super(name, description, cardNumber, cardPrice);
+    public SpellAndTrap(Icon icon, String name, String description, int cardPrice){
+        super(name, description, cardPrice);
         setIcon(icon);
         allCards.add(this);
     }
