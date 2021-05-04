@@ -5,8 +5,6 @@ import Database.User;
 import View.Exceptions.InvalidCardNameException;
 import View.Exceptions.NotEnoughMoneyException;
 
-import java.util.regex.Matcher;
-
 public class ShopController {
     private static ShopController shopController;
     private ShopController() {

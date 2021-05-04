@@ -17,13 +17,13 @@ public class LoginMenu {
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.createUser)).matches()) registerUser(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.login)).matches()) loginUser(matcher);
-        else System.out.println("invalid command");
+        else System.err.println("invalid command");
     }
 
     private void help() {
         System.out.println("menu exit");
         System.out.println("menu show-current");
-        System.out.println("user login --username <username> --password <password>");
+        System.out.println("user create --username <username> --password <password>");
         System.out.println("user login --password <password> --username <username>");
     }
 

@@ -5,7 +5,6 @@ import Database.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opencsv.*;
-import java.lang.Integer.*;
 
 import java.io.*;
 import java.util.Scanner;
@@ -87,19 +86,23 @@ public class DatabaseController {
     }
 
     private void initializeUsers(){
-        File userDirectory = new File("./main/resources/Users");
-        for (File userFile : userDirectory.listFiles()){
-            try{
-                Scanner fileScanner = new Scanner(userFile);
-                String userJson = fileScanner.nextLine();
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                Gson gson = gsonBuilder.create();
-                User tempUser = gson.fromJson(userJson, User.class);
-                new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getScore(),
-                        tempUser.getBalance(), tempUser.getDecks(), tempUser.getActiveDeck(), tempUser.getInactiveCards());
-            }catch (FileNotFoundException e){
-                System.out.println(e.getMessage());
+        File userDirectory = new File("./src/main/resources/Users");
+        try {
+            for (File userFile : userDirectory.listFiles()){
+                try{
+                    Scanner fileScanner = new Scanner(userFile);
+                    String userJson = fileScanner.nextLine();
+                    GsonBuilder gsonBuilder = new GsonBuilder();
+                    Gson gson = gsonBuilder.create();
+                    User tempUser = gson.fromJson(userJson, User.class);
+                    new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getScore(),
+                            tempUser.getBalance(), tempUser.getDecks(), tempUser.getActiveDeck(), tempUser.getInactiveCards());
+                }catch (FileNotFoundException e){
+                    System.out.println(e.getMessage());
+                }
             }
+        } catch (NullPointerException e){
+            System.out.println(e.getMessage());
         }
     }
 }

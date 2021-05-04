@@ -1,7 +1,7 @@
 package Controller.ProgramController;
 
 import Controller.DatabaseController.DatabaseController;
-import Controller.DuelController.GameplayController;
+import View.GameplayView;
 import View.Menu.LoginMenu;
 import View.Menu.MainMenu;
 import View.Menu.DeckMenu;
@@ -71,7 +71,7 @@ public class ProgramController {
                         scoreboard.run(command);
                         break;
                     case GAMEPLAY:
-                        GameplayController.getInstance().run(command);
+                        GameplayView.getInstance().run(command);
                 }
         }
     }

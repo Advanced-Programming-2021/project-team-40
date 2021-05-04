@@ -13,8 +13,6 @@ import View.Exceptions.InvalidDeckException;
 import View.Exceptions.InvalidRoundNumberException;
 import View.Exceptions.UserNotFoundException;
 
-import java.util.regex.Matcher;
-
 public class DuelMenuController {
     private static DuelMenuController duelMenuController;
     private DuelMenuController() {
