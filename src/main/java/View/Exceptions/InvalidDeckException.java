@@ -1,4 +1,4 @@
-package main.java.View.Exceptions;
+package View.Exceptions;
 
 public class InvalidDeckException extends Exception{
     public InvalidDeckException(String username){

@@ -1,9 +1,9 @@
-package main.java.Controller.DatabaseController;
+package Controller.DatabaseController;
 
-import main.java.Database.User;
-import main.java.View.Exceptions.InvalidPasswordException;
-import main.java.View.Exceptions.RepetitiveNicknameException;
-import main.java.View.Exceptions.RepetitivePasswordException;
+import Database.User;
+import View.Exceptions.InvalidPasswordException;
+import View.Exceptions.RepetitiveNicknameException;
+import View.Exceptions.RepetitivePasswordException;
 
 import java.util.regex.Matcher;
 

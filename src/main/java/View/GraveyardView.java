@@ -1,6 +1,6 @@
-package main.java.View;
+package View;
 
-import main.java.Database.Cards.Card;
+import Database.Cards.Card;
 
 import java.util.ArrayList;
 

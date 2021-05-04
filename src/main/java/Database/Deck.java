@@ -1,13 +1,13 @@
-package main.java.Database;
+package Database;
 
-import main.java.Database.Cards.*;
+import Database.Cards.*;
 
 import java.util.*;
 
 public class Deck {
     private String name;
-    public ArrayList<Card> mainCards = new ArrayList<>();
-    public ArrayList<Card> sideCards = new ArrayList<>();
+    private ArrayList<Card> mainCards = new ArrayList<>();
+    private ArrayList<Card> sideCards = new ArrayList<>();
 
     public Deck(String name){
         this.name = name;

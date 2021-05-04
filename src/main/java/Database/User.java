@@ -1,6 +1,6 @@
-package main.java.Database;
+package Database;
 
-import main.java.Database.Cards.Card;
+import Database.Cards.Card;
 
 import java.util.*;
 
@@ -15,6 +15,10 @@ public class User {
     private Deck activeDeck;
     private ArrayList<Card> inactiveCards = new ArrayList<>();
 
+    public User(){
+
+    }
+
     public User(String username, String password, String nickname){
         setUsername(username);
         setPassword(password);
@@ -22,6 +26,7 @@ public class User {
         setScore(0);
         //TODO fix balance
         setBalance(10000);
+        users.add(this);
     }
 
     public static User getUserByName(String username){

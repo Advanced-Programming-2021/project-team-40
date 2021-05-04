@@ -1,4 +1,4 @@
-package main.java.View.Exceptions;
+package View.Exceptions;
 
 public class InvalidCardNameException extends Exception {
     public InvalidCardNameException(String cardName){

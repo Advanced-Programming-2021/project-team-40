@@ -1,9 +1,9 @@
-package main.java.View.Menu;
+package View.Menu;
 
-import main.java.Controller.MenuController.DuelMenuController;
-import main.java.Controller.ProgramController.Regex;
-import main.java.Database.User;
-import main.java.View.Exceptions.*;
+import Controller.MenuController.DuelMenuController;
+import Controller.ProgramController.Regex;
+import Database.User;
+import View.Exceptions.*;
 
 import java.util.regex.Matcher;
 

@@ -1,9 +1,9 @@
-package main.java.Gameplay;
+package Gameplay;
 
 
-import main.java.Database.Cards.Card;
-import main.java.Database.Deck;
-import main.java.Database.User;
+import Database.Cards.Card;
+import Database.Deck;
+import Database.User;
 
 import java.util.ArrayList;
 

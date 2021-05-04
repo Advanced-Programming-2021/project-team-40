@@ -1,6 +1,7 @@
-package main.java.Gameplay;
+package Gameplay;
 
-import main.java.Database.Cards.Card;
+import Controller.DuelController.GameplayController;
+import Database.Cards.Card;
 
 public class MonsterFieldArea extends FieldArea{
     private boolean isAttack;
@@ -15,6 +16,7 @@ public class MonsterFieldArea extends FieldArea{
     public void putCard(Card card, boolean isAttack){
         this.isAttack = isAttack;
         super.putCard(card, isAttack);
+        GameplayController.getInstance().getGameplay().setHasPlacedMonster(true);
     }
 
     public void setAttack(boolean attack) {

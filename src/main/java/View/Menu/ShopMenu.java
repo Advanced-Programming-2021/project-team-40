@@ -1,11 +1,11 @@
-package main.java.View.Menu;
+package View.Menu;
 
-import main.java.Database.User;
-import main.java.View.Exceptions.InvalidCardNameException;
-import main.java.View.Exceptions.NotEnoughMoneyException;
-import main.java.Controller.ProgramController.Regex;
-import main.java.Controller.MenuController.ShopController;
-import main.java.View.ShopView;
+import Database.User;
+import Controller.ProgramController.Regex;
+import Controller.MenuController.ShopController;
+import View.Exceptions.InvalidCardNameException;
+import View.Exceptions.NotEnoughMoneyException;
+import View.ShopView;
 
 import java.util.regex.Matcher;
 

@@ -1,6 +1,6 @@
-package main.java.View;
+package View;
 
-import main.java.Database.User;
+import Database.User;
 
 import java.util.List;
 

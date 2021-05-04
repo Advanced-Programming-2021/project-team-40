@@ -1,15 +1,15 @@
-package main.java.Controller.DuelController;
+package Controller.DuelController;
 
 
-import main.java.Controller.ProgramController.Regex;
-import main.java.Database.Cards.Card;
-import main.java.Gameplay.FieldArea;
-import main.java.Gameplay.Gameplay;
-import main.java.Gameplay.MonsterFieldArea;
-import main.java.Gameplay.Phase;
-import main.java.View.CardView;
-import main.java.View.Exceptions.*;
-import main.java.View.GraveyardView;
+import Controller.ProgramController.Regex;
+import Database.Cards.Card;
+import Gameplay.FieldArea;
+import Gameplay.Gameplay;
+import Gameplay.MonsterFieldArea;
+import Gameplay.Phase;
+import View.CardView;
+import View.Exceptions.*;
+import View.GraveyardView;
 
 import java.util.regex.Matcher;
 
@@ -29,6 +29,10 @@ public class GameplayController {
 
     public void setGameplay(Gameplay gameplay) {
         this.gameplay = gameplay;
+    }
+
+    public Gameplay getGameplay() {
+        return gameplay;
     }
 
     public void run(String command) {
@@ -199,7 +203,6 @@ public class GameplayController {
         if (monsterFieldArea == null) throw new MonsterZoneFullException();
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
         monsterFieldArea.putCard(gameplay.getSelectedField().getCard(), isAttack);
-        gameplay.setHasPlacedMonster(true);
         deselectCard();
     }
 

@@ -1,12 +1,12 @@
-package main.java.Controller.MenuController;
+package Controller.MenuController;
 
-import main.java.Controller.ProgramController.Regex;
-import main.java.Database.User;
-import main.java.View.Exceptions.*;
+import Controller.ProgramController.Regex;
+import Database.User;
+import View.Exceptions.*;
 
 import java.util.regex.Matcher;
 
-import main.java.Controller.ProgramController.ProgramController;
+import Controller.ProgramController.ProgramController;
 
 public class LoginController {
     private static LoginController loginController;

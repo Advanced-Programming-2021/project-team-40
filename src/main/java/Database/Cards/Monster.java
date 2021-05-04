@@ -1,4 +1,4 @@
-package main.java.Database.Cards;
+package Database.Cards;
 
 public class Monster extends Card {
 
@@ -84,8 +84,4 @@ public class Monster extends Card {
 
     }
 
-    @Override
-    public void printCard() {
-        System.out.println("PRINT MONSTER CARDS HERE");
-    }
 }

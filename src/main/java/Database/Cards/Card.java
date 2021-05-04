@@ -1,4 +1,4 @@
-package main.java.Database.Cards;
+package Database.Cards;
 
 import java.util.*;
 
@@ -57,5 +57,4 @@ abstract public class Card {
         return cardPrice;
     }
 
-    abstract public void printCard();
 }

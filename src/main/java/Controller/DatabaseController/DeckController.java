@@ -1,12 +1,12 @@
-package main.java.Controller.DatabaseController;
+package Controller.DatabaseController;
 
-import main.java.Database.Cards.Card;
-import main.java.Database.Deck;
-import main.java.Database.User;
-import main.java.View.Exceptions.DeckIsFullException;
-import main.java.View.Exceptions.InvalidCardNameException;
-import main.java.View.Exceptions.InvalidDeckNameException;
-import main.java.View.Exceptions.RepetitiveDeckNameException;
+import Database.Cards.Card;
+import Database.Deck;
+import Database.User;
+import View.Exceptions.DeckIsFullException;
+import View.Exceptions.InvalidCardNameException;
+import View.Exceptions.InvalidDeckNameException;
+import View.Exceptions.RepetitiveDeckNameException;
 
 import java.util.Collections;
 import java.util.regex.Matcher;

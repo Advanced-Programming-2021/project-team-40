@@ -1,4 +1,4 @@
-package main.java.Gameplay;
+package Gameplay;
 
 public enum Phase {
     DRAW_PHASE,

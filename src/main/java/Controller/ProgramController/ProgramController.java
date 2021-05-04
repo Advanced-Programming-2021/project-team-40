@@ -1,19 +1,26 @@
-package main.java.Controller.ProgramController;
+package Controller.ProgramController;
 
-import main.java.Controller.DuelController.GameplayController;
-import main.java.View.Menu.LoginMenu;
-import main.java.View.Menu.MainMenu;
-import main.java.View.Menu.DeckMenu;
-import main.java.View.Menu.ProfileMenu;
-import main.java.View.Menu.ShopMenu;
-import main.java.View.Menu.Scoreboard;
-import main.java.View.Menu.ImportExport;
+import Database.*;
+import View.UserView;
+import com.google.gson.*;
+import Controller.DuelController.GameplayController;
+import View.Menu.LoginMenu;
+import View.Menu.MainMenu;
+import View.Menu.DeckMenu;
+import View.Menu.ProfileMenu;
+import View.Menu.ShopMenu;
+import View.Menu.Scoreboard;
+import View.Menu.ImportExport;
+import Controller.MenuController.MenuNavigationController;
+import View.Exceptions.MenuNavigationNotPossibleException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
-import main.java.Controller.MenuController.MenuNavigationController;
-import main.java.View.Exceptions.MenuNavigationNotPossibleException;
 
 
 public class ProgramController {
@@ -76,7 +83,21 @@ public class ProgramController {
         }
     }
 
-    public void initializeDatabase() {
+    public void initializeDatabase()  {
+        File userDirectory = new File("./main/resources/Users");
+        for (File userFile : userDirectory.listFiles()){
+            try{
+                Scanner fileScanner = new Scanner(userFile);
+                String userJson = fileScanner.nextLine();
+                System.out.println(userJson);
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                Gson gson = gsonBuilder.create();
+                User tempUser = gson.fromJson(userJson, User.class);
+                new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname());
+            }catch (FileNotFoundException e){
+                System.out.println(e.getMessage());
+            }
+        }
 
     }
 }
