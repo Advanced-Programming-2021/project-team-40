@@ -58,7 +58,7 @@ public class DeckController {
 
     public void addCardToDeck(Card cardToAdd, String deck, Deck currentDeck) throws DeckIsFullException {
         switch (deck) {
-            case "main.java.Main":
+            case "Main":
                 if (mainIsFull(currentDeck)) throw new DeckIsFullException("main");
                 else currentDeck.getMainCards().add(cardToAdd);
                 break;
@@ -71,7 +71,7 @@ public class DeckController {
 
     public void removeCardFromDeck(Card cardToRemove, String deck, Deck currentDeck) throws DeckIsFullException {
         switch (deck) {
-            case "main.java.Main":
+            case "Main":
                 if (mainIsFull(currentDeck)) throw new DeckIsFullException("main");
                 else for (int i = 0; i < currentDeck.getMainCards().size(); i++) {
                     if (currentDeck.getMainCards().get(i).equals(cardToRemove)) {
