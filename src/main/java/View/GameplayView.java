@@ -30,13 +30,24 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.surrender).matches()) ;
         else if (Regex.getCommandMatcher(command, Regex.flipSummon).matches()) ;
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) ;
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
         else System.err.println("invalid command");
+    }
+
+    private void attack(Matcher matcher) {
+        String monsterId = matcher.group("monsterId");
+        try {
+            StringBuilder temp;
+            temp = GameplayController.getInstance().attack(monsterId);
+            System.out.println(temp);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     private void setPosition(Matcher matcher) {
