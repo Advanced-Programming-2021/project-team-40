@@ -11,6 +11,10 @@ public class Field {
     private ArrayList<Card> graveyard = new ArrayList<>();
     private FieldArea fieldZone;
 
+    public MonsterFieldArea[] getMonstersField() {
+        return monstersField;
+    }
+
     public MonsterFieldArea getMonstersFieldById(int id) {
         return monstersField[id];
     }

@@ -9,18 +9,29 @@ import java.util.regex.Matcher;
 public class GameplayView {
     private static GameplayView gameplayView;
     private boolean tributeMode;
+    private int tributeCount = 0;
     private boolean graveyardMode;
     private boolean ritualMode;
-    private GameplayView(){
+
+    private GameplayView() {
 
     }
-    public static GameplayView getInstance(){
+
+    public static GameplayView getInstance() {
         if (gameplayView == null) gameplayView = new GameplayView();
         return gameplayView;
     }
+
     public void run(String command) {
         Matcher matcher;
-        if ((matcher = Regex.getCommandMatcher(command, Regex.selectCard)).matches()) selectCard(matcher);
+        if (tributeMode) {
+        }
+        if (graveyardMode) {
+
+        }
+        if (ritualMode) {
+
+        } else if ((matcher = Regex.getCommandMatcher(command, Regex.selectCard)).matches()) selectCard(matcher);
         else if (Regex.getCommandMatcher(command, Regex.deselectCard).matches()) deselectCard();
         else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches())
             GameplayController.getInstance().goToNextPhase();
@@ -30,12 +41,13 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.summon).matches()) summon();
         else if (Regex.getCommandMatcher(command, Regex.set).matches()) set();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setPosition)).matches()) setPosition(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.surrender).matches()) GameplayController.getInstance().surrender();
+        else if (Regex.getCommandMatcher(command, Regex.surrender).matches())
+            GameplayController.getInstance().surrender();
         else if (Regex.getCommandMatcher(command, Regex.flipSummon).matches()) ;
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();
-        else if (Regex.getCommandMatcher(command,Regex.cancel).matches()) GameplayController.getInstance().cancelAction();
+        else if (Regex.getCommandMatcher(command, Regex.cancel).matches()) cancelAction();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
@@ -45,8 +57,9 @@ public class GameplayView {
 
     private void directAttack() {
         try {
-            GameplayController.getInstance().directAttack();
-        } catch (Exception e){
+            String message = GameplayController.getInstance().directAttack();
+            System.out.println(message);
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
     }
@@ -54,9 +67,8 @@ public class GameplayView {
     private void attack(Matcher matcher) {
         String monsterId = matcher.group("monsterId");
         try {
-            StringBuilder temp;
-            temp = GameplayController.getInstance().attack(monsterId);
-            System.out.println(temp);
+            StringBuilder message = GameplayController.getInstance().attack(monsterId);
+            System.out.println(message);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
@@ -67,7 +79,7 @@ public class GameplayView {
             boolean isAttack = matcher.group(1).matches("^attack$");
             GameplayController.getInstance().changePosition(isAttack);
             System.out.println("monster card position changed successfully");
-        } catch (NoCardIsSelectedException | InvalidChangePositionException | WrongPhaseException | AlreadyInPositionException | AlreadySetPositionException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -76,9 +88,8 @@ public class GameplayView {
         try {
             GameplayController.getInstance().putMonsterCard(false);
             System.out.println("set successfully");
-        } catch (NoCardIsSelectedException | AlreadySummonedException | InvalidSummonException | MonsterZoneFullException | WrongPhaseException e) {
-            System.out.println(e.getMessage());
-            ;
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
     }
 
@@ -86,7 +97,7 @@ public class GameplayView {
         try {
             GameplayController.getInstance().putMonsterCard(true);
             System.out.println("summoned successfully");
-        } catch (NoCardIsSelectedException | AlreadySummonedException | InvalidSummonException | MonsterZoneFullException | WrongPhaseException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -116,13 +127,33 @@ public class GameplayView {
         boolean isOpponent = true;
         if (matcher.group("oppo1") == null && matcher.group("oppo2") == null) isOpponent = false;
         try {
-            if (monsterId != null) GameplayController.getInstance().selectCard(monsterId,"monster",isOpponent);
-            else if (spellId != null) GameplayController.getInstance().selectCard(spellId,"spell",isOpponent);
-            else if (handId != null) GameplayController.getInstance().selectCard(handId,"hand",isOpponent);
-            else if (isField != null) GameplayController.getInstance().selectCard(isField,"fieldZone",isOpponent);
+            if (monsterId != null) GameplayController.getInstance().selectCard(monsterId, "monster", isOpponent);
+            else if (spellId != null) GameplayController.getInstance().selectCard(spellId, "spell", isOpponent);
+            else if (handId != null) GameplayController.getInstance().selectCard(handId, "hand", isOpponent);
+            else if (isField != null) GameplayController.getInstance().selectCard(isField, "fieldZone", isOpponent);
             System.out.println("card selected");
         } catch (InvalidCardSelectionException | NoCardFoundException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public void setTributeMode(boolean tributeMode) {
+        this.tributeMode = tributeMode;
+    }
+
+    public void setGraveyardMode(boolean graveyardMode) {
+        this.graveyardMode = graveyardMode;
+    }
+
+    public void setRitualMode(boolean ritualMode) {
+        this.ritualMode = ritualMode;
+    }
+
+    private void cancelAction() {
+
+    }
+
+    private void tributeSummon(Matcher matcher) {
+
     }
 }

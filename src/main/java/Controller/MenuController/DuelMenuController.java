@@ -37,6 +37,7 @@ public class DuelMenuController {
         GameplayController.getInstance().setGameplay(gameplay);
         GameplayController.getInstance().setStartingPlayer();
         GameplayController.getInstance().dealCardsAtBeginning();
+        System.out.println(GameplayController.getInstance().drawCard());
     }
 
     public void startAIGame(String roundCount) {
