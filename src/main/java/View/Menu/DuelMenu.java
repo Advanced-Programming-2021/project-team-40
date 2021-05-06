@@ -15,6 +15,16 @@ import java.util.regex.Matcher;
 public class DuelMenu implements Help {
     User currentUser;
 
+    private static DuelMenu duelMenu;
+    private DuelMenu(){
+
+    }
+
+    public static DuelMenu getInstance(){
+        if (duelMenu == null) duelMenu = new DuelMenu();
+        return duelMenu;
+    }
+
     public void run(String command) {
         Matcher matcher;
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();

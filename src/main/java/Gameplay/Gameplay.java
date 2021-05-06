@@ -2,20 +2,30 @@ package Gameplay;
 
 public class Gameplay {
     private Player playerOne;
+    public int playerOneWins = 0;
     private Player playerTwo;
+    public int playerTwoWins = 0;
     private Player currentPlayer;
     private Player opponentPlayer;
     private FieldArea selectedField;
     private Phase currentPhase;
     private int currentRound;
     private int rounds;
-    private Boolean ownsSelectedCard;
+    private boolean ownsSelectedCard;
     private boolean hasPlacedMonster;
 
     public Gameplay(Player playerOne, Player playerTwo, int rounds) {
         this.playerOne = playerOne;
         this.playerTwo = playerTwo;
         this.rounds = rounds;
+    }
+
+    public Player getPlayerOne() {
+        return playerOne;
+    }
+
+    public Player getPlayerTwo() {
+        return playerTwo;
     }
 
     public Player getCurrentPlayer() {
@@ -66,7 +76,7 @@ public class Gameplay {
         this.hasPlacedMonster = hasPlacedMonster;
     }
 
-    public Boolean isOwnsSelectedCard() {
+    public Boolean ownsSelectedCard() {
         return ownsSelectedCard;
     }
 

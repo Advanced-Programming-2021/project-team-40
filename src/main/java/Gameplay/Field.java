@@ -61,4 +61,12 @@ public class Field {
     public void setFieldZone(FieldArea fieldZone) {
         this.fieldZone = fieldZone;
     }
+
+    public void endTurnActions() {
+        for (MonsterFieldArea monsterFieldArea: monstersField) {
+            monsterFieldArea.setHasAttacked(false);
+            monsterFieldArea.setHasSwitchedMode(false);
+            if (monsterFieldArea.getTurnsLeftForEffect() > 0) monsterFieldArea.setTurnsLeftForEffect(monsterFieldArea.getTurnsLeftForEffect() - 1);
+        }
+    }
 }

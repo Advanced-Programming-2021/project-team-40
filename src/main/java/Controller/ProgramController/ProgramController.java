@@ -2,13 +2,7 @@ package Controller.ProgramController;
 
 import Controller.DatabaseController.DatabaseController;
 import View.GameplayView;
-import View.Menu.LoginMenu;
-import View.Menu.MainMenu;
-import View.Menu.DeckMenu;
-import View.Menu.ProfileMenu;
-import View.Menu.ShopMenu;
-import View.Menu.Scoreboard;
-import View.Menu.ImportExport;
+import View.Menu.*;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -24,6 +18,7 @@ public class ProgramController {
     public static DeckMenu deckMenu = new DeckMenu();
     public static ProfileMenu profileMenu = new ProfileMenu();
     public static ShopMenu shopMenu = ShopMenu.getInstance();
+    public static DuelMenu duelMenu = DuelMenu.getInstance();
     public static Scoreboard scoreboard = new Scoreboard();
     public static ImportExport importExport = new ImportExport();
     public Scanner sc = new Scanner(System.in);
@@ -37,7 +32,8 @@ public class ProgramController {
         while (currentMenu != Menu.EXIT) {
             String command = sc.nextLine();
             Matcher matcher;
-            if ((matcher = Regex.getCommandMatcher(command, Regex.menuNavigation)).matches()) {
+            if (command.matches(Regex.showCurrentMenu)) System.out.println(currentMenu.toString());
+            else if ((matcher = Regex.getCommandMatcher(command, Regex.menuNavigation)).matches()) {
                 try {
                     currentMenu = MenuNavigationController.getInstance().toLowerMenu(matcher, currentMenu);
                 } catch (MenuNavigationNotPossibleException e) {
@@ -65,7 +61,7 @@ public class ProgramController {
                         importExport.run(command);
                         break;
                     case DUEL_MENU:
-
+                        duelMenu.run(command);
                         break;
                     case SCOREBOARD_MENU:
                         scoreboard.run(command);
@@ -76,4 +72,7 @@ public class ProgramController {
         }
     }
 
+    public static Menu getCurrentMenu() {
+        return currentMenu;
+    }
 }
