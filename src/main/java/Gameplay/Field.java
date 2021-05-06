@@ -26,6 +26,13 @@ public class Field {
         return null;
     }
 
+    public SpellAndTrapFieldArea getFreeSpellFieldArea() {
+        for (int i = 0; i < 5; i++) {
+            if (spellAndTrapField[i].getCard() == null) return spellAndTrapField[i];
+        }
+        return null;
+    }
+
     public SpellAndTrapFieldArea getSpellAndTrapFieldById(int id) {
         return spellAndTrapField[id];
     }

@@ -43,16 +43,25 @@ public class GameplayView {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setPosition)).matches()) setPosition(matcher);
         else if (Regex.getCommandMatcher(command, Regex.surrender).matches())
             GameplayController.getInstance().surrender();
-        else if (Regex.getCommandMatcher(command, Regex.flipSummon).matches()) ;
+        else if (Regex.getCommandMatcher(command, Regex.flipSummon).matches()) flipSummon();
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();
-        else if (Regex.getCommandMatcher(command, Regex.cancel).matches()) cancelAction();
+        else if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) cancelAction();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
         else System.err.println("invalid command");
+    }
+
+    private void flipSummon() {
+        try {
+            GameplayController.getInstance().flipSummon();
+            System.out.println("flip summoned successfully");
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     private void directAttack() {
@@ -80,13 +89,13 @@ public class GameplayView {
             GameplayController.getInstance().changePosition(isAttack);
             System.out.println("monster card position changed successfully");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 
     private void set() {
         try {
-            GameplayController.getInstance().putMonsterCard(false);
+            GameplayController.getInstance().set();
             System.out.println("set successfully");
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -95,7 +104,7 @@ public class GameplayView {
 
     private void summon() {
         try {
-            GameplayController.getInstance().putMonsterCard(true);
+            GameplayController.getInstance().summon();
             System.out.println("summoned successfully");
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -132,7 +141,7 @@ public class GameplayView {
             else if (handId != null) GameplayController.getInstance().selectCard(handId, "hand", isOpponent);
             else if (isField != null) GameplayController.getInstance().selectCard(isField, "fieldZone", isOpponent);
             System.out.println("card selected");
-        } catch (InvalidCardSelectionException | NoCardFoundException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

@@ -3,9 +3,12 @@ package Controller.DuelController;
 
 import Database.Cards.Card;
 import Database.Cards.Monster;
+import Database.Cards.Spell;
+import Database.Cards.Trap;
 import Gameplay.FieldArea;
 import Gameplay.Gameplay;
 import Gameplay.MonsterFieldArea;
+import Gameplay.SpellAndTrapFieldArea;
 import Gameplay.HandFieldArea;
 import Gameplay.Phase;
 import Gameplay.Player;
@@ -95,7 +98,7 @@ public class GameplayController {
 
     }
 
-    public void selectCard(String idToCheck, String field, boolean isFromOpponent) throws InvalidCardSelectionException, NoCardFoundException {
+    public void selectCard(String idToCheck, String field, boolean isFromOpponent) throws Exception {
         FieldArea fieldArea;
         int id;
         switch (field) {
@@ -144,11 +147,30 @@ public class GameplayController {
         CardView.showCard(card);
     }
 
-    public void putMonsterCard(boolean isAttack) throws Exception {
-        //TODO: handle tribute summon and ritual summons
+    public void set() throws Exception {
         FieldArea fieldArea = gameplay.getSelectedField();
         if (fieldArea.getCard() == null) throw new NoCardIsSelectedException();
         if (!fieldArea.canBePutOnBoard() || !gameplay.isOwnsSelectedCard())
+            throw new InvalidSetException();
+        if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
+            throw new WrongPhaseException();
+        if (fieldArea.getCard() instanceof Monster) {
+            MonsterFieldArea m = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
+            if (m == null) throw new MonsterZoneFullException();
+            setMonsterCard(m, fieldArea);
+        }
+        if (fieldArea.getCard() instanceof Spell || fieldArea.getCard() instanceof Trap) {
+            SpellAndTrapFieldArea s = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
+            if (s == null) throw new SpellZoneFullException();
+            setSpellCard(s, fieldArea);
+        }
+        deselectCard();
+    }
+
+    public void summon() throws Exception {
+        FieldArea fieldArea = gameplay.getSelectedField();
+        if (fieldArea.getCard() == null) throw new NoCardIsSelectedException();
+        if (!(fieldArea.getCard() instanceof Monster) || !gameplay.isOwnsSelectedCard())
             throw new InvalidSummonException();
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseException();
@@ -163,29 +185,47 @@ public class GameplayController {
         if (cardLevel == 7 || cardLevel == 8) {
             if (getMonsterFieldCount() < 2) throw new NotEnoughCardsException();
             GameplayView.getInstance().setTributeMode(true);
-        } else normalSummonOrSet(isAttack, fieldArea, monsterFieldArea);
+
+        } else normalSummon(fieldArea, monsterFieldArea);
         deselectCard();
     }
 
-    private void normalSummonOrSet(boolean isAttack, FieldArea fieldArea, MonsterFieldArea monsterFieldArea) {
-        monsterFieldArea.putCard(fieldArea.getCard(), isAttack);
-        monsterFieldArea.setAttack(isAttack);
-        gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
-    }
-
-    public void tribute(ArrayList<Integer> toTributeIds) {
-
+    public void tributeSummon(ArrayList<String> toTributeIds) throws Exception {
+        for (String idToCheck : toTributeIds
+        ) {
+            if (isNumberInvalid(idToCheck)) throw new InvalidCardSelectionException();
+            int id = Integer.parseInt(idToCheck);
+            if (gameplay.getCurrentPlayer().getField().getMonstersFieldById(id) == null)
+                throw new InvalidCardAddressException();
+        }
+        for (String idToCheck : toTributeIds
+        ) {
+            int id = Integer.parseInt(idToCheck);
+            MonsterFieldArea m = gameplay.getCurrentPlayer().getField().getMonstersFieldById(id);
+            destroyMonsterCard(gameplay.getCurrentPlayer(), m);
+            m.putCard(gameplay.getSelectedField().getCard(), true);
+        }
+        MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
+        normalSummon(gameplay.getSelectedField(), monsterFieldArea);
     }
 
     public void ritualSummon() {
 
     }
 
-    public void flipSummon() {
+    public void flipSummon() throws Exception {
+        FieldArea fieldArea = gameplay.getSelectedField();
+        if (fieldArea.getCard() == null) throw new NoCardIsSelectedException();
+        if (!(fieldArea instanceof MonsterFieldArea) || !gameplay.isOwnsSelectedCard())
+            throw new InvalidChangePositionException();
+        if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
+            throw new WrongPhaseException();
+        //TODO: fix doesn't handle same round flip-summon error
+        if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.isVisible()) throw new InvalidFlipSummonException();
 
     }
 
-    public void changePosition(boolean isAttack) throws NoCardIsSelectedException, InvalidChangePositionException, WrongPhaseException, AlreadyInPositionException, AlreadySetPositionException {
+    public void changePosition(boolean isAttack) throws Exception {
         FieldArea fieldArea = gameplay.getSelectedField();
         if (fieldArea.getCard() == null) throw new NoCardIsSelectedException();
         if (!(fieldArea instanceof MonsterFieldArea) || !gameplay.isOwnsSelectedCard())
@@ -232,22 +272,23 @@ public class GameplayController {
 
     private StringBuilder calculateDamage(int attackingFieldId) {
         MonsterFieldArea attackingMonster = (MonsterFieldArea) gameplay.getSelectedField();
-        MonsterFieldArea defendingMonster = gameplay.getOpponentPlayer().getField().getMonstersFieldById(attackingFieldId);
+        MonsterFieldArea defendingMonster;
+        defendingMonster = gameplay.getOpponentPlayer().getField().getMonstersFieldById(attackingFieldId);
         if (defendingMonster.isAttack()) return calculateAttackVsAttackSituation(attackingMonster, defendingMonster);
         else return calculateAttackVsDefenceSituation(defendingMonster, attackingMonster);
     }
 
-    private StringBuilder calculateAttackVsDefenceSituation(MonsterFieldArea defendingMonster, MonsterFieldArea attackingMonster) {
+    private StringBuilder calculateAttackVsDefenceSituation(MonsterFieldArea defense, MonsterFieldArea attack) {
         StringBuilder message = new StringBuilder();
-        int attackMonsterPoint = attackingMonster.getAttackPoint();
-        int defenceMonsterPoint = defendingMonster.getDefensePoint();
+        int attackMonsterPoint = attack.getAttackPoint();
+        int defenceMonsterPoint = defense.getDefensePoint();
         int damage = attackMonsterPoint - defenceMonsterPoint;
-        if (!defendingMonster.isVisible()) {
-            message.append("opponent’s monster card was ").append(defendingMonster.getCard().getName()).append(" and ");
-            flipCard(defendingMonster);
+        if (!defense.isVisible()) {
+            message.append("opponent’s monster card was ").append(defense.getCard().getName()).append(" and ");
+            flipCard(defense);
         }
         if (damage > 0) {
-            destroyMonsterCard(gameplay.getOpponentPlayer(), defendingMonster);
+            destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
             message.append("the defense position monster is destroyed");
         }
         if (damage < 0) {
@@ -259,26 +300,27 @@ public class GameplayController {
         return message;
     }
 
-    private StringBuilder calculateAttackVsAttackSituation(MonsterFieldArea attackingMonster, MonsterFieldArea defendingMonster) {
+    private StringBuilder calculateAttackVsAttackSituation(MonsterFieldArea attack, MonsterFieldArea defense) {
         StringBuilder message = new StringBuilder();
-        int attackMonsterPoint = attackingMonster.getAttackPoint();
-        int defenceMonsterPoint = defendingMonster.getAttackPoint();
+        int attackMonsterPoint = attack.getAttackPoint();
+        int defenceMonsterPoint = defense.getAttackPoint();
         int damage = attackMonsterPoint - defenceMonsterPoint;
         if (damage > 0) {
-            destroyMonsterCard(gameplay.getOpponentPlayer(), defendingMonster);
+            destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
             int newLP = gameplay.getOpponentPlayer().getLifePoints() - damage;
             gameplay.getOpponentPlayer().setLifePoints(newLP);
-            message.append("your opponent’s monster is destroyed and your opponent receives").append(damage).append(" battle damage");
+            message.append("your opponent’s monster is destroyed and your opponent receives")
+                    .append(damage).append(" battle damage");
         }
         if (damage < 0) {
-            destroyMonsterCard(gameplay.getCurrentPlayer(), attackingMonster);
+            destroyMonsterCard(gameplay.getCurrentPlayer(), attack);
             int newLP = gameplay.getCurrentPlayer().getLifePoints() + damage;
             gameplay.getCurrentPlayer().setLifePoints(newLP);
             message.append("Your monster card is destroyed and you received ").append(-damage).append(" battle damage");
         }
         if (damage == 0) {
-            destroyMonsterCard(gameplay.getOpponentPlayer(), defendingMonster);
-            destroyMonsterCard(gameplay.getCurrentPlayer(), attackingMonster);
+            destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
+            destroyMonsterCard(gameplay.getCurrentPlayer(), attack);
             message.append("both you and your opponent monster cards are destroyed and no one receives damage");
         }
         return message;
@@ -305,6 +347,22 @@ public class GameplayController {
         player.getPlayingHand().add(handFieldArea);
         player.getPlayingDeck().getMainCards().remove(card);
         return card;
+    }
+
+    private void setMonsterCard(MonsterFieldArea m, FieldArea fieldArea) {
+        m.putCard(fieldArea.getCard(), false);
+        m.setAttack(false);
+        gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
+    }
+    private void setSpellCard(SpellAndTrapFieldArea s, FieldArea fieldArea) {
+        s.putCard(fieldArea.getCard(), false);
+        gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
+    }
+
+    private void normalSummon(FieldArea fieldArea, MonsterFieldArea monsterFieldArea) {
+        monsterFieldArea.putCard(fieldArea.getCard(), true);
+        monsterFieldArea.setAttack(true);
+        gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
     }
 
     private void checkWinningConditions() {

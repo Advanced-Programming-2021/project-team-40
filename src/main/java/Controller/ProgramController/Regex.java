@@ -74,7 +74,7 @@ public class Regex {
     public static String exportCard = "^export card (?<cardName>.+?)$";
     public static String back = "^back$";
     public static String help = "^help$";
-    public static String cancel = "^cancel$";
+    public static String cancelAction = "^cancel$";
 
     public static Matcher getCommandMatcher(String command, String regex) {
         Pattern pattern = Pattern.compile(regex);
