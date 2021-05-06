@@ -9,6 +9,7 @@ public class Scoreboard implements Help{
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
         else if (Regex.getCommandMatcher(command,Regex.showScoreboard).matches())
             ScoreboardController.getInstance().printSortedUsers();
+        else System.err.println("invalid command");
     }
 
     public void help() {

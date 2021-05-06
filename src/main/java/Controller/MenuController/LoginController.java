@@ -8,7 +8,6 @@ import Database.Deck;
 import View.Exceptions.*;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 
 import Controller.ProgramController.ProgramController;
 
@@ -33,8 +32,7 @@ public class LoginController {
     }
 
     public static boolean passwordIsWeak(String password){
-        if (password.matches(Regex.strongPassword)) return false;
-        return true;
+        return !password.matches(Regex.strongPassword);
     }
 
     public static void registerUser(String username,String password,String nickname) throws RepetitiveUsernameException, RepetitiveNicknameException, WeakPasswordException {

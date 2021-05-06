@@ -37,4 +37,20 @@ public class Deck {
     public void setName(String name) {
         this.name = name;
     }
+
+    public void setSideCards(ArrayList<Card> sideCards) {
+        this.sideCards = sideCards;
+    }
+
+    public void setMainCards(ArrayList<Card> mainCards) {
+        this.mainCards = mainCards;
+    }
+
+    @Override
+    public Object clone(){
+        Deck newDeck = new Deck(this.getName());
+        newDeck.setSideCards(this.getSideCards());
+        newDeck.setMainCards(this.getMainCards());
+        return newDeck;
+    }
 }

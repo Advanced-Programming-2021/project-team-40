@@ -30,7 +30,7 @@ public class DeckMenu implements Help{
         else if (Regex.getCommandMatcher(command, Regex.showAllDeck).matches()) userView.showUserDecks(currentUser);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.showOneDeck)).matches()) showOneDeck(matcher);
         else if (Regex.getCommandMatcher(command, Regex.showCards).matches()) userView.showUserCards(currentUser);
-        else System.out.println("invalid command");
+        else System.err.println("invalid command");
     }
 
     private void createDeck(Matcher matcher) {

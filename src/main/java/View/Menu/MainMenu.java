@@ -14,7 +14,7 @@ public class MainMenu implements Help{
         else if (Regex.getCommandMatcher(command, Regex.logout).matches()) {
             ProgramController.setCurrentMenu(MenuNavigationController.getInstance().logout());
             System.out.println("logout successful");
-        } else System.out.println("invalid command");
+        } else System.err.println("invalid command");
     }
 
     public void help() {

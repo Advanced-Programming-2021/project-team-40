@@ -1,15 +1,14 @@
 package Controller.DuelController;
 
 
-import Controller.ProgramController.Regex;
 import Database.Cards.Card;
 import Gameplay.FieldArea;
 import Gameplay.Gameplay;
 import Gameplay.MonsterFieldArea;
 import Gameplay.Phase;
+import Gameplay.Player;
 import View.CardView;
 import View.Exceptions.*;
-import View.GraveyardView;
 
 import java.util.regex.Matcher;
 
@@ -35,86 +34,7 @@ public class GameplayController {
         return gameplay;
     }
 
-    public void run(String command) {
-        Matcher matcher;
-        if ((matcher = Regex.getCommandMatcher(command, Regex.selectCard)).matches()) {
-            try {
-                selectCard(matcher);
-                System.out.println("card selected");
-            } catch (InvalidCardSelectionException | NoCardFoundException e) {
-                System.out.println(e.getMessage());
-            }
-        } else if (Regex.getCommandMatcher(command, Regex.deselectCard).matches()) {
-            try {
-                deselectCard();
-                System.out.println("card deselected");
-            } catch (NoCardIsSelectedException e) {
-                System.out.println(e.getMessage());
-            }
-        } else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches()) goToNextPhase();
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.showGraveyard)).matches())
-            GraveyardView.showGraveyard(gameplay.getCurrentPlayer().getField().getGraveyard());
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.showSelectedCard)).matches()) {
-            try {
-                showCard();
-            } catch (NoCardIsSelectedException e) {
-                System.out.println(e.getMessage());
-            }
-        } else if ((matcher = Regex.getCommandMatcher(command, Regex.summon)).matches()) {
-            try {
-                putMonsterCard(true);
-                System.out.println("summoned successfully");
-            } catch (NoCardIsSelectedException | AlreadySummonedException | InvalidSummonException | MonsterZoneFullException | WrongPhaseException e) {
-                System.out.println(e.getMessage());
-                ;
-            }
-        } else if ((matcher = Regex.getCommandMatcher(command, Regex.set)).matches()) {
-            try {
-                putMonsterCard(false);
-                System.out.println("set successfully");
-            } catch (NoCardIsSelectedException | AlreadySummonedException | InvalidSummonException | MonsterZoneFullException | WrongPhaseException e) {
-                System.out.println(e.getMessage());
-                ;
-            }
-        } else if ((matcher = Regex.getCommandMatcher(command, Regex.setPosition)).matches()) {
-            try {
-                boolean isAttack = matcher.group(1).matches("attack");
-                changePosition(isAttack);
-                System.out.println("monster card position changed successfully");
-            } catch (NoCardIsSelectedException | InvalidChangePositionException | WrongPhaseException | AlreadyInPositionException | AlreadySetPositionException e) {
-                System.out.println(e.getMessage());
-            }
-        } else if ((matcher = Regex.getCommandMatcher(command, Regex.surrender)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
-        else switch (gameplay.getCurrentPhase()) {
-                case DRAW_PHASE:
-
-                    break;
-                case STANDBY_PHASE:
-
-                    break;
-                case MAIN_PHASE_ONE:
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.flipSummon)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.activateEffect)).matches()) ;
-                    else System.out.println("invalid command");
-                    break;
-                case BATTLE_PHASE:
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.flipSummon)).matches()) ;
-                    if ((matcher = Regex.getCommandMatcher(command, Regex.directAttack)).matches()) ;
-                    else System.out.println("invalid command");
-                    break;
-                case MAIN_PHASE_TW0:
-                    break;
-                case END_PHASE:
-                    break;
-            }
-    }
-
-    private void goToNextPhase() {
+    public void goToNextPhase() {
         switch (gameplay.getCurrentPhase()) {
 
             case DRAW_PHASE -> {
@@ -144,7 +64,7 @@ public class GameplayController {
         }
     }
 
-    private void selectCard(Matcher matcher) throws InvalidCardSelectionException, NoCardFoundException {
+    public void selectCard(Matcher matcher) throws InvalidCardSelectionException, NoCardFoundException {
         FieldArea fieldArea;
         if (matcher.group("monsterId") != null) {
             String monsterId = matcher.group("monsterId");
@@ -173,14 +93,16 @@ public class GameplayController {
             if (fieldArea.getCard() == null) throw new NoCardFoundException();
             gameplay.setSelectedField(fieldArea);
         }
+        gameplay.setOwnsSelectedCard(matcher.group("oppo1") == null || matcher.group("oppo2") == null);
     }
 
-    private void deselectCard() throws NoCardIsSelectedException {
+    public void deselectCard() throws NoCardIsSelectedException {
         if (gameplay.getSelectedField().getCard() == null) throw new NoCardIsSelectedException();
         gameplay.setSelectedField(null);
+        gameplay.setOwnsSelectedCard(null);
     }
 
-    private void showCard() throws NoCardIsSelectedException {
+    public void showCard() throws NoCardIsSelectedException {
         Card card = gameplay.getSelectedField().getCard();
         if (card == null) throw new NoCardIsSelectedException();
         CardView.showCard(card);
@@ -194,9 +116,11 @@ public class GameplayController {
         return true;
     }
 
-    private void putMonsterCard(boolean isAttack) throws NoCardIsSelectedException, AlreadySummonedException, InvalidSummonException, MonsterZoneFullException, WrongPhaseException {
+    public void putMonsterCard(boolean isAttack) throws NoCardIsSelectedException, AlreadySummonedException, InvalidSummonException, MonsterZoneFullException, WrongPhaseException {
+        //TODO: handle tribute summon and ritual summons
         if (gameplay.getSelectedField().getCard() == null) throw new NoCardIsSelectedException();
-        if (!gameplay.getSelectedField().canBePutOnBoard()) throw new InvalidSummonException();
+        if (!gameplay.getSelectedField().canBePutOnBoard() || !gameplay.isOwnsSelectedCard())
+            throw new InvalidSummonException();
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseException();
         MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
@@ -206,14 +130,97 @@ public class GameplayController {
         deselectCard();
     }
 
-    private void changePosition(boolean isAttack) throws NoCardIsSelectedException, InvalidChangePositionException, WrongPhaseException, AlreadyInPositionException, AlreadySetPositionException {
+    public void changePosition(boolean isAttack) throws NoCardIsSelectedException, InvalidChangePositionException, WrongPhaseException, AlreadyInPositionException, AlreadySetPositionException {
         FieldArea fieldArea = gameplay.getSelectedField();
         if (fieldArea.getCard() == null) throw new NoCardIsSelectedException();
-        if (!(fieldArea instanceof MonsterFieldArea)) throw new InvalidChangePositionException();
+        if (!(fieldArea instanceof MonsterFieldArea) || !gameplay.isOwnsSelectedCard())
+            throw new InvalidChangePositionException();
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseException();
         if (((MonsterFieldArea) fieldArea).isAttack() == isAttack) throw new AlreadyInPositionException();
         if (((MonsterFieldArea) fieldArea).hasSwitchedMode()) throw new AlreadySetPositionException();
         ((MonsterFieldArea) fieldArea).changePosition();
+        deselectCard();
+    }
+
+    public StringBuilder attack(String number) throws Exception {
+        FieldArea fieldArea = gameplay.getSelectedField();
+        Player opponent = gameplay.getOpponentPlayer();
+        if (fieldArea == null) throw new NoCardIsSelectedException();
+        if (!(fieldArea instanceof MonsterFieldArea) || !gameplay.isOwnsSelectedCard())
+            throw new AttackNotPossibleException();
+        if (!GameplayController.getInstance().getGameplay().getCurrentPhase().equals(Phase.BATTLE_PHASE))
+            throw new WrongPhaseException();
+        if (((MonsterFieldArea) fieldArea).hasAttacked()) throw new AlreadyAttackedException();
+        if (isNumberInvalid(number)) throw new InvalidCardSelectionException();
+        int id = Integer.parseInt(number);
+        if (opponent.getField().getMonstersFieldById(id) == null) throw new NoCardToAttackException();
+        return calculateDamage(id);
+    }
+
+    private StringBuilder calculateDamage(int attackingFieldId) {
+        MonsterFieldArea attackingMonster = (MonsterFieldArea) gameplay.getSelectedField();
+        MonsterFieldArea defendingMonster = gameplay.getOpponentPlayer().getField().getMonstersFieldById(attackingFieldId);
+        int attackMonsterPoint = attackingMonster.getAttackPoint();
+        if (defendingMonster.isAttack())
+            return calculateAttackVsAttackSituation(attackingMonster, defendingMonster, attackMonsterPoint);
+        else return calculateAttackVsDefenceSituation(defendingMonster, attackMonsterPoint);
+    }
+
+    private StringBuilder calculateAttackVsDefenceSituation(MonsterFieldArea defendingMonster, int attackMonsterPoint) {
+        StringBuilder message = new StringBuilder();
+        int damage;
+        int defenceMonsterPoint;
+        defenceMonsterPoint = defendingMonster.getDefensePoint();
+        if (!defendingMonster.isVisible()) {
+            message.append("opponent’s monster card was ").append(defendingMonster.getCard().getName()).append(" and ");
+            defendingMonster.setVisibility(true);
+        }
+        if (defenceMonsterPoint < attackMonsterPoint) {
+            destroyMonsterCard(gameplay.getOpponentPlayer(), defendingMonster);
+            message.append("the defense position monster is destroyed");
+        }
+        if (defenceMonsterPoint > attackMonsterPoint) {
+            damage = defenceMonsterPoint - attackMonsterPoint;
+            int newLP = gameplay.getCurrentPlayer().getLifePoints() - damage;
+            if (newLP <= 0) ;//TODO: finish game
+            gameplay.getCurrentPlayer().setLifePoints(newLP);
+            message.append("no card is destroyed and you received ").append(damage).append(" battle damage");
+        }
+        if (defenceMonsterPoint == attackMonsterPoint) message.append("no card is destroyed");
+        return message;
+    }
+
+    private StringBuilder calculateAttackVsAttackSituation(MonsterFieldArea attackingMonster, MonsterFieldArea defendingMonster, int attackMonsterPoint) {
+        StringBuilder message = new StringBuilder();
+        int damage;
+        int defenceMonsterPoint;
+        defenceMonsterPoint = defendingMonster.getAttackPoint();
+        if (defenceMonsterPoint < attackMonsterPoint) {
+            damage = defenceMonsterPoint - attackMonsterPoint;
+            destroyMonsterCard(gameplay.getOpponentPlayer(), defendingMonster);
+            int newLP = gameplay.getOpponentPlayer().getLifePoints() - damage;
+            if (newLP <= 0) ;//TODO: finish game
+            gameplay.getOpponentPlayer().setLifePoints(newLP);
+            message.append("your opponent’s monster is destroyed and your opponent receives").append(damage).append(" battle damage");
+        }
+        if (defenceMonsterPoint > attackMonsterPoint) {
+            damage = attackMonsterPoint - defenceMonsterPoint;
+            destroyMonsterCard(gameplay.getCurrentPlayer(), attackingMonster);
+            int newLP = gameplay.getCurrentPlayer().getLifePoints() - damage;
+            if (newLP <= 0) ;//TODO: finish game
+            gameplay.getCurrentPlayer().setLifePoints(newLP);
+            message.append("Your monster card is destroyed and you received ").append(damage).append(" battle damage");
+        }
+        if (defenceMonsterPoint == attackMonsterPoint) {
+            destroyMonsterCard(gameplay.getOpponentPlayer(), defendingMonster);
+            destroyMonsterCard(gameplay.getCurrentPlayer(), attackingMonster);
+            message.append("both you and your opponent monster cards are destroyed and no one receives damage");
+        }
+        return message;
+    }
+
+    private void destroyMonsterCard(Player player, MonsterFieldArea monster) {
+        //TODO: complete destroy card
     }
 }

@@ -9,6 +9,7 @@ public class Gameplay {
     private Phase currentPhase;
     private int currentRound;
     private int rounds;
+    private Boolean ownsSelectedCard;
     private boolean hasPlacedMonster;
 
     public Gameplay(Player playerOne, Player playerTwo, int rounds) {
@@ -63,5 +64,13 @@ public class Gameplay {
 
     public void setHasPlacedMonster(boolean hasPlacedMonster) {
         this.hasPlacedMonster = hasPlacedMonster;
+    }
+
+    public Boolean isOwnsSelectedCard() {
+        return ownsSelectedCard;
+    }
+
+    public void setOwnsSelectedCard(Boolean ownsSelectedCard) {
+        this.ownsSelectedCard = ownsSelectedCard;
     }
 }

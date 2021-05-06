@@ -18,7 +18,7 @@ public class ProfileMenu implements Help{
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.changeNickname)).matches()) changeNickname(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.changePassword)).matches()) changePassword(matcher);
-        else System.out.println("invalid command");
+        else System.err.println("invalid command");
     }
 
     public void help() {

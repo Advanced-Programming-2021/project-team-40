@@ -29,7 +29,7 @@ public class ShopMenu implements Help{
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.shopBuy)).matches()) buy(matcher);
         else if (Regex.getCommandMatcher(command, Regex.shopShowAll).matches()) shopView.showAll();
-        else System.out.println("invalid command");
+        else System.err.println("invalid command");
     }
 
     public void help() {
