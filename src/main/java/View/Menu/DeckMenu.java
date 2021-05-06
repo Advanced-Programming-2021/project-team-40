@@ -14,7 +14,7 @@ import View.UserView;
 
 import java.util.regex.Matcher;
 
-public class DeckMenu {
+public class DeckMenu implements Help{
     private User currentUser;
     private final DeckView deckView = new DeckView();
     private final UserView userView = new UserView();
@@ -110,6 +110,7 @@ public class DeckMenu {
         System.out.println("deck show --all");
         System.out.println("deck show --deck-name <deck name> --side(Opt)");
         System.out.println("deck show --cards");
+        System.out.println("help");
     }
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;

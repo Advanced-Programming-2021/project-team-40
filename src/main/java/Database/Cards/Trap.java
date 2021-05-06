@@ -1,7 +1,16 @@
 package Database.Cards;
 
+import java.util.ArrayList;
+
 public class Trap extends SpellAndTrap{
-    public Trap(Icon icon, String name, String description, int cardPrice) {
-        super(icon, name, description, cardPrice);
+    private static ArrayList<Trap> traps = new ArrayList<>();
+
+    public Trap(String name, Icon icon, String description, boolean isLimited, int cardPrice) {
+        super(name, icon, description, isLimited, cardPrice);
+        traps.add(this);
+    }
+
+    public static ArrayList<Trap> getTraps() {
+        return traps;
     }
 }

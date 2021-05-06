@@ -12,17 +12,15 @@ public class User {
     private int score;
     private int balance;
     private ArrayList<Deck> decks = new ArrayList<>();
-    private Deck activeDeck;
     private ArrayList<Card> inactiveCards = new ArrayList<>();
 
-    public User(String username, String password, String nickname, int score, int balance, ArrayList<Deck> decks, Deck activeDeck, ArrayList<Card> inactiveCards){
+    public User(String username, String password, String nickname, int score, int balance, ArrayList<Deck> decks, ArrayList<Card> inactiveCards){
         setUsername(username);
         setPassword(password);
         setNickname(nickname);
         setScore(score);
         setBalance(balance);
         setDecks(decks);
-        setActiveDeck(activeDeck);
         this.inactiveCards = inactiveCards;
         users.add(this);
     }
@@ -115,11 +113,18 @@ public class User {
     }
 
     public Deck getActiveDeck() {
-        return activeDeck;
+        for (Deck deck: decks) {
+            if (deck.isActive()) return deck;
+        }
+        return null;
+    }
+
+    public void inactivateDeck(){
+        getActiveDeck().setActive(false);
     }
 
     public void setActiveDeck(Deck activeDeck) {
-        this.activeDeck = activeDeck;
+        activeDeck.setActive(true);
     }
 
     public void setDecks(ArrayList<Deck> decks){

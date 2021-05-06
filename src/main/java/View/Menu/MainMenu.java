@@ -6,7 +6,7 @@ import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
 import Database.User;
 
-public class MainMenu {
+public class MainMenu implements Help{
     public User currentUser;
 
     public void run(String command) {
@@ -17,7 +17,7 @@ public class MainMenu {
         } else System.err.println("invalid command");
     }
 
-    private void help() {
+    public void help() {
         System.out.println("menu enter <menu name>");
         System.out.println("menu exit");
         System.out.println("menu show-current");

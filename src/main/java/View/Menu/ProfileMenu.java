@@ -10,7 +10,7 @@ import View.Exceptions.RepetitivePasswordException;
 
 import java.util.regex.Matcher;
 
-public class ProfileMenu {
+public class ProfileMenu implements Help{
     User currentUser;
 
     public void run(String command) {
@@ -21,7 +21,7 @@ public class ProfileMenu {
         else System.err.println("invalid command");
     }
 
-    private void help() {
+    public void help() {
         System.out.println("menu exit");
         System.out.println("menu show-current");
         System.out.println("profile change --nickname <nickname>");

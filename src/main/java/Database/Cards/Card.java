@@ -4,8 +4,6 @@ import java.util.*;
 
 abstract public class Card {
 
-
-    protected static ArrayList<Card> allCards = new ArrayList<>();
     protected String name;
     protected String description;
     protected int cardPrice = 0;
@@ -17,7 +15,7 @@ abstract public class Card {
     }
 
     public static Card getCardByName(String name) {
-        for (Card card : allCards) {
+        for (Card card : getAllCards()) {
             if (card.name.matches(name)) return card;
         }
         return null;
@@ -48,6 +46,10 @@ abstract public class Card {
     }
 
     public static ArrayList<Card> getAllCards() {
+        ArrayList<Card> allCards = new ArrayList<>();
+        allCards.addAll(Monster.getMonsters());
+        allCards.addAll(Trap.getTraps());
+        allCards.addAll(Spell.getSpells());
         return allCards;
     }
 }

@@ -23,7 +23,7 @@ public class ProgramController {
     public static MainMenu mainMenu = new MainMenu();
     public static DeckMenu deckMenu = new DeckMenu();
     public static ProfileMenu profileMenu = new ProfileMenu();
-    public static ShopMenu shopMenu = new ShopMenu();
+    public static ShopMenu shopMenu = ShopMenu.getInstance();
     public static Scoreboard scoreboard = new Scoreboard();
     public static ImportExport importExport = new ImportExport();
     public Scanner sc = new Scanner(System.in);

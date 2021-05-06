@@ -2,11 +2,13 @@ package Controller.DatabaseController;
 
 import Database.Cards.*;
 import Database.User;
+import View.ShopView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opencsv.*;
 
 import java.io.*;
+import java.security.PrivateKey;
 import java.util.Scanner;
 
 public class DatabaseController {
@@ -26,6 +28,7 @@ public class DatabaseController {
     private void initialize(){
         initializeUsers();
         initializeMonsterCards();
+        initializeSpellAndTrapCards();
     }
 
     public void saveUser(User user){
@@ -45,6 +48,28 @@ public class DatabaseController {
 
     }
 
+    public void initializeSpellAndTrapCards(){
+        try{
+            File spellAndTrapCards = new File("./src/main/resources/Cards/SpellTrap.csv");
+            FileReader fileReader= new FileReader(spellAndTrapCards);
+            CSVReader csvReader = new CSVReader(fileReader);
+            csvReader.readNext();
+            String[] cardDetails;
+            while ((cardDetails = csvReader.readNext()) != null){
+                switch (cardDetails[1]){
+                    case "Trap":
+                        new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
+                        break;
+                    case "Spell":
+                        new Spell(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
+
+                }
+            }
+        }catch (IOException e){
+            System.err.println(e.getMessage());
+        }
+    }
+
     private void initializeMonsterCards(){
         try{
             File monsterCards = new File("./src/main/resources/Cards/Monster.csv");
@@ -59,6 +84,19 @@ public class DatabaseController {
         }catch (IOException e){
             System.err.println(e.getMessage());
         }
+    }
+
+    private boolean isLimited(String string){
+        if (string.matches("Limited")) return true;
+        return false;
+    }
+
+    private Icon getIcon(String name){
+        name = name.toUpperCase();
+        for (int i = 0; i < Icon.values().length; i++) {
+            if (name.matches(Icon.values()[i].toString())) return Icon.values()[i];
+        }
+        return null;
     }
 
     private Attribute getAttribute(String name){
@@ -87,22 +125,19 @@ public class DatabaseController {
 
     private void initializeUsers(){
         File userDirectory = new File("./src/main/resources/Users");
-        try {
-            for (File userFile : userDirectory.listFiles()){
-                try{
-                    Scanner fileScanner = new Scanner(userFile);
-                    String userJson = fileScanner.nextLine();
-                    GsonBuilder gsonBuilder = new GsonBuilder();
-                    Gson gson = gsonBuilder.create();
-                    User tempUser = gson.fromJson(userJson, User.class);
-                    new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getScore(),
-                            tempUser.getBalance(), tempUser.getDecks(), tempUser.getActiveDeck(), tempUser.getInactiveCards());
-                }catch (FileNotFoundException e){
-                    System.out.println(e.getMessage());
-                }
+        if (userDirectory.listFiles() == null) return;
+        for (File userFile : userDirectory.listFiles()){
+            try{
+                Scanner fileScanner = new Scanner(userFile);
+                String userJson = fileScanner.nextLine();
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                Gson gson = gsonBuilder.create();
+                User tempUser = gson.fromJson(userJson, User.class);
+                new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getScore(),
+                        tempUser.getBalance(), tempUser.getDecks(), tempUser.getInactiveCards());
+            }catch (FileNotFoundException e){
+                System.out.println(e.getMessage());
             }
-        } catch (NullPointerException e){
-            System.out.println(e.getMessage());
         }
     }
 }
