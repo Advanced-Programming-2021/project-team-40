@@ -11,7 +11,7 @@ import View.Exceptions.WeakPasswordException;
 
 import java.util.regex.Matcher;
 
-public class LoginMenu {
+public class LoginMenu implements Help{
     public void run(String command) {
         Matcher matcher;
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
@@ -20,10 +20,10 @@ public class LoginMenu {
         else System.out.println("invalid command");
     }
 
-    private void help() {
+    public void help() {
         System.out.println("menu exit");
         System.out.println("menu show-current");
-        System.out.println("user login --username <username> --password <password>");
+        System.out.println("user create --username <username> --password <password> --nickname <nickname>");
         System.out.println("user login --password <password> --username <username>");
     }
 

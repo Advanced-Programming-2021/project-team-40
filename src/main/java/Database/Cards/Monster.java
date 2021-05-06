@@ -1,5 +1,7 @@
 package Database.Cards;
 
+import java.util.ArrayList;
+
 public class Monster extends Card {
 
     private Attribute attribute;
@@ -8,6 +10,7 @@ public class Monster extends Card {
     private int level;
     private int attackPoints;
     private int defensePoints;
+    private static ArrayList<Monster> monsters = new ArrayList<>();
 
     public Monster(String name, int level, Attribute attribute, MonsterType monsterType, CardType cardType,
                    int attackPoints, int defensePoints,
@@ -19,7 +22,11 @@ public class Monster extends Card {
         setLevel(level);
         setAttackPoints(attackPoints);
         setDefensePoints(defensePoints);
-        allCards.add(this);
+        monsters.add(this);
+    }
+
+    public static ArrayList<Monster> getMonsters() {
+        return monsters;
     }
 
     public void setAttribute(Attribute attribute) {

@@ -10,9 +10,19 @@ import View.ShopView;
 
 import java.util.regex.Matcher;
 
-public class ShopMenu {
+public class ShopMenu implements Help{
     User currentUser;
-    private final ShopView shopView = new ShopView();
+    private ShopView shopView;
+    private static ShopMenu shopMenu;
+    private ShopMenu(){
+        shopView = ShopView.getInstance();
+    }
+
+    public static ShopMenu getInstance(){
+        if (shopMenu == null)
+            shopMenu = new ShopMenu();
+        return shopMenu;
+    }
 
     public void run(String command) {
         Matcher matcher;
@@ -22,7 +32,7 @@ public class ShopMenu {
         else System.out.println("invalid command");
     }
 
-    private void help() {
+    public void help() {
         System.out.println("menu exit");
         System.out.println("menu show-current");
         System.out.println("shop buy <card name>");

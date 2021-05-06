@@ -12,7 +12,7 @@ import View.Exceptions.UserNotFoundException;
 
 import java.util.regex.Matcher;
 
-public class DuelMenu {
+public class DuelMenu implements Help {
     User currentUser;
 
     public void run(String command) {
@@ -23,7 +23,7 @@ public class DuelMenu {
         else System.out.println("invalid command");
     }
 
-    private void help() {
+    public void help() {
         System.out.println("menu exit");
         System.out.println("menu show-current");
         System.out.println("duel --new --second-player <player2 username> --rounds <1/3>");

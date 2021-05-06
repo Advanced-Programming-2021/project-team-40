@@ -3,11 +3,12 @@ package Database.Cards;
 abstract public class SpellAndTrap extends Card{
 
     protected Icon icon;
+    protected boolean isLimited;
 
-    public SpellAndTrap(Icon icon, String name, String description, int cardPrice){
+    public SpellAndTrap(String name, Icon icon, String description, boolean isLimited, int cardPrice){
         super(name, description, cardPrice);
         setIcon(icon);
-        allCards.add(this);
+        setLimited(isLimited);
     }
 
     public void setIcon(Icon icon) {
@@ -16,6 +17,14 @@ abstract public class SpellAndTrap extends Card{
 
     public Icon getIcon() {
         return icon;
+    }
+
+    public void setLimited(boolean limited) {
+        isLimited = limited;
+    }
+
+    public boolean isLimited() {
+        return isLimited;
     }
 
     public void activateSpellOrTrap(){

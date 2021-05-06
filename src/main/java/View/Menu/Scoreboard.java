@@ -3,7 +3,7 @@ package View.Menu;
 import Controller.MenuController.ScoreboardController;
 import Controller.ProgramController.Regex;
 
-public class Scoreboard {
+public class Scoreboard implements Help{
 
     public void run(String command){
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
@@ -11,7 +11,7 @@ public class Scoreboard {
             ScoreboardController.getInstance().printSortedUsers();
     }
 
-    private void help() {
+    public void help() {
         System.out.println("menu exit");
         System.out.println("menu show-current");
         System.out.println("show scoreboard");
