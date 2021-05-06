@@ -2,10 +2,12 @@ package Gameplay;
 
 
 import Controller.DatabaseController.DeckController;
+import Database.Cards.Card;
 import Database.Deck;
 import Database.User;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Player {
     private User user;
@@ -16,7 +18,7 @@ public class Player {
     public Player(User user){
         this.user = user;
         playingDeck = (Deck) user.getActiveDeck().clone();
-        DeckController.getInstance().shuffleDeck(user.getActiveDeck());
+        DeckController.getInstance().shuffleDeck(playingDeck);
     }
 
     public User getUser() {

@@ -8,6 +8,9 @@ import java.util.regex.Matcher;
 
 public class GameplayView {
     private static GameplayView gameplayView;
+    private boolean tributeMode;
+    private boolean graveyardMode;
+    private boolean ritualMode;
     private GameplayView(){
 
     }
@@ -27,16 +30,25 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.summon).matches()) summon();
         else if (Regex.getCommandMatcher(command, Regex.set).matches()) set();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setPosition)).matches()) setPosition(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.surrender).matches()) ;
+        else if (Regex.getCommandMatcher(command, Regex.surrender).matches()) GameplayController.getInstance().surrender();
         else if (Regex.getCommandMatcher(command, Regex.flipSummon).matches()) ;
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) ;
+        else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();
+        else if (Regex.getCommandMatcher(command,Regex.cancel).matches()) GameplayController.getInstance().cancelAction();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
         else System.err.println("invalid command");
+    }
+
+    private void directAttack() {
+        try {
+            GameplayController.getInstance().directAttack();
+        } catch (Exception e){
+            System.err.println(e.getMessage());
+        }
     }
 
     private void attack(Matcher matcher) {
@@ -97,8 +109,17 @@ public class GameplayView {
     }
 
     private void selectCard(Matcher matcher) {
+        String monsterId = matcher.group("monsterId");
+        String spellId = matcher.group("handId");
+        String handId = matcher.group("handId");
+        String isField = matcher.group("isField");
+        boolean isOpponent = true;
+        if (matcher.group("oppo1") == null && matcher.group("oppo2") == null) isOpponent = false;
         try {
-            GameplayController.getInstance().selectCard(matcher);
+            if (monsterId != null) GameplayController.getInstance().selectCard(monsterId,"monster",isOpponent);
+            else if (spellId != null) GameplayController.getInstance().selectCard(spellId,"spell",isOpponent);
+            else if (handId != null) GameplayController.getInstance().selectCard(handId,"hand",isOpponent);
+            else if (isField != null) GameplayController.getInstance().selectCard(isField,"fieldZone",isOpponent);
             System.out.println("card selected");
         } catch (InvalidCardSelectionException | NoCardFoundException e) {
             System.out.println(e.getMessage());

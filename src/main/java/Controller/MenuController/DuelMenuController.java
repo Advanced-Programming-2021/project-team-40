@@ -32,9 +32,11 @@ public class DuelMenuController {
         if (DeckController.getInstance().isDeckInvalid(currentUser.getActiveDeck())) throw new InvalidDeckException(currentUser.getUsername());
         if (DeckController.getInstance().isDeckInvalid(userTwo.getActiveDeck())) throw new InvalidDeckException(playerTwoUsername);
         if (!isRoundSupported(roundCount)) throw new InvalidRoundNumberException();
+        ProgramController.setCurrentMenu(Menu.GAMEPLAY);
         Gameplay gameplay = new Gameplay(new Player(currentUser),new Player(userTwo),Integer.parseInt(roundCount));
         GameplayController.getInstance().setGameplay(gameplay);
-        ProgramController.setCurrentMenu(Menu.GAMEPLAY);
+        GameplayController.getInstance().setStartingPlayer();
+        GameplayController.getInstance().dealCardsAtBeginning();
     }
 
     public void startAIGame(String roundCount) {
