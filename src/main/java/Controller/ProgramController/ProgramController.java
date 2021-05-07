@@ -30,6 +30,8 @@ public class ProgramController {
     public void run() {
         DatabaseController.getInstance();
         while (currentMenu != Menu.EXIT) {
+            System.out.flush();
+            System.err.flush();
             String command = sc.nextLine();
             Matcher matcher;
             if (command.matches(Regex.showCurrentMenu)) System.out.println(currentMenu.toString());

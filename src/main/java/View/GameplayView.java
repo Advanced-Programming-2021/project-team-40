@@ -28,7 +28,7 @@ public class GameplayView {
     public void run(String command) {
         Matcher matcher;
         if (isFirstOfGame) GameplayController.getInstance().doPhaseAction();
-        else if (oneTributeSetMode) {
+        if (oneTributeSetMode) {
             if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) {
                 oneTributeSetMode = false;
                 System.out.println("tribute cancelled");
