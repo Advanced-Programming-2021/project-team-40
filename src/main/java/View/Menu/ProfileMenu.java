@@ -13,7 +13,17 @@ import View.Exceptions.RepetitivePasswordException;
 import java.util.regex.Matcher;
 
 public class ProfileMenu implements Help{
+    private static ProfileMenu profileMenu;
     User currentUser;
+
+    private ProfileMenu(){
+
+    }
+
+    public static ProfileMenu getInstance(){
+        if (profileMenu == null) profileMenu = new ProfileMenu();
+        return profileMenu;
+    }
 
     public void run(String command) {
         Matcher matcher;

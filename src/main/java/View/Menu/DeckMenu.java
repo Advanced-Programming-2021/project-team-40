@@ -5,33 +5,56 @@ import Controller.DatabaseController.DeckController;
 import Controller.MenuController.MenuNavigationController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
+import Database.Cards.Card;
 import Database.Deck;
 import Database.User;
+import View.CardView;
 import View.DeckView;
 import View.Exceptions.*;
 import View.UserView;
 
 import java.util.regex.Matcher;
 
-public class DeckMenu implements Help{
+public class DeckMenu implements Help {
+    private static DeckMenu deckMenu;
+
     private User currentUser;
-    private final DeckView deckView = new DeckView();
-    private final UserView userView = new UserView();
+    private DeckView deckView = new DeckView();
+    private DeckMenu() {
+
+    }
+
+    public static DeckMenu getInstance() {
+        if (deckMenu == null) deckMenu = new DeckMenu();
+        return deckMenu;
+    }
 
     public void run(String command) {
         Matcher matcher;
-        if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
+        if (Regex.getCommandMatcher(command, Regex.help).matches()) help();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.createDeck)).matches()) createDeck(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.deleteDeck)).matches()) deleteDeck(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.activateDeck)).matches()) activateDeck(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToDeck)).matches()) addCard(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.removeCardFromDeck)).matches()) removeCard(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.showAllDeck).matches()) userView.showUserDecks(currentUser);
+        else if (Regex.getCommandMatcher(command, Regex.showAllDeck).matches()) DeckView.showAllDecks(currentUser);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.showOneDeck)).matches()) showOneDeck(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.showCards).matches()) userView.showUserCards(currentUser);
-        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
+        else if (Regex.getCommandMatcher(command, Regex.showCards).matches()) UserView.showAllCards(currentUser);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.showCardByName)).matches()) showACard(matcher);
+        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches()) {
             MenuNavigationController.getInstance().toUpperMenu(Menu.DECK_MENU);
-        else System.err.println("invalid command");
+        } else System.err.println("invalid command");
+    }
+
+    private void showACard(Matcher matcher) {
+        String name = matcher.group("cardName");
+        try {
+            Card card;
+            if ((card = Card.getCardByName(name)) == null) throw new InvalidCardNameException(name);
+            CardView.showCard(card);
+        } catch (InvalidCardNameException e){
+            System.err.println(e.getMessage());
+        }
     }
 
     private void createDeck(Matcher matcher) {
@@ -93,13 +116,15 @@ public class DeckMenu implements Help{
     public void showOneDeck(Matcher matcher) {
         String deckName = matcher.group("deckName");
         Deck deck;
+        boolean isSide = (matcher.group("isSide") != null);
         if ((deck = currentUser.getDeckByName(deckName)) == null) try {
             throw new InvalidDeckNameException(deckName);
         } catch (InvalidDeckNameException e) {
             System.err.println(e.getMessage());
         }
-        else deckView.showDetailedDeck(deck);
+        else deckView.showDetailedDeck(deck, isSide);
     }
+
     public void help() {
         System.out.println("deck create <deck name>");
         System.out.println("deck delete <deck name>");
@@ -113,6 +138,7 @@ public class DeckMenu implements Help{
         System.out.println("help");
         System.out.println("menu exit");
     }
+
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
     }

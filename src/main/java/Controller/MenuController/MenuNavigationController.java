@@ -66,7 +66,7 @@ public class MenuNavigationController {
         profileMenu.setCurrentUser(null);
         shopMenu.setCurrentUser(null);
         mainMenu.setCurrentUser(null);
-        //TODO complete list
+        //TODO complete list and add to login as well
     }
 
     public Menu login(User currentUser) {

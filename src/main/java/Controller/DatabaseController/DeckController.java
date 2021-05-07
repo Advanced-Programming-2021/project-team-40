@@ -110,9 +110,14 @@ public class DeckController {
         return currentDeck.getSideCards().size() >= 15;
     }
 
-    public boolean isDeckInvalid(Deck activeDeck) {
-        int mainCount = activeDeck.getMainCards().size();
-        int sideCount = activeDeck.getSideCards().size();
-        return mainCount < 40 || mainCount > 60 || sideCount > 15;
+    public boolean isDeckInvalid(Deck deck) {
+        int mainCount = deck.getMainCards().size();
+        int sideCount = deck.getSideCards().size();
+        return mainCount < 40;
+    }
+
+    public String deckValidityString(Deck deck) {
+        if (isDeckInvalid(deck)) return "Invalid";
+        return "Valid";
     }
 }

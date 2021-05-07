@@ -14,14 +14,14 @@ import View.Exceptions.MenuNavigationNotPossibleException;
 public class ProgramController {
     private static ProgramController programController;
     private static Menu currentMenu = Menu.LOGIN_MENU;
-    public static LoginMenu loginMenu = new LoginMenu();
-    public static MainMenu mainMenu = new MainMenu();
-    public static DeckMenu deckMenu = new DeckMenu();
-    public static ProfileMenu profileMenu = new ProfileMenu();
+    public static LoginMenu loginMenu = LoginMenu.getInstance();
+    public static MainMenu mainMenu = MainMenu.getInstance();
+    public static DeckMenu deckMenu = DeckMenu.getInstance();
+    public static ProfileMenu profileMenu = ProfileMenu.getInstance();
     public static ShopMenu shopMenu = ShopMenu.getInstance();
     public static DuelMenu duelMenu = DuelMenu.getInstance();
     public static ScoreboardMenu scoreboardMenu = new ScoreboardMenu();
-    public static ImportExport importExport = new ImportExport();
+    public static ImportExport importExport = ImportExport.getInstance();
     public Scanner sc = new Scanner(System.in);
 
     private ProgramController(){
@@ -32,8 +32,6 @@ public class ProgramController {
         if (programController == null) programController = new ProgramController();
         return programController;
     }
-
-
 
     public void run() {
         DatabaseController.getInstance();

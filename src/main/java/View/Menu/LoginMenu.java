@@ -14,6 +14,18 @@ import View.Exceptions.WeakPasswordException;
 import java.util.regex.Matcher;
 
 public class LoginMenu implements Help{
+
+    private static LoginMenu loginMenu;
+
+    private LoginMenu(){
+
+    }
+
+    public static LoginMenu getInstance(){
+        if (loginMenu == null) loginMenu = new LoginMenu();
+        return loginMenu;
+    }
+
     public void run(String command) {
         Matcher matcher;
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();

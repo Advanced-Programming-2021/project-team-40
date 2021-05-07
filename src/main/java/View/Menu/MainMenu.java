@@ -7,7 +7,18 @@ import Controller.ProgramController.Regex;
 import Database.User;
 
 public class MainMenu implements Help{
+
+    private static MainMenu mainMenu;
     public User currentUser;
+
+    private MainMenu(){
+
+    }
+
+    public static MainMenu getInstance(){
+        if (mainMenu == null) mainMenu = new MainMenu();
+        return mainMenu;
+    }
 
     public void run(String command) {
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
