@@ -6,10 +6,7 @@ import Controller.ProgramController.Regex;
 import Database.Deck;
 import Database.User;
 import View.DeckView;
-import View.Exceptions.DeckIsFullException;
-import View.Exceptions.InvalidCardNameException;
-import View.Exceptions.InvalidDeckNameException;
-import View.Exceptions.RepetitiveDeckNameException;
+import View.Exceptions.*;
 import View.UserView;
 
 import java.util.regex.Matcher;
@@ -71,7 +68,7 @@ public class DeckMenu implements Help{
         try {
             DeckController.getInstance().addCard(deckName, cardName, isSide, currentUser);
             System.out.println("card added to deck successfully");
-        } catch (DeckIsFullException | InvalidCardNameException | InvalidDeckNameException e) {
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
     }
@@ -84,7 +81,7 @@ public class DeckMenu implements Help{
         try {
             DeckController.getInstance().removeCard(deckName, cardName, isSide, currentUser);
             System.out.println("card removed form deck successfully");
-        } catch (DeckIsFullException | InvalidCardNameException | InvalidDeckNameException e) {
+        } catch (DeckIsFullException | InvalidCardNameException | InvalidDeckNameException | CardNotInDeckException e) {
             System.err.println(e.getMessage());
         }
     }

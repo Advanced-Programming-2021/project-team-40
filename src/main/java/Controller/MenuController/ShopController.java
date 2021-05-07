@@ -20,5 +20,6 @@ public class ShopController {
         if ((card = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         if (card.getCardPrice() > currentUser.getBalance()) throw new NotEnoughMoneyException();
         currentUser.setBalance(currentUser.getBalance() - card.getCardPrice());
+        currentUser.getInactiveCards().add(card);
     }
 }
