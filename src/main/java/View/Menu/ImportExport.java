@@ -9,9 +9,10 @@ public class ImportExport implements Help{
         if (Regex.getCommandMatcher(command, help).matches()) help();
     }
     public void help(){
-        System.out.println("menu exit");
-        System.out.println("menu show-current");
         System.out.println("import card [card name]");
         System.out.println("export card [card name]");
+        System.out.println("menu show-current");
+        System.out.println("help");
+        System.out.println("menu exit");
     }
 }

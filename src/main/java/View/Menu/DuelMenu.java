@@ -3,6 +3,8 @@ package View.Menu;
 
 
 import Controller.MenuController.DuelMenuController;
+import Controller.MenuController.MenuNavigationController;
+import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 import Database.User;
 import View.Exceptions.ActiveDeckNotFoundException;
@@ -30,14 +32,17 @@ public class DuelMenu implements Help {
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.startPlayerDuel)).matches()) startPlayerGame(matcher);
         else if ((matcher = Regex.getCommandMatcher(command,Regex.startAIDuel)).matches()) startAIGame(matcher);
+        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
+            MenuNavigationController.getInstance().toUpperMenu(Menu.DUEL_MENU);
         else System.err.println("invalid command");
     }
 
     public void help() {
-        System.out.println("menu exit");
-        System.out.println("menu show-current");
         System.out.println("duel --new --second-player <player2 username> --rounds <1/3>");
         System.out.println("duel --new --ai --rounds <1/3>");
+        System.out.println("menu show-current");
+        System.out.println("help");
+        System.out.println("menu exit");
     }
 
     private void startAIGame(Matcher matcher) {

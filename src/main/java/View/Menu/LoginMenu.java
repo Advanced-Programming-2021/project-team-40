@@ -3,6 +3,8 @@ package View.Menu;
 
 
 import Controller.MenuController.LoginController;
+import Controller.ProgramController.Menu;
+import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
 import View.Exceptions.InvalidLoginException;
 import View.Exceptions.RepetitiveNicknameException;
@@ -17,14 +19,15 @@ public class LoginMenu implements Help{
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.createUser)).matches()) registerUser(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.login)).matches()) loginUser(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, "exit")).matches()) ProgramController.getInstance().setCurrentMenu(Menu.EXIT);
         else System.out.println("invalid command");
     }
 
     public void help() {
-        System.out.println("menu exit");
-        System.out.println("menu show-current");
         System.out.println("user create --username <username> --password <password> --nickname <nickname>");
-        System.out.println("user login --password <password> --username <username>");
+        System.out.println("user login --username <username> --password <password>");
+        System.out.println("menu show-current");
+        System.out.println("menu exit");
     }
 
     private void loginUser(Matcher matcher) {

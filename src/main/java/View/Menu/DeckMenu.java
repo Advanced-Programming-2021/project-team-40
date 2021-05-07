@@ -2,6 +2,8 @@ package View.Menu;
 
 
 import Controller.DatabaseController.DeckController;
+import Controller.MenuController.MenuNavigationController;
+import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 import Database.Deck;
 import Database.User;
@@ -30,6 +32,8 @@ public class DeckMenu implements Help{
         else if (Regex.getCommandMatcher(command, Regex.showAllDeck).matches()) userView.showUserDecks(currentUser);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.showOneDeck)).matches()) showOneDeck(matcher);
         else if (Regex.getCommandMatcher(command, Regex.showCards).matches()) userView.showUserCards(currentUser);
+        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
+            MenuNavigationController.getInstance().toUpperMenu(Menu.DECK_MENU);
         else System.err.println("invalid command");
     }
 
@@ -100,8 +104,6 @@ public class DeckMenu implements Help{
         else deckView.showDetailedDeck(deck);
     }
     public void help() {
-        System.out.println("menu exit");
-        System.out.println("menu show-current");
         System.out.println("deck create <deck name>");
         System.out.println("deck delete <deck name>");
         System.out.println("deck set-activate <deck name>");
@@ -110,7 +112,9 @@ public class DeckMenu implements Help{
         System.out.println("deck show --all");
         System.out.println("deck show --deck-name <deck name> --side(Opt)");
         System.out.println("deck show --cards");
+        System.out.println("menu show-current");
         System.out.println("help");
+        System.out.println("menu exit");
     }
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;

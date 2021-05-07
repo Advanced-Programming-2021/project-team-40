@@ -1,5 +1,6 @@
 package Controller.MenuController;
 
+import Controller.ProgramController.ProgramController;
 import Database.User;
 import View.Exceptions.MenuNavigationNotPossibleException;
 import Controller.ProgramController.Menu;
@@ -20,7 +21,7 @@ public class MenuNavigationController {
         return menuNavigator;
     }
 
-    public Menu toUpperMenu(Menu menu) {
+    public void toUpperMenu(Menu menu) {
         switch (menu) {
             case LOGIN_MENU -> menu = Menu.EXIT;
             case MAIN_MENU -> {
@@ -30,7 +31,7 @@ public class MenuNavigationController {
             }
             default -> menu = Menu.MAIN_MENU;
         }
-        return menu;
+        ProgramController.getInstance().setCurrentMenu(menu);
     }
 
     public Menu toLowerMenu(Matcher matcher, Menu menu) throws MenuNavigationNotPossibleException {
@@ -42,7 +43,7 @@ public class MenuNavigationController {
                     deckMenu.setCurrentUser(mainMenu.currentUser);
                     menu = Menu.DECK_MENU;
                 }
-                case "Scoreboard" -> menu = Menu.SCOREBOARD_MENU;
+                case "ScoreboardMenu" -> menu = Menu.SCOREBOARD_MENU;
                 case "Profile" -> {
                     profileMenu.setCurrentUser(mainMenu.currentUser);
                     menu = Menu.PROFILE_MENU;

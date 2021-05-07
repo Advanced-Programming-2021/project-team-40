@@ -28,7 +28,7 @@ public class LoginController {
         User currentUser;
         if ((currentUser = User.getUserByName(username)) == null) throw new InvalidLoginException();
         if (!currentUser.getPassword().equals(password)) throw new InvalidLoginException();
-        ProgramController.setCurrentMenu(MenuNavigationController.getInstance().login(currentUser));
+        ProgramController.getInstance().setCurrentMenu(MenuNavigationController.getInstance().login(currentUser));
     }
 
     public static boolean passwordIsWeak(String password){

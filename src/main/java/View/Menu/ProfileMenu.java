@@ -2,6 +2,8 @@ package View.Menu;
 
 
 import Controller.DatabaseController.UserController;
+import Controller.MenuController.MenuNavigationController;
+import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 import Database.User;
 import View.Exceptions.InvalidPasswordException;
@@ -18,6 +20,8 @@ public class ProfileMenu implements Help{
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.changeNickname)).matches()) changeNickname(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.changePassword)).matches()) changePassword(matcher);
+        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
+            MenuNavigationController.getInstance().toUpperMenu(Menu.PROFILE_MENU);
         else System.err.println("invalid command");
     }
 

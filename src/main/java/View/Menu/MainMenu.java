@@ -12,13 +12,13 @@ public class MainMenu implements Help{
     public void run(String command) {
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
         else if (Regex.getCommandMatcher(command, Regex.logout).matches()) {
-            ProgramController.setCurrentMenu(MenuNavigationController.getInstance().logout());
+            ProgramController.getInstance().setCurrentMenu(MenuNavigationController.getInstance().logout());
             System.out.println("logout successful");
         } else System.err.println("invalid command");
     }
 
     public void help() {
-        System.out.println("menu enter <menu name>");
+        System.out.println("menu enter [Duel | Deck | ScoreboardMenu | Profile | Shop | Import/Export]");
         System.out.println("menu exit");
         System.out.println("menu show-current");
         System.out.println("logout");

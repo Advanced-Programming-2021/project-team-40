@@ -12,6 +12,7 @@ import View.Exceptions.MenuNavigationNotPossibleException;
 
 
 public class ProgramController {
+    private static ProgramController programController;
     private static Menu currentMenu = Menu.LOGIN_MENU;
     public static LoginMenu loginMenu = new LoginMenu();
     public static MainMenu mainMenu = new MainMenu();
@@ -19,13 +20,20 @@ public class ProgramController {
     public static ProfileMenu profileMenu = new ProfileMenu();
     public static ShopMenu shopMenu = ShopMenu.getInstance();
     public static DuelMenu duelMenu = DuelMenu.getInstance();
-    public static Scoreboard scoreboard = new Scoreboard();
+    public static ScoreboardMenu scoreboardMenu = new ScoreboardMenu();
     public static ImportExport importExport = new ImportExport();
     public Scanner sc = new Scanner(System.in);
 
-    public static void setCurrentMenu(Menu currentMenu) {
-        ProgramController.currentMenu = currentMenu;
+    private ProgramController(){
+
     }
+
+    public static ProgramController getInstance(){
+        if (programController == null) programController = new ProgramController();
+        return programController;
+    }
+
+
 
     public void run() {
         DatabaseController.getInstance();
@@ -39,8 +47,7 @@ public class ProgramController {
                 } catch (MenuNavigationNotPossibleException e) {
                     System.out.println(e.getMessage());
                 }
-            } else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
-                currentMenu = MenuNavigationController.getInstance().toUpperMenu(currentMenu);
+            }
             else switch (currentMenu) {
                     case LOGIN_MENU:
                         loginMenu.run(command);
@@ -64,12 +71,16 @@ public class ProgramController {
                         duelMenu.run(command);
                         break;
                     case SCOREBOARD_MENU:
-                        scoreboard.run(command);
+                        scoreboardMenu.run(command);
                         break;
                     case GAMEPLAY:
                         GameplayView.getInstance().run(command);
                 }
         }
+    }
+
+    public void setCurrentMenu(Menu currentMenu) {
+        ProgramController.currentMenu = currentMenu;
     }
 
     public static Menu getCurrentMenu() {
