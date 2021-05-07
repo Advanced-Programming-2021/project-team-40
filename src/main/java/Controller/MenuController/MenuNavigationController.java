@@ -19,6 +19,7 @@ public class MenuNavigationController {
             menuNavigator = new MenuNavigationController();
         return menuNavigator;
     }
+
     public Menu toUpperMenu(Menu menu) {
         switch (menu) {
             case LOGIN_MENU -> menu = Menu.EXIT;

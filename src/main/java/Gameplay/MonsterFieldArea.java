@@ -19,6 +19,7 @@ public class MonsterFieldArea extends FieldArea{
         super.putCard(card, isAttack);
         attackPoint = ((Monster) card).getAttackPoints();
         defensePoint = ((Monster) card).getDefensePoints();
+        hasSwitchedMode = true;
     }
 
     public void setAttack(boolean attack) {
@@ -42,6 +43,10 @@ public class MonsterFieldArea extends FieldArea{
         return hasSwitchedMode;
     }
 
+    public void setHasSwitchedMode(boolean hasSwitchedMode) {
+        this.hasSwitchedMode = hasSwitchedMode;
+    }
+
     public void setHasAttacked(boolean hasAttacked) {
         this.hasAttacked = hasAttacked;
     }
@@ -60,5 +65,13 @@ public class MonsterFieldArea extends FieldArea{
 
     public int getDefensePoint() {
         return defensePoint;
+    }
+
+    public void setTurnsLeftForEffect(int turnsLeftForEffect) {
+        this.turnsLeftForEffect = turnsLeftForEffect;
+    }
+
+    public int getTurnsLeftForEffect() {
+        return turnsLeftForEffect;
     }
 }

@@ -24,7 +24,8 @@ public class GameplayView {
 
     public void run(String command) {
         Matcher matcher;
-        if (tributeMode) {
+        if (tributeCount > 0) {
+
         }
         if (graveyardMode) {
 

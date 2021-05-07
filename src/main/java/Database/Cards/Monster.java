@@ -22,7 +22,14 @@ public class Monster extends Card {
         setLevel(level);
         setAttackPoints(attackPoints);
         setDefensePoints(defensePoints);
+
         monsters.add(this);
+    }
+
+    public int getNumberOfTributes() {
+        if (level < 5) return 0;
+        if (level < 7) return 1;
+        return 2;
     }
 
     public static ArrayList<Monster> getMonsters() {
