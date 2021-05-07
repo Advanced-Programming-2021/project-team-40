@@ -53,7 +53,6 @@ public class GameplayController {
                 goToNextPhase();
                 break;
             case END_PHASE:
-                System.out.println("its " + gameplay.getOpponentPlayer().getUser().getUsername() + "'s turn");
                 checkWinningConditions();
                 switchTurn();
                 goToNextPhase();
@@ -70,19 +69,19 @@ public class GameplayController {
                 doPhaseAction();
                 break;
             case STANDBY_PHASE:
-                if (GameplayView.getInstance().isFirstOfGame()) gameplay.setCurrentPhase(Phase.END_PHASE);
-                else gameplay.setCurrentPhase(Phase.MAIN_PHASE_ONE);
+                gameplay.setCurrentPhase(Phase.MAIN_PHASE_ONE);
                 System.out.println(gameplay.getCurrentPhase().toString());
                 doPhaseAction();
                 break;
             case MAIN_PHASE_ONE:
-                if (isPlayerFieldEmpty()) gameplay.setCurrentPhase(Phase.END_PHASE);
+                if (GameplayView.getInstance().isFirstOfGame()) gameplay.setCurrentPhase(Phase.END_PHASE);
+                else if (hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 gameplay.setCurrentPhase(Phase.BATTLE_PHASE);
                 System.out.println(gameplay.getCurrentPhase().toString());
                 doPhaseAction();
                 break;
             case BATTLE_PHASE:
-                if (isPlayerFieldEmpty()) gameplay.setCurrentPhase(Phase.END_PHASE);
+                if (hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
                 System.out.println(gameplay.getCurrentPhase().toString());
                 doPhaseAction();
@@ -125,6 +124,7 @@ public class GameplayController {
 
     public void switchTurn() {
         //TODO set required booleans and decrease remaining effect rounds
+        System.out.println("its " + gameplay.getOpponentPlayer().getUser().getUsername() + "'s turn");
         gameplay.getCurrentPlayer().getField().endTurnActions();
         Player temp = gameplay.getOpponentPlayer();
         gameplay.setOpponentPlayer(gameplay.getCurrentPlayer());
@@ -157,7 +157,7 @@ public class GameplayController {
     }
 
     public void surrender() {
-        endGame(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
+        endMatch(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
     }
 
     public void selectCard(String idToCheck, String field, boolean isFromOpponent) throws Exception {
@@ -497,9 +497,9 @@ public class GameplayController {
 
     private void checkWinningConditions() {
         if (gameplay.getOpponentPlayer().getLifePoints() <= 0) {
-            endGame(gameplay.getCurrentPlayer(), gameplay.getOpponentPlayer());
+            endMatch(gameplay.getCurrentPlayer(), gameplay.getOpponentPlayer());
         } else if (gameplay.getCurrentPlayer().getLifePoints() <= 0) {
-            endGame(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
+            endMatch(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
         }
         //TODO check for more possible conditions
 
@@ -521,13 +521,13 @@ public class GameplayController {
         }
         return true;
     }
-    private boolean isPlayerFieldEmpty() {
+    private boolean hasAttackMonster() {
         MonsterFieldArea[] monsterFieldAreas = gameplay.getCurrentPlayer().getField().getMonstersField();
         for (MonsterFieldArea monster :
                 monsterFieldAreas) {
-            if (monster != null) return false;
+            if (monster.isAttack() && !monster.hasAttacked()) return true;
         }
-        return true;
+        return false;
     }
 
     private void makeCardVisible(MonsterFieldArea defendingMonster) {
