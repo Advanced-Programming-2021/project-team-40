@@ -10,5 +10,21 @@ public enum Menu {
     EXIT,
     DUEL_MENU,
     SCOREBOARD_MENU,
-    GAMEPLAY,
+    GAMEPLAY;
+
+    @Override
+    public String toString() {
+        return switch (this) {
+            case LOGIN_MENU -> "Login";
+            case MAIN_MENU -> "Main";
+            case SHOP_MENU -> "Shop";
+            case DECK_MENU -> "Deck";
+            case PROFILE_MENU -> "Profile";
+            case IMPORT_EXPORT_MENU -> "Import/Export";
+            case DUEL_MENU -> "Duel";
+            case SCOREBOARD_MENU -> "Scoreboard";
+            case GAMEPLAY -> "Gameplay";
+            default -> "";
+        };
+    }
 }

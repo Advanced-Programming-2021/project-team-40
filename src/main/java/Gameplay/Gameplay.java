@@ -7,7 +7,7 @@ public class Gameplay {
     public int playerTwoWins = 0;
     private Player currentPlayer;
     private Player opponentPlayer;
-    private FieldArea selectedField;
+    private FieldArea selectedField = null;
     private Phase currentPhase;
     private int currentRound;
     private int rounds;
