@@ -42,35 +42,60 @@ public class GameplayController {
         return gameplay;
     }
 
+    public void doPhaseAction() {
+        switch (gameplay.getCurrentPhase()) {
+            case DRAW_PHASE:
+                Card card = drawCard();
+                System.out.println("new card added to the hand : " + card.getName());
+                goToNextPhase();
+                break;
+            case STANDBY_PHASE:
+                goToNextPhase();
+                break;
+            case END_PHASE:
+                System.out.println("its " + gameplay.getOpponentPlayer().getUser().getUsername() + "'s turn");
+                checkWinningConditions();
+                switchTurn();
+                goToNextPhase();
+                break;
+        }
+
+    }
+
     public void goToNextPhase() {
         switch (gameplay.getCurrentPhase()) {
             case DRAW_PHASE:
                 gameplay.setCurrentPhase(Phase.STANDBY_PHASE);
-                System.out.println("phase: standby phase");
+                System.out.println(gameplay.getCurrentPhase().toString());
+                doPhaseAction();
                 break;
             case STANDBY_PHASE:
-                gameplay.setCurrentPhase(Phase.MAIN_PHASE_ONE);
-                System.out.println("phase: main phase one");
+                if (GameplayView.getInstance().isFirstOfGame()) gameplay.setCurrentPhase(Phase.END_PHASE);
+                else gameplay.setCurrentPhase(Phase.MAIN_PHASE_ONE);
+                System.out.println(gameplay.getCurrentPhase().toString());
+                doPhaseAction();
                 break;
             case MAIN_PHASE_ONE:
+                if (isPlayerFieldEmpty()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 gameplay.setCurrentPhase(Phase.BATTLE_PHASE);
-                System.out.println("phase: battle phase");
+                System.out.println(gameplay.getCurrentPhase().toString());
+                doPhaseAction();
                 break;
             case BATTLE_PHASE:
+                if (isPlayerFieldEmpty()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
-                System.out.println("phase: main phase two");
+                System.out.println(gameplay.getCurrentPhase().toString());
+                doPhaseAction();
                 break;
             case MAIN_PHASE_TW0:
                 gameplay.setCurrentPhase(Phase.END_PHASE);
-                System.out.println("phase: end phase");
+                System.out.println(gameplay.getCurrentPhase().toString());
+                doPhaseAction();
                 break;
             case END_PHASE:
                 gameplay.setCurrentPhase(Phase.DRAW_PHASE);
-                System.out.println(gameplay.getCurrentPlayer().getUser().getNickname() + "'s turn is completed");
-                checkWinningConditions();
-                switchTurn();
-                Card newCard = drawCard();
-                System.out.println("new card added to hand: " + newCard.getName());
+                System.out.println(gameplay.getCurrentPhase().toString());
+                doPhaseAction();
                 break;
         }
     }
@@ -104,6 +129,7 @@ public class GameplayController {
         Player temp = gameplay.getOpponentPlayer();
         gameplay.setOpponentPlayer(gameplay.getCurrentPlayer());
         gameplay.setOpponentPlayer(temp);
+        GameplayView.getInstance().setFirstOfGame(false);
     }
 
     public void endGame(Player winner, Player loser) {
@@ -491,6 +517,14 @@ public class GameplayController {
         MonsterFieldArea[] monsterFieldAreas = gameplay.getOpponentPlayer().getField().getMonstersField();
         for (MonsterFieldArea monster : monsterFieldAreas
         ) {
+            if (monster != null) return false;
+        }
+        return true;
+    }
+    private boolean isPlayerFieldEmpty() {
+        MonsterFieldArea[] monsterFieldAreas = gameplay.getCurrentPlayer().getField().getMonstersField();
+        for (MonsterFieldArea monster :
+                monsterFieldAreas) {
             if (monster != null) return false;
         }
         return true;

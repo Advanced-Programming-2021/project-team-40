@@ -38,7 +38,10 @@ public class MenuNavigationController {
         String menuName = matcher.group("menuName");
         if (menu == Menu.MAIN_MENU)
             switch (menuName) {
-                case "Duel" -> menu = Menu.DUEL_MENU;
+                case "Duel" -> {
+                    duelMenu.setCurrentUser(mainMenu.currentUser);
+                    menu = Menu.DUEL_MENU;
+                }
                 case "Deck" -> {
                     deckMenu.setCurrentUser(mainMenu.currentUser);
                     menu = Menu.DECK_MENU;

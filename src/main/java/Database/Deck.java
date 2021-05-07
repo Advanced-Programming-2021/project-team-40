@@ -53,4 +53,31 @@ public class Deck {
         newDeck.setMainCards(this.getMainCards());
         return newDeck;
     }
+
+    public boolean hasCard(Card currentCard,boolean isSide) {
+        if (isSide) {
+            for (Card card : sideCards
+            ) {
+                if (card.equals(currentCard)) return true;
+            }
+        } else {
+            for (Card card: mainCards
+                 ) {
+                if (card.equals(currentCard)) return true;
+            }
+        }
+        return false;
+    }
+    public int cardCount(Card card) {
+        int count = 0;
+        for (Card c :
+                mainCards) {
+            if (card.equals(c)) count++;
+        }
+        for (Card c :
+                sideCards) {
+            if (card.equals(c)) count++;
+        }
+        return count;
+    }
 }

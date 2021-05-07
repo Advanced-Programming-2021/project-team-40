@@ -7,10 +7,6 @@ import Controller.MenuController.MenuNavigationController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 import Database.User;
-import View.Exceptions.ActiveDeckNotFoundException;
-import View.Exceptions.InvalidDeckException;
-import View.Exceptions.InvalidRoundNumberException;
-import View.Exceptions.UserNotFoundException;
 
 import java.util.regex.Matcher;
 
@@ -57,8 +53,12 @@ public class DuelMenu implements Help {
         try {
             DuelMenuController.getInstance().startPlayerGame(userTwo,roundCount,currentUser);
             System.out.println("game started between" + currentUser.getUsername() + "and" + User.getUserByName(userTwo).getUsername() + " !");
-        } catch (UserNotFoundException | InvalidRoundNumberException | ActiveDeckNotFoundException | InvalidDeckException e) {
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 }
