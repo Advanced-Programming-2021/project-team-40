@@ -1,7 +1,5 @@
 package View.Menu;
 
-
-
 import Controller.MenuController.LoginController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
@@ -13,25 +11,29 @@ import View.Exceptions.WeakPasswordException;
 
 import java.util.regex.Matcher;
 
-public class LoginMenu implements Help{
+public class LoginMenu implements Help {
 
     private static LoginMenu loginMenu;
 
-    private LoginMenu(){
+    private LoginMenu() {
 
     }
 
-    public static LoginMenu getInstance(){
+    public static LoginMenu getInstance() {
         if (loginMenu == null) loginMenu = new LoginMenu();
         return loginMenu;
     }
 
     public void run(String command) {
         Matcher matcher;
-        if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
+        if (Regex.getCommandMatcher(command, Regex.help).matches()) help();
+        else if (command.matches(Regex.showCurrentMenu)) System.out.println(Menu.LOGIN_MENU.toString());
+        else if (command.matches(Regex.exitMenu)) LoginController.getInstance().toUpperMenu();
+        else if (command.matches(Regex.menuNavigation)) LoginController.getInstance().toLowerMenu("");
         else if ((matcher = Regex.getCommandMatcher(command, Regex.createUser)).matches()) registerUser(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.login)).matches()) loginUser(matcher);
-        else if ((matcher = Regex.getCommandMatcher(command, "exit")).matches()) ProgramController.getInstance().setCurrentMenu(Menu.EXIT);
+        else if (Regex.getCommandMatcher(command, "exit").matches())
+            ProgramController.getInstance().setCurrentMenu(Menu.EXIT);
         else System.out.println("invalid command");
     }
 
@@ -46,7 +48,7 @@ public class LoginMenu implements Help{
         String username = matcher.group("username");
         String password = matcher.group("password");
         try {
-            LoginController.loginUser(username,password);
+            LoginController.loginUser(username, password);
             System.out.println("user logged in successfully!");
         } catch (InvalidLoginException e) {
             System.err.println(e.getMessage());
@@ -58,7 +60,7 @@ public class LoginMenu implements Help{
         String password = matcher.group("password");
         String nickname = matcher.group("nickname");
         try {
-            LoginController.registerUser(username,password,nickname);
+            LoginController.registerUser(username, password, nickname);
             System.out.println("user created successfully!");
         } catch (RepetitiveUsernameException | RepetitiveNicknameException | WeakPasswordException e) {
             System.err.println(e.getMessage());

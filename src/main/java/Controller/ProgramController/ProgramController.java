@@ -5,10 +5,7 @@ import View.GameplayView;
 import View.Menu.*;
 
 import java.util.Scanner;
-import java.util.regex.Matcher;
 
-import Controller.MenuController.MenuNavigationController;
-import View.Exceptions.MenuNavigationNotPossibleException;
 
 
 public class ProgramController {
@@ -39,16 +36,7 @@ public class ProgramController {
             System.out.flush();
             System.err.flush();
             String command = sc.nextLine();
-            Matcher matcher;
-            if (command.matches(Regex.showCurrentMenu)) System.out.println(currentMenu.toString());
-            else if ((matcher = Regex.getCommandMatcher(command, Regex.menuNavigation)).matches()) {
-                try {
-                    currentMenu = MenuNavigationController.getInstance().toLowerMenu(matcher, currentMenu);
-                } catch (MenuNavigationNotPossibleException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-            else switch (currentMenu) {
+            switch (currentMenu) {
                     case LOGIN_MENU:
                         loginMenu.run(command);
                         break;

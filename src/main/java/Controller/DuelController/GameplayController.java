@@ -1,7 +1,7 @@
 package Controller.DuelController;
 
 
-import Controller.MenuController.MenuNavigationController;
+import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
 import Database.Cards.Card;
 import Database.Cards.Monster;
@@ -138,7 +138,7 @@ public class GameplayController {
         winner.getUser().increaseBalance((1000 + winner.getMaxLP()) * multiplier);
         loser.getUser().increaseBalance(100 * multiplier);
         setGameplay(null);
-        MenuNavigationController.getInstance().toUpperMenu(ProgramController.getCurrentMenu());
+        ProgramController.getInstance().setCurrentMenu(Menu.MAIN_MENU);
     }
 
     public void endMatch(Player winner, Player loser) {

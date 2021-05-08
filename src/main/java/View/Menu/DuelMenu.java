@@ -3,7 +3,6 @@ package View.Menu;
 
 
 import Controller.MenuController.DuelMenuController;
-import Controller.MenuController.MenuNavigationController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 import Database.User;
@@ -25,12 +24,14 @@ public class DuelMenu implements Help {
 
     public void run(String command) {
         Matcher matcher;
-        if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
+        if (Regex.getCommandMatcher(command, Regex.help).matches()) help();
+        else if (command.matches(Regex.showCurrentMenu)) System.out.println(Menu.DUEL_MENU.toString());
+        else if (command.matches(Regex.exitMenu)) DuelMenuController.getInstance().toUpperMenu();
+        else if (command.matches(Regex.menuNavigation)) DuelMenuController.getInstance().toLowerMenu("");
+        else if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.startPlayerDuel)).matches()) startPlayerGame(matcher);
         else if ((matcher = Regex.getCommandMatcher(command,Regex.startAIDuel)).matches()) startAIGame(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
-            MenuNavigationController.getInstance().toUpperMenu(Menu.DUEL_MENU);
-        else System.err.println("invalid command");
+        else System.out.println("invalid command");
     }
 
     public void help() {

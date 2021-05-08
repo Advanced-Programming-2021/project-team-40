@@ -1,5 +1,7 @@
-package Controller.DatabaseController;
+package Controller.MenuController;
 
+import Controller.ProgramController.Menu;
+import Controller.ProgramController.ProgramController;
 import Database.Cards.Card;
 import Database.Deck;
 import Database.User;
@@ -7,15 +9,15 @@ import View.Exceptions.*;
 
 import java.util.Collections;
 
-public class DeckController {
-    private static DeckController deckController;
-    private DeckController() {
+public class DeckMenuController implements MenuNavigation {
+    private static DeckMenuController deckMenuController;
+    private DeckMenuController() {
     }
 
-    public static DeckController getInstance() {
-        if (deckController == null)
-            deckController = new DeckController();
-        return deckController;
+    public static DeckMenuController getInstance() {
+        if (deckMenuController == null)
+            deckMenuController = new DeckMenuController();
+        return deckMenuController;
     }
     public void removeCard(String deckName,String cardName,boolean isSide, User currentUser) throws DeckIsFullException, InvalidCardNameException, InvalidDeckNameException, CardNotInDeckException {
         Deck currentDeck;
@@ -119,5 +121,17 @@ public class DeckController {
     public String deckValidityString(Deck deck) {
         if (isDeckInvalid(deck)) return "Invalid";
         return "Valid";
+    }
+
+    public void toUpperMenu() {
+        ProgramController.getInstance().setCurrentMenu(Menu.MAIN_MENU);
+    }
+
+    public void toLowerMenu(String menuName) {
+        try {
+            throw new MenuNavigationNotPossibleException();
+        } catch (MenuNavigationNotPossibleException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

@@ -1,11 +1,14 @@
 package Controller.MenuController;
 
+import Controller.ProgramController.Menu;
+import Controller.ProgramController.ProgramController;
 import Database.Cards.Card;
 import Database.User;
 import View.Exceptions.InvalidCardNameException;
+import View.Exceptions.MenuNavigationNotPossibleException;
 import View.Exceptions.NotEnoughMoneyException;
 
-public class ShopController {
+public class ShopController implements MenuNavigation{
     private static ShopController shopController;
     private ShopController() {
     }
@@ -21,5 +24,17 @@ public class ShopController {
         if (card.getCardPrice() > currentUser.getBalance()) throw new NotEnoughMoneyException();
         currentUser.setBalance(currentUser.getBalance() - card.getCardPrice());
         currentUser.getInactiveCards().add(card);
+    }
+
+    public void toUpperMenu() {
+        ProgramController.getInstance().setCurrentMenu(Menu.MAIN_MENU);
+    }
+
+    public void toLowerMenu(String menuName) {
+        try {
+            throw new MenuNavigationNotPossibleException();
+        } catch (MenuNavigationNotPossibleException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

@@ -1,8 +1,7 @@
 package View.Menu;
 
 
-import Controller.DatabaseController.DeckController;
-import Controller.MenuController.MenuNavigationController;
+import Controller.MenuController.DeckMenuController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 import Database.Cards.Card;
@@ -32,6 +31,9 @@ public class DeckMenu implements Help {
     public void run(String command) {
         Matcher matcher;
         if (Regex.getCommandMatcher(command, Regex.help).matches()) help();
+        else if (command.matches(Regex.showCurrentMenu)) System.out.println(Menu.DECK_MENU.toString());
+        else if (command.matches(Regex.exitMenu)) DeckMenuController.getInstance().toUpperMenu();
+        else if (command.matches(Regex.menuNavigation)) DeckMenuController.getInstance().toLowerMenu("");
         else if ((matcher = Regex.getCommandMatcher(command, Regex.createDeck)).matches()) createDeck(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.deleteDeck)).matches()) deleteDeck(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.activateDeck)).matches()) activateDeck(matcher);
@@ -41,9 +43,6 @@ public class DeckMenu implements Help {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.showOneDeck)).matches()) showOneDeck(matcher);
         else if (Regex.getCommandMatcher(command, Regex.showCards).matches()) UserView.showAllCards(currentUser);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.showCardByName)).matches()) showACard(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches()) {
-            MenuNavigationController.getInstance().toUpperMenu(Menu.DECK_MENU);
-        } else System.err.println("invalid command");
     }
 
     private void showACard(Matcher matcher) {
@@ -60,7 +59,7 @@ public class DeckMenu implements Help {
     private void createDeck(Matcher matcher) {
         String deckName = matcher.group("deckName");
         try {
-            DeckController.getInstance().createDeck(deckName, currentUser);
+            DeckMenuController.getInstance().createDeck(deckName, currentUser);
             System.out.println("deck created successfully!");
         } catch (RepetitiveDeckNameException e) {
             System.err.println(e.getMessage());
@@ -70,7 +69,7 @@ public class DeckMenu implements Help {
     private void deleteDeck(Matcher matcher) {
         String deckName = matcher.group("deckName");
         try {
-            DeckController.getInstance().deleteDeck(deckName, currentUser);
+            DeckMenuController.getInstance().deleteDeck(deckName, currentUser);
             System.out.println("deck deleted successfully!");
         } catch (InvalidDeckNameException e) {
             System.err.println(e.getMessage());
@@ -80,7 +79,7 @@ public class DeckMenu implements Help {
     private void activateDeck(Matcher matcher) {
         String deckName = matcher.group("deckName");
         try {
-            DeckController.getInstance().activateDeck(deckName, currentUser);
+            DeckMenuController.getInstance().activateDeck(deckName, currentUser);
             System.out.println("deck activated successfully");
         } catch (InvalidDeckNameException e) {
             System.err.println(e.getMessage());
@@ -93,7 +92,7 @@ public class DeckMenu implements Help {
         boolean isSide = true;
         if (matcher.group("isSide") == null) isSide = false;
         try {
-            DeckController.getInstance().addCard(deckName, cardName, isSide, currentUser);
+            DeckMenuController.getInstance().addCard(deckName, cardName, isSide, currentUser);
             System.out.println("card added to deck successfully");
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -106,7 +105,7 @@ public class DeckMenu implements Help {
         boolean isSide = true;
         if (matcher.group("isSide") == null) isSide = false;
         try {
-            DeckController.getInstance().removeCard(deckName, cardName, isSide, currentUser);
+            DeckMenuController.getInstance().removeCard(deckName, cardName, isSide, currentUser);
             System.out.println("card removed form deck successfully");
         } catch (DeckIsFullException | InvalidCardNameException | InvalidDeckNameException | CardNotInDeckException e) {
             System.err.println(e.getMessage());

@@ -1,6 +1,5 @@
 package Controller.MenuController;
 
-import Controller.DatabaseController.DeckController;
 import Controller.DuelController.GameplayController;
 
 import Controller.ProgramController.Menu;
@@ -10,7 +9,7 @@ import Gameplay.Gameplay;
 import Gameplay.Player;
 import View.Exceptions.*;
 
-public class DuelMenuController {
+public class DuelMenuController implements MenuNavigation {
     private static DuelMenuController duelMenuController;
     private DuelMenuController() {
 
@@ -27,8 +26,8 @@ public class DuelMenuController {
         if (userTwo.equals(currentUser)) throw new SameUserChosenException();
         if (currentUser.getActiveDeck() == null) throw new ActiveDeckNotFoundException(currentUser.getUsername());
         if (userTwo.getActiveDeck() == null) throw new ActiveDeckNotFoundException(playerTwoUsername);
-        if (DeckController.getInstance().isDeckInvalid(currentUser.getActiveDeck())) throw new InvalidDeckException(currentUser.getUsername());
-        if (DeckController.getInstance().isDeckInvalid(userTwo.getActiveDeck())) throw new InvalidDeckException(playerTwoUsername);
+        if (DeckMenuController.getInstance().isDeckInvalid(currentUser.getActiveDeck())) throw new InvalidDeckException(currentUser.getUsername());
+        if (DeckMenuController.getInstance().isDeckInvalid(userTwo.getActiveDeck())) throw new InvalidDeckException(playerTwoUsername);
         if (!isRoundSupported(roundCount)) throw new InvalidRoundNumberException();
         ProgramController.getInstance().setCurrentMenu(Menu.GAMEPLAY);
         Gameplay gameplay = new Gameplay(new Player(currentUser),new Player(userTwo),Integer.parseInt(roundCount));
@@ -44,5 +43,17 @@ public class DuelMenuController {
     private boolean isRoundSupported(String round){
         if (round.matches("^\\d+$")) return Integer.parseInt(round) < 4 && Integer.parseInt(round) > 0;
         return false;
+    }
+
+    public void toUpperMenu() {
+        ProgramController.getInstance().setCurrentMenu(Menu.MAIN_MENU);
+    }
+
+    public void toLowerMenu(String menuName) {
+        try {
+            throw new MenuNavigationNotPossibleException();
+        } catch (MenuNavigationNotPossibleException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

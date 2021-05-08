@@ -1,6 +1,6 @@
 package View;
 
-import Controller.DatabaseController.DeckController;
+import Controller.MenuController.DeckMenuController;
 import Database.Cards.Card;
 import Database.Cards.Monster;
 import Database.Cards.SpellAndTrap;
@@ -8,7 +8,6 @@ import Database.Deck;
 import Database.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class DeckView {
 
@@ -29,7 +28,7 @@ public class DeckView {
 
     public static void showDeck(Deck deck) {
         System.out.println(deck.getName() + ": main deck " + deck.getMainCards().size() + ", side deck " +
-                deck.getSideCards().size() + ", " + DeckController.getInstance().deckValidityString(deck));
+                           deck.getSideCards().size() + ", " + DeckMenuController.getInstance().deckValidityString(deck));
     }
 
     public void showDetailedDeck(Deck deck, boolean isSide) {

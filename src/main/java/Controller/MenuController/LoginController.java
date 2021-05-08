@@ -1,6 +1,7 @@
 package Controller.MenuController;
 
 import Controller.DatabaseController.DatabaseController;
+import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 import Database.Cards.Card;
 import Database.User;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 
 import Controller.ProgramController.ProgramController;
 
-public class LoginController {
+public class LoginController implements MenuNavigation {
     private static LoginController loginController;
 
     private LoginController() {
@@ -28,7 +29,8 @@ public class LoginController {
         User currentUser;
         if ((currentUser = User.getUserByName(username)) == null) throw new InvalidLoginException();
         if (!currentUser.getPassword().equals(password)) throw new InvalidLoginException();
-        ProgramController.getInstance().setCurrentMenu(MenuNavigationController.getInstance().login(currentUser));
+        ProgramController.getInstance().setCurrentMenu(Menu.LOGIN_MENU);
+        ProgramController.mainMenu.setCurrentUser(currentUser);
     }
 
     public static boolean passwordIsWeak(String password){
@@ -36,11 +38,22 @@ public class LoginController {
     }
 
     public static void registerUser(String username,String password,String nickname) throws RepetitiveUsernameException, RepetitiveNicknameException, WeakPasswordException {
-//        System.out.println("Nickname: " + nickname + "\nPassword: " + password);
         if (passwordIsWeak(password)) throw new WeakPasswordException();
         if (User.getUserByName(username) != null) throw new RepetitiveUsernameException(username);
         if (User.getUserByNickname(nickname) != null) throw new RepetitiveNicknameException(nickname);
         User tempUser = new User(username, password, nickname, 0, 10000, new ArrayList<Deck>(), new ArrayList<Card>());
         DatabaseController.getInstance().saveUser(tempUser);
+    }
+
+    public void toUpperMenu() {
+        ProgramController.getInstance().setCurrentMenu(Menu.EXIT);
+    }
+
+    public void toLowerMenu(String menuName) {
+        try {
+            throw new MenuNavigationNotPossibleException();
+        } catch (MenuNavigationNotPossibleException e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

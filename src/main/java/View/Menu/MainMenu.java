@@ -1,31 +1,45 @@
 package View.Menu;
 
 
-import Controller.MenuController.MenuNavigationController;
-import Controller.ProgramController.ProgramController;
+import Controller.MenuController.MainMenuController;
+import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 import Database.User;
 
-public class MainMenu implements Help{
+import java.util.regex.Matcher;
+
+public class MainMenu implements Help {
 
     private static MainMenu mainMenu;
     public User currentUser;
 
-    private MainMenu(){
+    private MainMenu() {
 
     }
 
-    public static MainMenu getInstance(){
+    public static MainMenu getInstance() {
         if (mainMenu == null) mainMenu = new MainMenu();
         return mainMenu;
     }
 
     public void run(String command) {
-        if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
-        else if (Regex.getCommandMatcher(command, Regex.logout).matches()) {
-            ProgramController.getInstance().setCurrentMenu(MenuNavigationController.getInstance().logout());
-            System.out.println("logout successful");
-        } else System.err.println("invalid command");
+        Matcher matcher;
+        if (Regex.getCommandMatcher(command, Regex.help).matches()) help();
+        else if (command.matches(Regex.showCurrentMenu)) System.out.println(Menu.MAIN_MENU.toString());
+        else if (command.matches(Regex.exitMenu)) MainMenuController.getInstance().toUpperMenu();
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.menuNavigation)).matches()) goToMenu(matcher);
+        else if (Regex.getCommandMatcher(command, Regex.logout).matches()) logout();
+        else System.out.println("invalid command");
+    }
+
+    private void logout() {
+        MainMenuController.getInstance().toUpperMenu();
+        System.out.println("logout successful");
+    }
+
+    private void goToMenu(Matcher matcher) {
+        String menuName = matcher.group(matcher.group("menuName"));
+        MainMenuController.getInstance().toLowerMenu(menuName);
     }
 
     public void help() {

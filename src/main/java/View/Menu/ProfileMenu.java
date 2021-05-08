@@ -1,8 +1,7 @@
 package View.Menu;
 
 
-import Controller.DatabaseController.UserController;
-import Controller.MenuController.MenuNavigationController;
+import Controller.MenuController.ProfileMenuController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 import Database.User;
@@ -28,10 +27,11 @@ public class ProfileMenu implements Help{
     public void run(String command) {
         Matcher matcher;
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
+        else if (command.matches(Regex.showCurrentMenu)) System.out.println(Menu.PROFILE_MENU.toString());
+        else if (command.matches(Regex.exitMenu)) ProfileMenuController.getInstance().toUpperMenu();
+        else if (command.matches(Regex.menuNavigation)) ProfileMenuController.getInstance().toLowerMenu("");
         else if ((matcher = Regex.getCommandMatcher(command, Regex.changeNickname)).matches()) changeNickname(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.changePassword)).matches()) changePassword(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
-            MenuNavigationController.getInstance().toUpperMenu(Menu.PROFILE_MENU);
         else System.err.println("invalid command");
     }
 
@@ -45,7 +45,7 @@ public class ProfileMenu implements Help{
     private void changeNickname(Matcher matcher) {
         String newNickname = matcher.group("nickname");
         try {
-            UserController.getInstance().changeNickname(newNickname,currentUser);
+            ProfileMenuController.getInstance().changeNickname(newNickname,currentUser);
             System.out.println("nickname changed successfully!");
         } catch (RepetitiveNicknameException e) {
             System.err.println(e.getMessage());
@@ -56,7 +56,7 @@ public class ProfileMenu implements Help{
         String currentPassword = matcher.group("currentPass");
         String newPassword = matcher.group("newPass");
         try {
-            UserController.getInstance().changePassword(currentPassword,newPassword,currentUser);
+            ProfileMenuController.getInstance().changePassword(currentPassword,newPassword,currentUser);
             System.out.println("password changed successfully!");
         } catch (RepetitivePasswordException | InvalidPasswordException e) {
             System.err.println(e.getMessage());

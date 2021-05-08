@@ -1,19 +1,19 @@
 package View.Menu;
 
-import Controller.MenuController.MenuNavigationController;
 import Controller.MenuController.ScoreboardController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 
-public class ScoreboardMenu implements Help{
+public class ScoreboardMenu implements Help {
 
-    public void run(String command){
-        if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
-        else if (Regex.getCommandMatcher(command,Regex.showScoreboard).matches())
+    public void run(String command) {
+        if (Regex.getCommandMatcher(command, Regex.help).matches()) help();
+        else if (command.matches(Regex.showCurrentMenu)) System.out.println(Menu.SCOREBOARD_MENU.toString());
+        else if (command.matches(Regex.exitMenu)) ScoreboardController.getInstance().toUpperMenu();
+        else if (command.matches(Regex.menuNavigation)) ScoreboardController.getInstance().toLowerMenu("");
+        else if (Regex.getCommandMatcher(command, Regex.showScoreboard).matches())
             ScoreboardController.getInstance().printSortedUsers();
-        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
-            MenuNavigationController.getInstance().toUpperMenu(Menu.SCOREBOARD_MENU);
-        else System.err.println("invalid command");
+        else System.out.println("invalid command");
     }
 
     public void help() {

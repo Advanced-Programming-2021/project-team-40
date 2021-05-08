@@ -1,13 +1,11 @@
 package Gameplay;
 
 
-import Controller.DatabaseController.DeckController;
-import Database.Cards.Card;
+import Controller.MenuController.DeckMenuController;
 import Database.Deck;
 import Database.User;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class Player {
     private int maxLP = 0;
@@ -20,7 +18,7 @@ public class Player {
     public Player(User user) {
         this.user = user;
         playingDeck = (Deck) user.getActiveDeck().clone();
-        DeckController.getInstance().shuffleDeck(playingDeck);
+        DeckMenuController.getInstance().shuffleDeck(playingDeck);
     }
 
     public User getUser() {

@@ -1,22 +1,24 @@
-package Controller.DatabaseController;
+package Controller.MenuController;
 
+import Controller.DatabaseController.DatabaseController;
+import Controller.ProgramController.Menu;
+import Controller.ProgramController.ProgramController;
 import Database.User;
 import View.Exceptions.InvalidPasswordException;
+import View.Exceptions.MenuNavigationNotPossibleException;
 import View.Exceptions.RepetitiveNicknameException;
 import View.Exceptions.RepetitivePasswordException;
 
-import javax.xml.crypto.Data;
+public class ProfileMenuController implements MenuNavigation {
+    private static ProfileMenuController profileMenuController;
 
-public class UserController {
-    private static UserController userController;
-
-    private UserController() {
+    private ProfileMenuController() {
     }
 
-    public static UserController getInstance() {
-        if (userController == null)
-            userController = new UserController();
-        return userController;
+    public static ProfileMenuController getInstance() {
+        if (profileMenuController == null)
+            profileMenuController = new ProfileMenuController();
+        return profileMenuController;
     }
 
     public void changePassword(String currentPassword, String newPassword, User currentUser) throws RepetitivePasswordException, InvalidPasswordException {
@@ -32,4 +34,15 @@ public class UserController {
         DatabaseController.getInstance().saveUser(currentUser);
     }
 
+    public void toUpperMenu() {
+        ProgramController.getInstance().setCurrentMenu(Menu.MAIN_MENU);
+    }
+
+    public void toLowerMenu(String menuName) {
+        try {
+            throw new MenuNavigationNotPossibleException();
+        } catch (MenuNavigationNotPossibleException e) {
+            System.err.println(e.getMessage());
+        }
+    }
 }
