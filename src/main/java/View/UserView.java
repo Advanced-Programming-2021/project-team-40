@@ -5,7 +5,6 @@ import Database.Deck;
 import Database.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class UserView {
     public static void showAllCards(User user) {

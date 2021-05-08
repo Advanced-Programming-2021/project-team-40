@@ -25,19 +25,19 @@ public class LoginController implements MenuNavigation {
         return loginController;
     }
 
-    public static void loginUser(String username,String password) throws InvalidLoginException {
+    public void loginUser(String username,String password) throws InvalidLoginException {
         User currentUser;
         if ((currentUser = User.getUserByName(username)) == null) throw new InvalidLoginException();
         if (!currentUser.getPassword().equals(password)) throw new InvalidLoginException();
-        ProgramController.getInstance().setCurrentMenu(Menu.LOGIN_MENU);
+        ProgramController.getInstance().setCurrentMenu(Menu.MAIN_MENU);
         ProgramController.mainMenu.setCurrentUser(currentUser);
     }
 
-    public static boolean passwordIsWeak(String password){
+    public boolean passwordIsWeak(String password){
         return !password.matches(Regex.strongPassword);
     }
 
-    public static void registerUser(String username,String password,String nickname) throws RepetitiveUsernameException, RepetitiveNicknameException, WeakPasswordException {
+    public void registerUser(String username,String password,String nickname) throws RepetitiveUsernameException, RepetitiveNicknameException, WeakPasswordException {
         if (passwordIsWeak(password)) throw new WeakPasswordException();
         if (User.getUserByName(username) != null) throw new RepetitiveUsernameException(username);
         if (User.getUserByNickname(nickname) != null) throw new RepetitiveNicknameException(nickname);

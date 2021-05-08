@@ -8,7 +8,6 @@ import com.google.gson.GsonBuilder;
 import com.opencsv.*;
 
 import java.io.*;
-import java.security.PrivateKey;
 import java.util.Scanner;
 
 public class DatabaseController {

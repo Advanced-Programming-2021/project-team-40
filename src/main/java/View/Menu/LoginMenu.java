@@ -48,7 +48,7 @@ public class LoginMenu implements Help {
         String username = matcher.group("username");
         String password = matcher.group("password");
         try {
-            LoginController.loginUser(username, password);
+            LoginController.getInstance().loginUser(username, password);
             System.out.println("user logged in successfully!");
         } catch (InvalidLoginException e) {
             System.err.println(e.getMessage());
@@ -60,7 +60,7 @@ public class LoginMenu implements Help {
         String password = matcher.group("password");
         String nickname = matcher.group("nickname");
         try {
-            LoginController.registerUser(username, password, nickname);
+            LoginController.getInstance().registerUser(username, password, nickname);
             System.out.println("user created successfully!");
         } catch (RepetitiveUsernameException | RepetitiveNicknameException | WeakPasswordException e) {
             System.err.println(e.getMessage());
