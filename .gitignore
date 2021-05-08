@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+#System based users
+src/main/resources/Users/*.json
+
 # Log file
 *.log
 
