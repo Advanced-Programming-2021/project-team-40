@@ -28,7 +28,7 @@ public class LoginController {
         User currentUser;
         if ((currentUser = User.getUserByName(username)) == null) throw new InvalidLoginException();
         if (!currentUser.getPassword().equals(password)) throw new InvalidLoginException();
-        ProgramController.setCurrentMenu(MenuNavigationController.getInstance().login(currentUser));
+        ProgramController.getInstance().setCurrentMenu(MenuNavigationController.getInstance().login(currentUser));
     }
 
     public static boolean passwordIsWeak(String password){
@@ -36,7 +36,7 @@ public class LoginController {
     }
 
     public static void registerUser(String username,String password,String nickname) throws RepetitiveUsernameException, RepetitiveNicknameException, WeakPasswordException {
-        System.out.println("Nickname: " + nickname + "\nPassword: " + password);
+//        System.out.println("Nickname: " + nickname + "\nPassword: " + password);
         if (passwordIsWeak(password)) throw new WeakPasswordException();
         if (User.getUserByName(username) != null) throw new RepetitiveUsernameException(username);
         if (User.getUserByNickname(nickname) != null) throw new RepetitiveNicknameException(nickname);

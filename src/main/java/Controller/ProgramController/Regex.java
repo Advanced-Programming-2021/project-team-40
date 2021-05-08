@@ -16,7 +16,7 @@ public class Regex {
     public static String exitMenu = "^menu exit$";
     public static String showCurrentMenu = "^menu show-current$";
     public static String logout = "^user logout$";
-    public static String showScoreboard = "^scoreboard show$";
+    public static String showScoreboard = "^scoreboardMenu show$";
     public static String changeNickname = "^profile change --nickname (?<nickname>.+?)$";
     public static String changePassword = "^profile change(?=.* --current)(?=.* --password)(?=.* --new)" +
             "(?: --password(?!.*?--password)|" +
@@ -65,6 +65,7 @@ public class Regex {
     public static String activateEffect = "^activate effect$";
     public static String showGraveyard = "^show graveyard$";
     public static String showSelectedCard = "^card show --selected$";
+    public static String showCardByName = "^card show (?<cardName>.+?)$";
     public static String surrender = "^surrender$";
     public static String increaseMoneyCheatCode = "^increase --money (?<amount>.+?)$";
     public static String forceAddCardCheatCode = "^select(?: --hand (?<cardName>.+?)| --force){2}$";

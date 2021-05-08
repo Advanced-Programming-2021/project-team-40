@@ -1,9 +1,13 @@
 package View.Menu;
 
 
+import Controller.MenuController.MenuNavigationController;
 import Controller.MenuController.ShopController;
+import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
+import Database.Cards.Card;
 import Database.User;
+import View.CardView;
 import View.Exceptions.InvalidCardNameException;
 import View.Exceptions.NotEnoughMoneyException;
 import View.ShopView;
@@ -29,13 +33,29 @@ public class ShopMenu implements Help{
         if (Regex.getCommandMatcher(command,Regex.help).matches()) help();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.shopBuy)).matches()) buy(matcher);
         else if (Regex.getCommandMatcher(command, Regex.shopShowAll).matches()) shopView.showAll();
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.showCardByName)).matches()) showACard(matcher);
+        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches())
+            MenuNavigationController.getInstance().toUpperMenu(Menu.SHOP_MENU);
         else System.err.println("invalid command");
     }
 
     public void help() {
-        System.out.println("menu exit");
-        System.out.println("menu show-current");
+        System.out.println("shop show --all");
         System.out.println("shop buy <card name>");
+        System.out.println("menu show-current");
+        System.out.println("help");
+        System.out.println("menu exit");
+    }
+
+    private void showACard(Matcher matcher) {
+        String name = matcher.group("cardName");
+        try {
+            Card card;
+            if ((card = Card.getCardByName(name)) == null) throw new InvalidCardNameException(name);
+            CardView.showCard(card);
+        } catch (InvalidCardNameException e){
+            System.err.println(e.getMessage());
+        }
     }
 
     private void buy(Matcher matcher) {

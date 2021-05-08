@@ -19,7 +19,7 @@ public class User {
         setPassword(password);
         setNickname(nickname);
         setScore(score);
-        setBalance(balance);
+        setBalance(1000000000);
         setDecks(decks);
         this.inactiveCards = inactiveCards;
         users.add(this);

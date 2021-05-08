@@ -22,7 +22,7 @@ public enum Menu {
             case PROFILE_MENU -> "Profile";
             case IMPORT_EXPORT_MENU -> "Import/Export";
             case DUEL_MENU -> "Duel";
-            case SCOREBOARD_MENU -> "Scoreboard";
+            case SCOREBOARD_MENU -> "ScoreboardMenu";
             case GAMEPLAY -> "Gameplay";
             default -> "";
         };

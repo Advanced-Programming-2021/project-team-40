@@ -10,7 +10,7 @@ public class Deck {
     private ArrayList<Card> sideCards = new ArrayList<>();
     private boolean isActive = false;
 
-    public Deck(String name){
+    public Deck(String name) {
         this.name = name;
     }
 
@@ -47,10 +47,47 @@ public class Deck {
     }
 
     @Override
-    public Object clone(){
+    public Object clone() {
         Deck newDeck = new Deck(this.getName());
         newDeck.setSideCards(this.getSideCards());
         newDeck.setMainCards(this.getMainCards());
         return newDeck;
     }
+
+    public boolean hasCard(Card currentCard, boolean isSide) {
+        if (isSide) {
+            for (Card card : sideCards
+            ) {
+                if (card.equals(currentCard)) return true;
+            }
+        } else {
+            for (Card card : mainCards
+            ) {
+                if (card.equals(currentCard)) return true;
+            }
+        }
+        return false;
+    }
+
+    public int cardCount(Card card) {
+        int count = 0;
+        for (Card c :
+                mainCards) {
+            if (card.equals(c)) count++;
+        }
+        for (Card c :
+                sideCards) {
+            if (card.equals(c)) count++;
+        }
+        return count;
+    }
+
+    public static Comparator<Deck> deckNameComparator = new Comparator<>() {
+        @Override
+        public int compare(Deck firstDeck, Deck secondDeck) {
+            String first = firstDeck.getName().toUpperCase();
+            String second = secondDeck.getName().toUpperCase();
+            return first.compareTo(second);
+        }
+    };
 }

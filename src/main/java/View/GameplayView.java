@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 
 public class GameplayView {
     private static GameplayView gameplayView;
+    private boolean isFirstOfGame;
     private boolean oneTributeSetMode;
     private boolean twoTributeSetMode;
     private boolean oneTributeSummonMode;
@@ -26,6 +27,7 @@ public class GameplayView {
 
     public void run(String command) {
         Matcher matcher;
+        if (isFirstOfGame) GameplayController.getInstance().doPhaseAction();
         if (oneTributeSetMode) {
             if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) {
                 oneTributeSetMode = false;
@@ -259,5 +261,13 @@ public class GameplayView {
 
     public void setOneTributeSummonMode(boolean oneTributeSummonMode) {
         this.oneTributeSummonMode = oneTributeSummonMode;
+    }
+
+    public boolean isFirstOfGame() {
+        return isFirstOfGame;
+    }
+
+    public void setFirstOfGame(boolean firstOfGame) {
+        isFirstOfGame = firstOfGame;
     }
 }
