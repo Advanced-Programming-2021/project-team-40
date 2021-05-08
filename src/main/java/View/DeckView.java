@@ -27,6 +27,7 @@ public class DeckView {
     }
 
     public static void showDeck(Deck deck) {
+        if (deck == null) return;
         System.out.println(deck.getName() + ": main deck " + deck.getMainCards().size() + ", side deck " +
                            deck.getSideCards().size() + ", " + DeckMenuController.getInstance().deckValidityString(deck));
     }

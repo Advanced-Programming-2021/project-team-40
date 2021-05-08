@@ -1,6 +1,8 @@
 package Controller.DatabaseController;
 
 import Database.Cards.*;
+import Database.Cards.Effects.DestroyAttackerOnDestruction;
+import Database.Cards.Effects.Effect;
 import Database.User;
 import View.ShopView;
 import com.google.gson.Gson;
@@ -65,7 +67,7 @@ public class DatabaseController {
                 }
             }
         }catch (IOException e){
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -81,8 +83,13 @@ public class DatabaseController {
                         getCardType(cardDetails[4]), Integer.parseInt(cardDetails[5]), Integer.parseInt(cardDetails[6]), cardDetails[7], Integer.parseInt(cardDetails[8]));
             }
         }catch (IOException e){
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
+        initializeMonsterCardEffects();
+    }
+
+    private void initializeMonsterCardEffects() {
+        //TODO add effects to cards
     }
 
     private boolean isLimited(String string){

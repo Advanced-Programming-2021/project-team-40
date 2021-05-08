@@ -32,7 +32,7 @@ public class ProfileMenu implements Help{
         else if (command.matches(Regex.menuNavigation)) ProfileMenuController.getInstance().toLowerMenu("");
         else if ((matcher = Regex.getCommandMatcher(command, Regex.changeNickname)).matches()) changeNickname(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.changePassword)).matches()) changePassword(matcher);
-        else System.err.println("invalid command");
+        else System.out.println("invalid command");
     }
 
     public void help() {
@@ -48,7 +48,7 @@ public class ProfileMenu implements Help{
             ProfileMenuController.getInstance().changeNickname(newNickname,currentUser);
             System.out.println("nickname changed successfully!");
         } catch (RepetitiveNicknameException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class ProfileMenu implements Help{
             ProfileMenuController.getInstance().changePassword(currentPassword,newPassword,currentUser);
             System.out.println("password changed successfully!");
         } catch (RepetitivePasswordException | InvalidPasswordException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 

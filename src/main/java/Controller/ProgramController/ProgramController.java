@@ -34,7 +34,7 @@ public class ProgramController {
         DatabaseController.getInstance();
         while (currentMenu != Menu.EXIT) {
             System.out.flush();
-            System.err.flush();
+            System.out.flush();
             String command = sc.nextLine();
             switch (currentMenu) {
                     case LOGIN_MENU:

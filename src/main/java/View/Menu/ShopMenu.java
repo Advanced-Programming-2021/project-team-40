@@ -30,7 +30,7 @@ public class ShopMenu implements Help {
     public void run(String command) {
         Matcher matcher;
         if (Regex.getCommandMatcher(command, Regex.help).matches()) help();
-        else if (command.matches(Regex.showCurrentMenu)) System.out.println(Menu.DUEL_MENU.toString());
+        else if (command.matches(Regex.showCurrentMenu)) System.out.println(Menu.SHOP_MENU.toString());
         else if (command.matches(Regex.exitMenu)) ShopController.getInstance().toUpperMenu();
         else if (command.matches(Regex.menuNavigation)) ShopController.getInstance().toLowerMenu("");
         else if ((matcher = Regex.getCommandMatcher(command, Regex.shopBuy)).matches()) buy(matcher);
@@ -42,6 +42,7 @@ public class ShopMenu implements Help {
     public void help() {
         System.out.println("shop show --all");
         System.out.println("shop buy <card name>");
+        System.out.println("card show <card name>");
         System.out.println("menu show-current");
         System.out.println("help");
         System.out.println("menu exit");
@@ -54,7 +55,7 @@ public class ShopMenu implements Help {
             if ((card = Card.getCardByName(name)) == null) throw new InvalidCardNameException(name);
             CardView.showCard(card);
         } catch (InvalidCardNameException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -64,7 +65,7 @@ public class ShopMenu implements Help {
             ShopController.getInstance().buy(cardName, currentUser);
             System.out.println("card bought successfully");
         } catch (InvalidCardNameException | NotEnoughMoneyException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 

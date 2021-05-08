@@ -19,6 +19,7 @@ public class DeckMenu implements Help {
 
     private User currentUser;
     private DeckView deckView = new DeckView();
+
     private DeckMenu() {
 
     }
@@ -51,8 +52,8 @@ public class DeckMenu implements Help {
             Card card;
             if ((card = Card.getCardByName(name)) == null) throw new InvalidCardNameException(name);
             CardView.showCard(card);
-        } catch (InvalidCardNameException e){
-            System.err.println(e.getMessage());
+        } catch (InvalidCardNameException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -62,7 +63,7 @@ public class DeckMenu implements Help {
             DeckMenuController.getInstance().createDeck(deckName, currentUser);
             System.out.println("deck created successfully!");
         } catch (RepetitiveDeckNameException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -72,7 +73,7 @@ public class DeckMenu implements Help {
             DeckMenuController.getInstance().deleteDeck(deckName, currentUser);
             System.out.println("deck deleted successfully!");
         } catch (InvalidDeckNameException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -82,7 +83,7 @@ public class DeckMenu implements Help {
             DeckMenuController.getInstance().activateDeck(deckName, currentUser);
             System.out.println("deck activated successfully");
         } catch (InvalidDeckNameException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -95,7 +96,7 @@ public class DeckMenu implements Help {
             DeckMenuController.getInstance().addCard(deckName, cardName, isSide, currentUser);
             System.out.println("card added to deck successfully");
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -108,7 +109,7 @@ public class DeckMenu implements Help {
             DeckMenuController.getInstance().removeCard(deckName, cardName, isSide, currentUser);
             System.out.println("card removed form deck successfully");
         } catch (DeckIsFullException | InvalidCardNameException | InvalidDeckNameException | CardNotInDeckException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -119,7 +120,7 @@ public class DeckMenu implements Help {
         if ((deck = currentUser.getDeckByName(deckName)) == null) try {
             throw new InvalidDeckNameException(deckName);
         } catch (InvalidDeckNameException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
         else deckView.showDetailedDeck(deck, isSide);
     }

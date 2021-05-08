@@ -55,7 +55,7 @@ public class DuelMenu implements Help {
             DuelMenuController.getInstance().startPlayerGame(userTwo,roundCount,currentUser);
             System.out.println("game started between" + currentUser.getUsername() + "and" + User.getUserByName(userTwo).getUsername() + " !");
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 

@@ -366,19 +366,21 @@ public class GameplayController {
     }
 
     public StringBuilder attack(String number) throws Exception {
-        FieldArea fieldArea = gameplay.getSelectedField();
+        FieldArea attacker = gameplay.getSelectedField();
+        MonsterFieldArea attackTarget;
         Player opponent = gameplay.getOpponentPlayer();
-        if (fieldArea == null) throw new NoCardIsSelectedException();
-        if (!(fieldArea instanceof MonsterFieldArea) || !gameplay.ownsSelectedCard())
+        if (attacker == null) throw new NoCardIsSelectedException();
+        if (!(attacker instanceof MonsterFieldArea) || !gameplay.ownsSelectedCard())
             throw new AttackNotPossibleException();
         if (!gameplay.getCurrentPhase().equals(Phase.BATTLE_PHASE))
             throw new WrongPhaseException();
-        if (((MonsterFieldArea) fieldArea).hasAttacked()) throw new AlreadyAttackedException();
+        if (((MonsterFieldArea) attacker).hasAttacked()) throw new AlreadyAttackedException();
         if (isLocationNumberInvalid(number)) throw new InvalidCardSelectionException();
         int id = Integer.parseInt(number);
-        if (opponent.getField().getMonstersFieldById(id) == null) throw new NoCardToAttackException();
-        StringBuilder temp = calculateDamage(id);
-        ((MonsterFieldArea) fieldArea).setHasAttacked(true);
+        if ((attackTarget = opponent.getField().getMonstersFieldById(id)) == null) throw new NoCardToAttackException();
+        StringBuilder temp = calculateDamage((MonsterFieldArea) attacker, attackTarget);
+
+        ((MonsterFieldArea) attacker).setHasAttacked(true);
         deselectCard();
         checkWinningConditions();
         return temp;
@@ -398,12 +400,9 @@ public class GameplayController {
         return temp;
     }
 
-    private StringBuilder calculateDamage(int attackingFieldId) {
-        MonsterFieldArea attackingMonster = (MonsterFieldArea) gameplay.getSelectedField();
-        MonsterFieldArea defendingMonster;
-        defendingMonster = gameplay.getOpponentPlayer().getField().getMonstersFieldById(attackingFieldId);
-        if (defendingMonster.isAttack()) return calculateAttackVsAttackSituation(attackingMonster, defendingMonster);
-        else return calculateAttackVsDefenseSituation(defendingMonster, attackingMonster);
+    private StringBuilder calculateDamage(MonsterFieldArea attackingMonster, MonsterFieldArea beingAttackedMonster) {
+        if (beingAttackedMonster.isAttack()) return calculateAttackVsAttackSituation(attackingMonster, beingAttackedMonster);
+        else return calculateAttackVsDefenseSituation(beingAttackedMonster, attackingMonster);
     }
 
     private StringBuilder calculateAttackVsDefenseSituation(MonsterFieldArea defense, MonsterFieldArea attack) {

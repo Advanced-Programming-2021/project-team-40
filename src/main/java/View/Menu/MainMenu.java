@@ -5,6 +5,7 @@ import Controller.MenuController.MainMenuController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
 import Database.User;
+import View.Exceptions.InvalidMenuNameException;
 
 import java.util.regex.Matcher;
 
@@ -38,8 +39,12 @@ public class MainMenu implements Help {
     }
 
     private void goToMenu(Matcher matcher) {
-        String menuName = matcher.group(matcher.group("menuName"));
-        MainMenuController.getInstance().toLowerMenu(menuName);
+        String menuName = matcher.group("menuName");
+        try {
+            MainMenuController.getInstance().toLowerMenu(menuName);
+        }catch (InvalidMenuNameException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     public void help() {

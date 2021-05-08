@@ -21,7 +21,7 @@ public class ImportExportController implements MenuNavigation {
         try {
             throw new MenuNavigationNotPossibleException();
         } catch (MenuNavigationNotPossibleException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }

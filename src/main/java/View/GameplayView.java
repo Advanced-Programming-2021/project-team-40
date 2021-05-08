@@ -33,32 +33,32 @@ public class GameplayView {
                 oneTributeSetMode = false;
                 System.out.println("tribute cancelled");
             } else if ((matcher = Regex.getCommandMatcher(command, Regex.tributeOne)).matches()) oneTributeSet(matcher);
-            else System.err.println("invalid command");
+            else System.out.println("invalid command");
         } else if (twoTributeSetMode) {
             if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) {
                 twoTributeSetMode = false;
                 System.out.println("tribute cancelled");
             } else if ((matcher = Regex.getCommandMatcher(command, Regex.tributeTwo)).matches()) twoTributeSet(matcher);
-            else System.err.println("invalid command");
+            else System.out.println("invalid command");
         } else if (oneTributeSummonMode) {
             if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) {
                 oneTributeSummonMode = false;
                 System.out.println("tribute cancelled");
             } else if ((matcher = Regex.getCommandMatcher(command, Regex.tributeOne)).matches())
                 oneTributeSummon(matcher);
-            else System.err.println("invalid command");
+            else System.out.println("invalid command");
         } else if (twoTributeSummonMode) {
             if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) {
                 twoTributeSummonMode = false;
                 System.out.println("tribute cancelled");
             } else if ((matcher = Regex.getCommandMatcher(command, Regex.tributeOne)).matches())
                 twoTributeSummon(matcher);
-            else System.err.println("invalid command");
+            else System.out.println("invalid command");
         } else if (graveyardMode) {
             if (Regex.getCommandMatcher(command, Regex.back).matches()) {
                 graveyardMode = false;
                 System.out.println("back to game");
-            } else System.err.println("invalid command");
+            } else System.out.println("invalid command");
         } else if (ritualMode) {
 
         } else if ((matcher = Regex.getCommandMatcher(command, Regex.selectCard)).matches()) selectCard(matcher);
@@ -80,7 +80,7 @@ public class GameplayView {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
-        else System.err.println("invalid command");
+        else System.out.println("invalid command");
     }
 
     private void activateEffect() {
@@ -88,7 +88,7 @@ public class GameplayView {
             GameplayController.getInstance().activateEffect();
             System.out.println("spell activated");
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -104,7 +104,7 @@ public class GameplayView {
             System.out.println("set successfully");
             oneTributeSetMode = false;
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -116,7 +116,7 @@ public class GameplayView {
             System.out.println("set successfully");
             twoTributeSetMode = false;
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -127,7 +127,7 @@ public class GameplayView {
             System.out.println("summoned successfully");
             oneTributeSummonMode = false;
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -139,7 +139,7 @@ public class GameplayView {
             System.out.println("summoned successfully");
             twoTributeSummonMode = false;
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -148,7 +148,7 @@ public class GameplayView {
             GameplayController.getInstance().flipSummon();
             System.out.println("flip summoned successfully");
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -157,7 +157,7 @@ public class GameplayView {
             String message = GameplayController.getInstance().directAttack();
             System.out.println(message);
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -167,7 +167,7 @@ public class GameplayView {
             StringBuilder message = GameplayController.getInstance().attack(monsterId);
             System.out.println(message);
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -177,7 +177,7 @@ public class GameplayView {
             GameplayController.getInstance().changePosition(isAttack);
             System.out.println("monster card position changed successfully");
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -186,7 +186,7 @@ public class GameplayView {
             GameplayController.getInstance().set();
             if (!oneTributeSetMode && !twoTributeSetMode) System.out.println("set successfully");
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -195,7 +195,7 @@ public class GameplayView {
             GameplayController.getInstance().summon();
             if (!oneTributeSummonMode && !twoTributeSummonMode) System.out.println("summoned successfully");
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -203,7 +203,7 @@ public class GameplayView {
         try {
             GameplayController.getInstance().showCard();
         } catch (NoCardIsSelectedException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -212,7 +212,7 @@ public class GameplayView {
             GameplayController.getInstance().deselectCard();
             System.out.println("card deselected");
         } catch (NoCardIsSelectedException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -230,7 +230,7 @@ public class GameplayView {
             else if (isField != null) GameplayController.getInstance().selectCard(isField, "fieldZone", isOpponent);
             System.out.println("card selected");
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 

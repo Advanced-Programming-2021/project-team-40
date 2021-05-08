@@ -52,6 +52,8 @@ public class DeckMenuController implements MenuNavigation {
     public void deleteDeck(String deckName, User currentUser) throws InvalidDeckNameException {
         Deck deck;
         if ((deck = currentUser.getDeckByName(deckName)) == null) throw new InvalidDeckNameException(deckName);
+        currentUser.getInactiveCards().addAll(deck.getSideCards());
+        currentUser.getInactiveCards().addAll(deck.getMainCards());
         currentUser.getDecks().remove(deck);
     }
 
@@ -131,7 +133,7 @@ public class DeckMenuController implements MenuNavigation {
         try {
             throw new MenuNavigationNotPossibleException();
         } catch (MenuNavigationNotPossibleException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }

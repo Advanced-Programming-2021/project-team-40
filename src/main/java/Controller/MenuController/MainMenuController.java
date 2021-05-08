@@ -2,6 +2,7 @@ package Controller.MenuController;
 
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
+import View.Exceptions.InvalidMenuNameException;
 import View.Exceptions.MenuNavigationNotPossibleException;
 
 import static Controller.ProgramController.ProgramController.*;
@@ -32,7 +33,7 @@ public class MainMenuController implements MenuNavigation {
         ProgramController.getInstance().setCurrentMenu(Menu.LOGIN_MENU);
     }
 
-    public void toLowerMenu(String menuName) {
+    public void toLowerMenu(String menuName) throws InvalidMenuNameException {
         Menu menu = Menu.MAIN_MENU;
         switch (menuName) {
             case "Duel":
@@ -57,6 +58,8 @@ public class MainMenuController implements MenuNavigation {
             case "Import/Export":
                 menu = Menu.IMPORT_EXPORT_MENU;
                 break;
+            default:
+                throw new InvalidMenuNameException();
         }
         ProgramController.getInstance().setCurrentMenu(menu);
     }

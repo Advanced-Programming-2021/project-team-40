@@ -51,7 +51,7 @@ public class LoginMenu implements Help {
             LoginController.getInstance().loginUser(username, password);
             System.out.println("user logged in successfully!");
         } catch (InvalidLoginException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -63,7 +63,7 @@ public class LoginMenu implements Help {
             LoginController.getInstance().registerUser(username, password, nickname);
             System.out.println("user created successfully!");
         } catch (RepetitiveUsernameException | RepetitiveNicknameException | WeakPasswordException e) {
-            System.err.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }
