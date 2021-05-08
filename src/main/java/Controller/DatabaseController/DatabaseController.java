@@ -131,6 +131,7 @@ public class DatabaseController {
 
     private void initializeUsers(){
         File userDirectory = new File("./src/main/resources/Users");
+        userDirectory.mkdir();
         if (userDirectory.listFiles() == null) return;
         for (File userFile : userDirectory.listFiles()){
             try{

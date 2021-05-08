@@ -1,6 +1,7 @@
 package View.Menu;
 
 
+import Controller.DatabaseController.DatabaseController;
 import Controller.MenuController.DeckMenuController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
@@ -44,6 +45,7 @@ public class DeckMenu implements Help {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.showOneDeck)).matches()) showOneDeck(matcher);
         else if (Regex.getCommandMatcher(command, Regex.showCards).matches()) UserView.showAllCards(currentUser);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.showCardByName)).matches()) showACard(matcher);
+        DatabaseController.getInstance().saveUser(currentUser);
     }
 
     private void showACard(Matcher matcher) {
