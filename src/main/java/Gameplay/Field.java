@@ -9,7 +9,14 @@ public class Field {
     private MonsterFieldArea[] monstersField = new MonsterFieldArea[5];
     private SpellAndTrapFieldArea[] spellAndTrapField = new SpellAndTrapFieldArea[5];
     private ArrayList<Card> graveyard = new ArrayList<>();
-    private FieldArea fieldZone;
+    private FieldArea fieldZone = new FieldArea();
+
+    public Field() {
+        for (int i = 0; i < 5; i++) {
+            monstersField[i] = new MonsterFieldArea();
+            spellAndTrapField[i] = new SpellAndTrapFieldArea();
+        }
+    }
 
     public MonsterFieldArea[] getMonstersField() {
         return monstersField;

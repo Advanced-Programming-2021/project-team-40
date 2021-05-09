@@ -139,9 +139,9 @@ public class DatabaseController {
                 String userJson = fileScanner.nextLine();
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 Gson gson = gsonBuilder.create();
-                User tempUser = gson.fromJson(userJson, User.class);
-                new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getScore(),
-                        tempUser.getBalance(), tempUser.getDecks(), tempUser.getInactiveCards());
+//                User tempUser = gson.fromJson(userJson, User.class);
+//                new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getScore(),
+//                        tempUser.getBalance(), tempUser.getDecks(), tempUser.getInactiveCards());
             }catch (FileNotFoundException e){
                 System.out.println(e.getMessage());
             }

@@ -2,6 +2,7 @@ package View.Menu;
 
 
 
+import Controller.DuelController.GameplayController;
 import Controller.MenuController.DuelMenuController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.Regex;
@@ -53,7 +54,8 @@ public class DuelMenu implements Help {
         String roundCount = matcher.group("rounds");
         try {
             DuelMenuController.getInstance().startPlayerGame(userTwo,roundCount,currentUser);
-            System.out.println("game started between" + currentUser.getUsername() + "and" + User.getUserByName(userTwo).getUsername() + " !");
+            System.out.println("game started between " + currentUser.getUsername() + " and " + User.getUserByName(userTwo).getUsername() + " !");
+            GameplayController.getInstance().doPhaseAction();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

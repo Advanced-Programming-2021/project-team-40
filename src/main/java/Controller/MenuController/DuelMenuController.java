@@ -34,7 +34,7 @@ public class DuelMenuController implements MenuNavigation {
         GameplayController.getInstance().setGameplay(gameplay);
         GameplayController.getInstance().setStartingPlayer();
         GameplayController.getInstance().dealCardsAtBeginning();
-        System.out.println(GameplayController.getInstance().drawCard());
+//        System.out.println(GameplayController.getInstance().drawCard());
     }
 
     public void startAIGame(String roundCount) {
