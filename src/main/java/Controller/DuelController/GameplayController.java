@@ -164,7 +164,7 @@ public class GameplayController {
         FieldArea fieldArea;
         int id;
         switch (field) {
-            case "monster":
+            case "--monster":
                 if (isLocationNumberInvalid(idToCheck)) throw new InvalidCardSelectionException();
                 id = Integer.parseInt(idToCheck) - 1;
                 if (isFromOpponent) fieldArea = gameplay.getOpponentPlayer().getField().getMonstersFieldById(id);
@@ -172,7 +172,7 @@ public class GameplayController {
                 if (fieldArea.getCard() == null) throw new NoCardFoundException();
                 gameplay.setSelectedField(fieldArea);
                 break;
-            case "spell":
+            case "--spell":
                 if (isLocationNumberInvalid(idToCheck)) throw new InvalidCardSelectionException();
                 id = Integer.parseInt(idToCheck) - 1;
                 if (isFromOpponent) fieldArea = gameplay.getOpponentPlayer().getField().getSpellAndTrapFieldById(id);
@@ -180,14 +180,14 @@ public class GameplayController {
                 if (fieldArea.getCard() == null) throw new NoCardFoundException();
                 gameplay.setSelectedField(fieldArea);
                 break;
-            case "hand":
+            case "--hand":
                 if (isLocationNumberInvalid(idToCheck)) throw new InvalidCardSelectionException();
                 id = Integer.parseInt(idToCheck) - 1;
                 fieldArea = gameplay.getCurrentPlayer().getPlayingHand().get(id);
                 if (fieldArea == null) throw new NoCardFoundException();
                 gameplay.setSelectedField(fieldArea);
                 break;
-            case "fieldZone":
+            case "--field":
                 if (isFromOpponent) fieldArea = gameplay.getOpponentPlayer().getField().getFieldZone();
                 else fieldArea = gameplay.getCurrentPlayer().getField().getFieldZone();
                 if (fieldArea.getCard() == null) throw new NoCardFoundException();

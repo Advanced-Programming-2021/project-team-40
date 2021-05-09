@@ -8,10 +8,10 @@ public class Gameplay {
     private Player currentPlayer;
     private Player opponentPlayer;
     private FieldArea selectedField = null;
-    private Phase currentPhase;
+    private Phase currentPhase = Phase.DRAW_PHASE;
     private int currentRound;
     private int rounds;
-    private boolean ownsSelectedCard;
+    private Boolean ownsSelectedCard;
     private boolean hasPlacedMonster;
 
     public Gameplay(Player playerOne, Player playerTwo, int rounds) {

@@ -34,7 +34,7 @@ public class DeckMenu implements Help {
         Matcher matcher;
         if (Regex.getCommandMatcher(command, Regex.help).matches()) help();
         else if (command.matches(Regex.showCurrentMenu)) System.out.println(Menu.DECK_MENU.toString());
-        else if (command.matches(Regex.exitMenu)) DeckMenuController.getInstance().toUpperMenu();
+        else if (Regex.getCommandMatcher(command, Regex.exitMenu).matches()) DeckMenuController.getInstance().toUpperMenu();
         else if (command.matches(Regex.menuNavigation)) DeckMenuController.getInstance().toLowerMenu("");
         else if ((matcher = Regex.getCommandMatcher(command, Regex.createDeck)).matches()) createDeck(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.deleteDeck)).matches()) deleteDeck(matcher);

@@ -27,7 +27,6 @@ public class GameplayView {
 
     public void run(String command) {
         Matcher matcher;
-        if (isFirstOfGame) GameplayController.getInstance().doPhaseAction();
         if (oneTributeSetMode) {
             if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) {
                 oneTributeSetMode = false;
@@ -61,7 +60,10 @@ public class GameplayView {
             } else System.out.println("invalid command");
         } else if (ritualMode) {
 
-        } else if ((matcher = Regex.getCommandMatcher(command, Regex.selectCard)).matches()) selectCard(matcher);
+        } else if ((matcher = Regex.getCommandMatcher(command, Regex.selectMonsterCard)).matches()) selectCard(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.selectSpellCard)).matches()) selectCard(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.selectHandCard)).matches()) selectCard(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.selectFieldZoneCard)).matches()) selectCard(matcher);
         else if (Regex.getCommandMatcher(command, Regex.deselectCard).matches()) deselectCard();
         else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches())
             GameplayController.getInstance().goToNextPhase();
@@ -217,17 +219,12 @@ public class GameplayView {
     }
 
     private void selectCard(Matcher matcher) {
-        String monsterId = matcher.group("monsterId");
-        String spellId = matcher.group("handId");
-        String handId = matcher.group("handId");
-        String isField = matcher.group("isField");
+        String id = matcher.group("id");
+        String type = matcher.group("type");
         boolean isOpponent = true;
-        if (matcher.group("oppo1") == null && matcher.group("oppo2") == null) isOpponent = false;
+        if (matcher.group("isOpponent") == null ) isOpponent = false;
         try {
-            if (monsterId != null) GameplayController.getInstance().selectCard(monsterId, "monster", isOpponent);
-            else if (spellId != null) GameplayController.getInstance().selectCard(spellId, "spell", isOpponent);
-            else if (handId != null) GameplayController.getInstance().selectCard(handId, "hand", isOpponent);
-            else if (isField != null) GameplayController.getInstance().selectCard(isField, "fieldZone", isOpponent);
+            GameplayController.getInstance().selectCard(id,type,isOpponent);
             System.out.println("card selected");
         } catch (Exception e) {
             System.out.println(e.getMessage());
