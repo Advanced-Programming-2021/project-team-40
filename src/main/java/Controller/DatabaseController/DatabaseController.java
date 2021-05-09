@@ -3,6 +3,9 @@ package Controller.DatabaseController;
 import Database.Cards.*;
 import Database.Cards.Effects.DestroyAttackerOnDestruction;
 import Database.Cards.Effects.Effect;
+import Database.Deck;
+import Database.EfficientDeck;
+import Database.EfficientUser;
 import Database.User;
 import View.ShopView;
 import com.google.gson.Gson;
@@ -10,6 +13,7 @@ import com.google.gson.GsonBuilder;
 import com.opencsv.*;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class DatabaseController {
@@ -27,17 +31,18 @@ public class DatabaseController {
     }
 
     private void initialize(){
-        initializeUsers();
         initializeMonsterCards();
         initializeSpellAndTrapCards();
+        initializeUsers();
     }
 
     public void saveUser(User user){
         File userFile = new File("./src/main/resources/Users/" + user.getUsername() + ".json");
+        EfficientUser efficientUser = new EfficientUser(user);
         try {
             userFile.createNewFile();
             Gson gson = new GsonBuilder().create();
-            String writeToFile = gson.toJson(user);
+            String writeToFile = gson.toJson(efficientUser);
             FileWriter fw = new FileWriter(userFile);
             BufferedWriter out = new BufferedWriter(fw);
             out.write(writeToFile);
@@ -139,12 +144,29 @@ public class DatabaseController {
                 String userJson = fileScanner.nextLine();
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 Gson gson = gsonBuilder.create();
-                User tempUser = gson.fromJson(userJson, User.class);
+                EfficientUser tempUser = gson.fromJson(userJson, EfficientUser.class);
+                ArrayList<Deck> actualDecks = new ArrayList<>();
+                for (EfficientDeck deckName: tempUser.getDecks()) {
+                    actualDecks.add(createDeckFromStringArray(deckName.getName(), deckName.getMainCards(), deckName.getSideCards()));
+                }
+                ArrayList<Card> actualInactiveCards = new ArrayList<>();
+                for (String cardName: tempUser.getInactiveCards()) actualInactiveCards.add(Card.getCardByName(cardName));
                 new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getScore(),
-                        tempUser.getBalance(), tempUser.getDecks(), tempUser.getInactiveCards());
+                        tempUser.getBalance(), actualDecks, actualInactiveCards);
             }catch (FileNotFoundException e){
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    private Deck createDeckFromStringArray (String deckName, ArrayList<String> mainCards, ArrayList<String> sideCards){
+        Deck deck = new Deck(deckName);
+        for (String cardName: mainCards) {
+            deck.getMainCards().add(Card.getCardByName(cardName));
+        }
+        for (String cardName: sideCards){
+            deck.getSideCards().add(Card.getCardByName(cardName));
+        }
+        return deck;
     }
 }

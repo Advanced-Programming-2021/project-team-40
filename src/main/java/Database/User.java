@@ -15,14 +15,15 @@ public class User {
     private ArrayList<Card> inactiveCards = new ArrayList<>();
 
     public User(String username, String password, String nickname, int score, int balance, ArrayList<Deck> decks, ArrayList<Card> inactiveCards){
-        setUsername(username);
-        setPassword(password);
-        setNickname(nickname);
+        setUsername(username.trim());
+        setPassword(password.trim());
+        setNickname(nickname.trim());
         setScore(score);
-        setBalance(1000000000);
+        setBalance(balance);
         setDecks(decks);
         this.inactiveCards = inactiveCards;
         users.add(this);
+        System.out.println("new user created successfully!\nUsername: " + username + "\nPassword: " + password);
     }
 
     public static User getUserByName(String username){

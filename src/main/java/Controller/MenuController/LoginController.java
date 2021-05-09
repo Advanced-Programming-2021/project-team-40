@@ -41,7 +41,7 @@ public class LoginController implements MenuNavigation {
         if (passwordIsWeak(password)) throw new WeakPasswordException();
         if (User.getUserByName(username) != null) throw new RepetitiveUsernameException(username);
         if (User.getUserByNickname(nickname) != null) throw new RepetitiveNicknameException(nickname);
-        User tempUser = new User(username, password, nickname, 0, 10000, new ArrayList<Deck>(), new ArrayList<Card>());
+        User tempUser = new User(username, password, nickname, 0, 100000, new ArrayList<Deck>(), new ArrayList<Card>());
         DatabaseController.getInstance().saveUser(tempUser);
     }
 
