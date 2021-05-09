@@ -18,6 +18,7 @@ import View.CardView;
 import View.Exceptions.*;
 import View.GameplayView;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GameplayController {
@@ -233,21 +234,12 @@ public class GameplayController {
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseException();
         if (fieldArea.getCard() instanceof Monster) {
-            MonsterFieldArea m = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
-            int cardLevel = ((Monster) fieldArea.getCard()).getLevel();
-            if (m == null) throw new MonsterZoneFullException();
-            if (cardLevel == 5 || cardLevel == 6) {
-                if (getMonsterFieldCount() < 1) throw new NotEnoughCardsException();
-                GameplayView.getInstance().setOneTributeSetMode(true);
-            }
-            if (cardLevel == 7 || cardLevel == 8) {
-                if (getMonsterFieldCount() < 2) throw new NotEnoughCardsException();
-                GameplayView.getInstance().setTwoTributeSetMode(true);
-
-            } else {
-                setMonsterCard(m, fieldArea);
-                deselectCard();
-            }
+            MonsterFieldArea monster = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
+            if (monster == null) throw new MonsterZoneFullException();
+            if (((Monster) fieldArea.getCard()).getLevel() > 4)
+                tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
+            setMonsterCard(monster, fieldArea);
+            deselectCard();
         } else if (fieldArea.getCard() instanceof Spell || fieldArea.getCard() instanceof Trap) {
             SpellAndTrapFieldArea s = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
             if (s == null) throw new SpellZoneFullException();
@@ -266,72 +258,16 @@ public class GameplayController {
         MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
         if (monsterFieldArea == null) throw new MonsterZoneFullException();
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
-        int cardLevel = ((Monster) fieldArea.getCard()).getLevel();
-        if (cardLevel == 5 || cardLevel == 6) {
-            if (getMonsterFieldCount() < 1) throw new NotEnoughCardsException();
-            GameplayView.getInstance().setOneTributeSummonMode(true);
+        if (((Monster) fieldArea.getCard()).getLevel() > 4)
+            tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
+        normalSummon(fieldArea, monsterFieldArea);
+        deselectCard();
+    }
+
+    private void tributeCards(ArrayList<MonsterFieldArea> toTribute) {
+        for (MonsterFieldArea monsterFieldArea : toTribute) {
+            destroyMonsterCard(gameplay.getCurrentPlayer(), monsterFieldArea);
         }
-        if (cardLevel == 7 || cardLevel == 8) {
-            if (getMonsterFieldCount() < 2) throw new NotEnoughCardsException();
-            GameplayView.getInstance().setTwoTributeSummonMode(true);
-        } else {
-            normalSummon(fieldArea, monsterFieldArea);
-            deselectCard();
-        }
-    }
-
-    public void OneTributeSummon(String toTributeId) throws Exception {
-        if (isLocationNumberInvalid(toTributeId)) throw new InvalidCardSelectionException();
-        int id = Integer.parseInt(toTributeId) - 1;
-        MonsterFieldArea m = gameplay.getCurrentPlayer().getField().getMonstersFieldById(id);
-        if (m == null) throw new InvalidCardAddressException();
-        destroyMonsterCard(gameplay.getCurrentPlayer(), m);
-        m.putCard(gameplay.getSelectedField().getCard(), true);
-        MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
-        normalSummon(gameplay.getSelectedField(), monsterFieldArea);
-        deselectCard();
-    }
-
-    public void TwoTributeSummon(String toTributeId1, String toTributeId2) throws Exception {
-        if (isLocationNumberInvalid(toTributeId1) || isLocationNumberInvalid(toTributeId2))
-            throw new InvalidCardSelectionException();
-        int id1 = Integer.parseInt(toTributeId1) - 1;
-        int id2 = Integer.parseInt(toTributeId2) - 1;
-        MonsterFieldArea m1 = gameplay.getCurrentPlayer().getField().getMonstersFieldById(id1);
-        MonsterFieldArea m2 = gameplay.getCurrentPlayer().getField().getMonstersFieldById(id2);
-        if (m1 == null || m2 == null) throw new InvalidCardAddressException();
-        destroyMonsterCard(gameplay.getCurrentPlayer(), m1);
-        destroyMonsterCard(gameplay.getCurrentPlayer(), m2);
-        MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
-        normalSummon(gameplay.getSelectedField(), monsterFieldArea);
-        deselectCard();
-    }
-
-    public void OneTributeSet(String toTributeId) throws Exception {
-        if (isLocationNumberInvalid(toTributeId)) throw new InvalidCardSelectionException();
-        int id = Integer.parseInt(toTributeId) - 1;
-        MonsterFieldArea m = gameplay.getCurrentPlayer().getField().getMonstersFieldById(id);
-        if (m == null) throw new InvalidCardAddressException();
-        destroyMonsterCard(gameplay.getCurrentPlayer(), m);
-        m.putCard(gameplay.getSelectedField().getCard(), false);
-        MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
-        setMonsterCard((MonsterFieldArea) gameplay.getSelectedField(), monsterFieldArea);
-        deselectCard();
-    }
-
-    public void TwoTributeSet(String toTributeId1, String toTributeId2) throws Exception {
-        if (isLocationNumberInvalid(toTributeId1) || isLocationNumberInvalid(toTributeId2))
-            throw new InvalidCardSelectionException();
-        int id1 = Integer.parseInt(toTributeId1) - 1;
-        int id2 = Integer.parseInt(toTributeId2) - 1;
-        MonsterFieldArea m1 = gameplay.getCurrentPlayer().getField().getMonstersFieldById(id1);
-        MonsterFieldArea m2 = gameplay.getCurrentPlayer().getField().getMonstersFieldById(id2);
-        if (m1 == null || m2 == null) throw new InvalidCardAddressException();
-        destroyMonsterCard(gameplay.getCurrentPlayer(), m1);
-        destroyMonsterCard(gameplay.getCurrentPlayer(), m2);
-        MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
-        setMonsterCard((MonsterFieldArea) gameplay.getSelectedField(), monsterFieldArea);
-        deselectCard();
     }
 
     public void ritualSummon() {
@@ -401,7 +337,8 @@ public class GameplayController {
     }
 
     private StringBuilder calculateDamage(MonsterFieldArea attackingMonster, MonsterFieldArea beingAttackedMonster) {
-        if (beingAttackedMonster.isAttack()) return calculateAttackVsAttackSituation(attackingMonster, beingAttackedMonster);
+        if (beingAttackedMonster.isAttack())
+            return calculateAttackVsAttackSituation(attackingMonster, beingAttackedMonster);
         else return calculateAttackVsDefenseSituation(beingAttackedMonster, attackingMonster);
     }
 
@@ -462,6 +399,8 @@ public class GameplayController {
 
     private void destroyMonsterCard(Player player, MonsterFieldArea monster) {
         moveCardToGraveyard(player, monster.getCard());
+        //TODO remove monster from field
+        monster = new MonsterFieldArea();
     }
 
     private void moveCardToGraveyard(Player player, Card card) {
@@ -514,12 +453,12 @@ public class GameplayController {
 
     private boolean isOpponentFieldEmpty() {
         MonsterFieldArea[] monsterFieldAreas = gameplay.getOpponentPlayer().getField().getMonstersField();
-        for (MonsterFieldArea monster : monsterFieldAreas
-        ) {
+        for (MonsterFieldArea monster : monsterFieldAreas) {
             if (monster != null) return false;
         }
         return true;
     }
+
     private boolean hasAttackMonster() {
         MonsterFieldArea[] monsterFieldAreas = gameplay.getCurrentPlayer().getField().getMonstersField();
         for (MonsterFieldArea monster :

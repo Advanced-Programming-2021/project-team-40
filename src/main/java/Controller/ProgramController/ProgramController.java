@@ -19,7 +19,7 @@ public class ProgramController {
     public static DuelMenu duelMenu = DuelMenu.getInstance();
     public static ScoreboardMenu scoreboardMenu = new ScoreboardMenu();
     public static ImportExport importExport = ImportExport.getInstance();
-    public Scanner sc = new Scanner(System.in);
+    public Scanner scanner = new Scanner(System.in);
 
     private ProgramController(){
 
@@ -35,7 +35,7 @@ public class ProgramController {
         while (currentMenu != Menu.EXIT) {
             System.out.flush();
             System.out.flush();
-            String command = sc.nextLine();
+            String command = scanner.nextLine();
             switch (currentMenu) {
                     case LOGIN_MENU:
                         loginMenu.run(command);
@@ -69,6 +69,10 @@ public class ProgramController {
 
     public void setCurrentMenu(Menu currentMenu) {
         ProgramController.currentMenu = currentMenu;
+    }
+
+    public Scanner getScanner() {
+        return scanner;
     }
 
     public static Menu getCurrentMenu() {

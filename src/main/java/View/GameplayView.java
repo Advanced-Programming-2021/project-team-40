@@ -1,18 +1,18 @@
 package View;
 
 import Controller.DuelController.GameplayController;
+import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
+import Gameplay.MonsterFieldArea;
+import Gameplay.Player;
 import View.Exceptions.*;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 
 public class GameplayView {
     private static GameplayView gameplayView;
     private boolean isFirstOfGame;
-    private boolean oneTributeSetMode;
-    private boolean twoTributeSetMode;
-    private boolean oneTributeSummonMode;
-    private boolean twoTributeSummonMode;
     private boolean graveyardMode;
     private boolean ritualMode;
 
@@ -27,33 +27,7 @@ public class GameplayView {
 
     public void run(String command) {
         Matcher matcher;
-        if (oneTributeSetMode) {
-            if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) {
-                oneTributeSetMode = false;
-                System.out.println("tribute cancelled");
-            } else if ((matcher = Regex.getCommandMatcher(command, Regex.tributeOne)).matches()) oneTributeSet(matcher);
-            else System.out.println("invalid command");
-        } else if (twoTributeSetMode) {
-            if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) {
-                twoTributeSetMode = false;
-                System.out.println("tribute cancelled");
-            } else if ((matcher = Regex.getCommandMatcher(command, Regex.tributeTwo)).matches()) twoTributeSet(matcher);
-            else System.out.println("invalid command");
-        } else if (oneTributeSummonMode) {
-            if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) {
-                oneTributeSummonMode = false;
-                System.out.println("tribute cancelled");
-            } else if ((matcher = Regex.getCommandMatcher(command, Regex.tributeOne)).matches())
-                oneTributeSummon(matcher);
-            else System.out.println("invalid command");
-        } else if (twoTributeSummonMode) {
-            if (Regex.getCommandMatcher(command, Regex.cancelAction).matches()) {
-                twoTributeSummonMode = false;
-                System.out.println("tribute cancelled");
-            } else if ((matcher = Regex.getCommandMatcher(command, Regex.tributeOne)).matches())
-                twoTributeSummon(matcher);
-            else System.out.println("invalid command");
-        } else if (graveyardMode) {
+        if (graveyardMode) {
             if (Regex.getCommandMatcher(command, Regex.back).matches()) {
                 graveyardMode = false;
                 System.out.println("back to game");
@@ -99,50 +73,8 @@ public class GameplayView {
         GraveyardView.showGraveyard(GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getGraveyard());
     }
 
-    private void oneTributeSet(Matcher matcher) {
-        String id = matcher.group(1);
-        try {
-            GameplayController.getInstance().OneTributeSet(id);
-            System.out.println("set successfully");
-            oneTributeSetMode = false;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
+    private void tributeSummon(Matcher matcher) {
 
-    private void twoTributeSet(Matcher matcher) {
-        String id1 = matcher.group(1);
-        String id2 = matcher.group(2);
-        try {
-            GameplayController.getInstance().TwoTributeSet(id1, id2);
-            System.out.println("set successfully");
-            twoTributeSetMode = false;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void oneTributeSummon(Matcher matcher) {
-        String id1 = matcher.group(1);
-        try {
-            GameplayController.getInstance().OneTributeSummon(id1);
-            System.out.println("summoned successfully");
-            oneTributeSummonMode = false;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void twoTributeSummon(Matcher matcher) {
-        String id1 = matcher.group(1);
-        String id2 = matcher.group(2);
-        try {
-            GameplayController.getInstance().TwoTributeSummon(id1, id2);
-            System.out.println("summoned successfully");
-            twoTributeSummonMode = false;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     private void flipSummon() {
@@ -161,6 +93,47 @@ public class GameplayView {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public ArrayList<MonsterFieldArea> getTributes(int number) throws NotEnoughCardsException, CommandCancellationException {
+        String[] tributeRegex = {" ", "\\d+", "\\d+ \\d+", "\\d+ \\d+ \\d+"};
+        String tributesInput;
+        if (getNumberOfPlayerMonsters(GameplayController.getInstance().getGameplay().getCurrentPlayer()) < number)
+            throw new NotEnoughCardsException();
+        while (true) {
+            tributesInput = ProgramController.getInstance().getScanner().nextLine();
+            if (tributesInput.matches(tributeRegex[number])) break;
+            else if (tributesInput.matches("cancel")) throw new CommandCancellationException("tribute");
+            else if (tributesInput.matches("help"))
+                System.out.println("type " + number + " locations for monsters to tribute, or cancel");
+            else System.out.println("type exactly " + number + " locations to tribute");
+        }
+        String[] splitTributeInputs = tributesInput.split(" ");
+        try {
+            ArrayList<MonsterFieldArea> toReturn = new ArrayList<>();
+            MonsterFieldArea fieldAreaToAdd;
+            for (int i = 0; i < number; i++) {
+                if (GameplayController.getInstance().isLocationNumberInvalid(splitTributeInputs[i]))
+                    throw new InvalidCardSelectionException();
+                if ((fieldAreaToAdd = GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersFieldById(Integer.parseInt(splitTributeInputs[i]))).getCard() == null)
+                    throw new InvalidCardAddressException();
+                toReturn.add(fieldAreaToAdd);
+            }
+            return toReturn;
+
+        } catch (InvalidCardAddressException | InvalidCardSelectionException e) {
+            System.out.println(e.getMessage());
+            return getTributes(number);
+        }
+    }
+
+    private int getNumberOfPlayerMonsters(Player currentPlayer) {
+        int monsters = 0;
+        MonsterFieldArea[] monsterFieldAreas = currentPlayer.getField().getMonstersField();
+        for (MonsterFieldArea area : monsterFieldAreas) {
+            if (area.getCard() != null) monsters++;
+        }
+        return monsters;
     }
 
     private void attack(Matcher matcher) {
@@ -186,7 +159,7 @@ public class GameplayView {
     private void set() {
         try {
             GameplayController.getInstance().set();
-            if (!oneTributeSetMode && !twoTributeSetMode) System.out.println("set successfully");
+            System.out.println("set successfully");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -195,7 +168,7 @@ public class GameplayView {
     private void summon() {
         try {
             GameplayController.getInstance().summon();
-            if (!oneTributeSummonMode && !twoTributeSummonMode) System.out.println("summoned successfully");
+            System.out.println("summoned successfully");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -222,9 +195,9 @@ public class GameplayView {
         String id = matcher.group("id");
         String type = matcher.group("type");
         boolean isOpponent = true;
-        if (matcher.group("isOpponent") == null ) isOpponent = false;
+        if (matcher.group("isOpponent") == null) isOpponent = false;
         try {
-            GameplayController.getInstance().selectCard(id,type,isOpponent);
+            GameplayController.getInstance().selectCard(id, type, isOpponent);
             System.out.println("card selected");
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -238,26 +211,6 @@ public class GameplayView {
 
     public void setRitualMode(boolean ritualMode) {
         this.ritualMode = ritualMode;
-    }
-
-    private void tributeSummon(Matcher matcher) {
-
-    }
-
-    public void setOneTributeSetMode(boolean oneTributeSetMode) {
-        this.oneTributeSetMode = oneTributeSetMode;
-    }
-
-    public void setTwoTributeSetMode(boolean twoTributeSetMode) {
-        this.twoTributeSetMode = twoTributeSetMode;
-    }
-
-    public void setTwoTributeSummonMode(boolean twoTributeSummonMode) {
-        this.twoTributeSummonMode = twoTributeSummonMode;
-    }
-
-    public void setOneTributeSummonMode(boolean oneTributeSummonMode) {
-        this.oneTributeSummonMode = oneTributeSummonMode;
     }
 
     public boolean isFirstOfGame() {
