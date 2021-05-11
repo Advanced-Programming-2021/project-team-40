@@ -17,9 +17,11 @@ public class MonsterFieldArea extends FieldArea{
     public void putCard(Card card, boolean isAttack){
         this.isAttack = isAttack;
         super.putCard(card, isAttack);
-        attackPoint = ((Monster) card).getAttackPoints();
-        defensePoint = ((Monster) card).getDefensePoints();
-        hasSwitchedMode = true;
+        if (card !=null) {
+            attackPoint = ((Monster) card).getAttackPoints();
+            defensePoint = ((Monster) card).getDefensePoints();
+            hasSwitchedMode = true;
+        }
     }
 
     public void setAttack(boolean attack) {

@@ -13,8 +13,6 @@ import java.util.regex.Matcher;
 public class GameplayView {
     private static GameplayView gameplayView;
     private boolean isFirstOfGame;
-    private boolean graveyardMode;
-    private boolean ritualMode;
 
     private GameplayView() {
 
@@ -27,21 +25,14 @@ public class GameplayView {
 
     public void run(String command) {
         Matcher matcher;
-        if (graveyardMode) {
-            if (Regex.getCommandMatcher(command, Regex.back).matches()) {
-                graveyardMode = false;
-                System.out.println("back to game");
-            } else System.out.println("invalid command");
-        } else if (ritualMode) {
-
-        } else if ((matcher = Regex.getCommandMatcher(command, Regex.selectMonsterCard)).matches()) selectCard(matcher);
+        if ((matcher = Regex.getCommandMatcher(command, Regex.selectMonsterCard)).matches()) selectCard(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.selectSpellCard)).matches()) selectCard(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.selectHandCard)).matches()) selectCard(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.selectFieldZoneCard)).matches()) selectCard(matcher);
         else if (Regex.getCommandMatcher(command, Regex.deselectCard).matches()) deselectCard();
         else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches())
             GameplayController.getInstance().goToNextPhase();
-        else if (Regex.getCommandMatcher(command, Regex.showGraveyard).matches()) showGraveyard();
+        else if (Regex.getCommandMatcher(command, Regex.showGraveyard).matches()) graveyardMode();
         else if (Regex.getCommandMatcher(command, Regex.showSelectedCard).matches()) showCard();
         else if (Regex.getCommandMatcher(command, Regex.summon).matches()) summon();
         else if (Regex.getCommandMatcher(command, Regex.set).matches()) set();
@@ -66,15 +57,6 @@ public class GameplayView {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    private void showGraveyard() {
-        setGraveyardMode(true);
-        GraveyardView.showGraveyard(GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getGraveyard());
-    }
-
-    private void tributeSummon(Matcher matcher) {
-
     }
 
     private void flipSummon() {
@@ -124,6 +106,18 @@ public class GameplayView {
         } catch (InvalidCardAddressException | InvalidCardSelectionException e) {
             System.out.println(e.getMessage());
             return getTributes(number);
+        }
+    }
+
+    private void graveyardMode() {
+        GraveyardView.showGraveyard(GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getGraveyard());
+        String command;
+        while (true) {
+            command = ProgramController.getInstance().getScanner().nextLine();
+            if (command.matches(Regex.back)) break;
+            if (command.matches(Regex.showGraveyard))
+                GraveyardView.showGraveyard(GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getGraveyard());
+            else System.out.println("invalid command");
         }
     }
 
@@ -202,15 +196,6 @@ public class GameplayView {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-    }
-
-
-    public void setGraveyardMode(boolean graveyardMode) {
-        this.graveyardMode = graveyardMode;
-    }
-
-    public void setRitualMode(boolean ritualMode) {
-        this.ritualMode = ritualMode;
     }
 
     public boolean isFirstOfGame() {

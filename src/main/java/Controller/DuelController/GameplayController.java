@@ -227,8 +227,6 @@ public class GameplayController {
             //TODO: set and activate at the same time
         }
         //TODO: check preparation for spell
-
-
     }
 
     public void set() throws Exception {
@@ -346,35 +344,43 @@ public class GameplayController {
     }
 
     private StringBuilder calculateDamage(MonsterFieldArea attackingMonster, MonsterFieldArea beingAttackedMonster) {
-        if (beingAttackedMonster.isAttack())
-            return calculateAttackVsAttackSituation(attackingMonster, beingAttackedMonster);
-        else return calculateAttackVsDefenseSituation(beingAttackedMonster, attackingMonster);
-    }
-
-    private StringBuilder calculateAttackVsDefenseSituation(MonsterFieldArea defense, MonsterFieldArea attack) {
         StringBuilder message = new StringBuilder();
-        int attackMonsterPoint = attack.getAttackPoint();
-        int defenseMonsterPoint = defense.getDefensePoint();
-        int damage = attackMonsterPoint - defenseMonsterPoint;
-        if (!defense.isVisible()) {
-            message.append("opponent’s monster card was ").append(defense.getCard().getName()).append(" and ");
-            makeCardVisible(defense);
+        if (beingAttackedMonster.isAttack()) {
+            int damage = calculateAttackVsAttackSituation(attackingMonster, beingAttackedMonster);
+            if (damage > 0)
+                message.append("your opponent’s monster is destroyed and your opponent receives").append(damage).append(" battle damage");
+            if (damage < 0)
+                message.append("Your monster card is destroyed and you received ").append(-damage).append(" battle damage");
+            if (damage == 0)
+                message.append("both you and your opponent monster cards are destroyed and no one receives damage");
+        } else {
+            if (beingAttackedMonster.isVisible()) {
+                message.append("opponent’s monster card was ").append(beingAttackedMonster.getCard().getName()).append(" and ");
+                makeCardVisible(beingAttackedMonster);
+            }
+            int damage = calculateAttackVsDefenseSituation(beingAttackedMonster, attackingMonster);
+            if (damage > 0) message.append("the defense position monster is destroyed");
+            if (damage < 0)
+                message.append("no card is destroyed and you received ").append(-damage).append(" battle damage");
+            if (damage == 0) message.append("no card is destroyed");
         }
-        if (damage > 0) {
-            destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
-            message.append("the defense position monster is destroyed");
-        }
-        if (damage < 0) {
-            int newLP = gameplay.getCurrentPlayer().getLifePoints() + damage;
-            gameplay.getCurrentPlayer().setLifePoints(newLP);
-            message.append("no card is destroyed and you received ").append(-damage).append(" battle damage");
-        }
-        if (damage == 0) message.append("no card is destroyed");
         return message;
     }
 
-    private StringBuilder calculateAttackVsAttackSituation(MonsterFieldArea attack, MonsterFieldArea defense) {
-        StringBuilder message = new StringBuilder();
+    private int calculateAttackVsDefenseSituation(MonsterFieldArea defense, MonsterFieldArea attack) {
+        int attackMonsterPoint = attack.getAttackPoint();
+        int defenseMonsterPoint = defense.getDefensePoint();
+        int damage = attackMonsterPoint - defenseMonsterPoint;
+        if (!defense.isVisible())
+            if (damage > 0) destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
+        if (damage < 0) {
+            int newLP = gameplay.getCurrentPlayer().getLifePoints() + damage;
+            gameplay.getCurrentPlayer().setLifePoints(newLP);
+        }
+        return damage;
+    }
+
+    private int calculateAttackVsAttackSituation(MonsterFieldArea attack, MonsterFieldArea defense) {
         int attackMonsterPoint = attack.getAttackPoint();
         int defenseMonsterPoint = defense.getAttackPoint();
         int damage = attackMonsterPoint - defenseMonsterPoint;
@@ -382,21 +388,17 @@ public class GameplayController {
             destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
             int newLP = gameplay.getOpponentPlayer().getLifePoints() - damage;
             gameplay.getOpponentPlayer().setLifePoints(newLP);
-            message.append("your opponent’s monster is destroyed and your opponent receives")
-                    .append(damage).append(" battle damage");
         }
         if (damage < 0) {
             destroyMonsterCard(gameplay.getCurrentPlayer(), attack);
             int newLP = gameplay.getCurrentPlayer().getLifePoints() + damage;
             gameplay.getCurrentPlayer().setLifePoints(newLP);
-            message.append("Your monster card is destroyed and you received ").append(-damage).append(" battle damage");
         }
         if (damage == 0) {
             destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
             destroyMonsterCard(gameplay.getCurrentPlayer(), attack);
-            message.append("both you and your opponent monster cards are destroyed and no one receives damage");
         }
-        return message;
+        return damage;
     }
 
     private String calculateDirectDamage(MonsterFieldArea monster) {
@@ -416,7 +418,7 @@ public class GameplayController {
         monster.setHasSwitchedMode(false);
         monster.setAttackPoint(0);
         monster.setDefensePoint(0);
-        monster.putCard(null,false);
+        monster.putCard(null, false);
     }
 
     private void moveCardToGraveyard(Player player, Card card) {
