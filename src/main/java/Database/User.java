@@ -23,7 +23,6 @@ public class User {
         setDecks(decks);
         this.inactiveCards = inactiveCards;
         users.add(this);
-        System.out.println("new user created successfully!\nUsername: " + username + "\nPassword: " + password);
     }
 
     public static User getUserByName(String username){

@@ -4,6 +4,8 @@ package Controller.DuelController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
 import Database.Cards.Card;
+import Database.Cards.Effects.Effect;
+import Database.Cards.Effects.EffectTypes;
 import Database.Cards.Monster;
 import Database.Cards.Spell;
 import Database.Cards.Trap;
@@ -314,10 +316,14 @@ public class GameplayController {
         if (isLocationNumberInvalid(number)) throw new InvalidCardSelectionException();
         int id = Integer.parseInt(number);
         if ((attackTarget = opponent.getField().getMonstersFieldById(id)) == null) throw new NoCardToAttackException();
+        gameplay.setAttacker(attacker);
+        gameplay.setBeingAttacked(attackTarget);
         StringBuilder temp = calculateDamage((MonsterFieldArea) attacker, attackTarget);
 
         ((MonsterFieldArea) attacker).setHasAttacked(true);
         deselectCard();
+        gameplay.setAttacker(null);
+        gameplay.setBeingAttacked(null);
         checkWinningConditions();
         return temp;
     }
@@ -398,8 +404,11 @@ public class GameplayController {
     }
 
     private void destroyMonsterCard(Player player, MonsterFieldArea monster) {
-        moveCardToGraveyard(player, monster.getCard());
+        for (Effect effect: monster.getCard().getEffects()) {
+            if (effect.effectType == EffectTypes.ON_DESTRUCTION) effect.execute(GameplayController.gameplayController.getGameplay());
+        }
         //TODO remove monster from field
+        moveCardToGraveyard(player, monster.getCard());
         monster = new MonsterFieldArea();
     }
 

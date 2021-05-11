@@ -95,6 +95,13 @@ public class DatabaseController {
 
     private void initializeMonsterCardEffects() {
         //TODO add effects to cards
+        try {
+            Card.getCardByName("Yomi Ship").addEffect(new DestroyAttackerOnDestruction());
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("invalid card name in monster initialization");
+        }
     }
 
     private boolean isLimited(String string){

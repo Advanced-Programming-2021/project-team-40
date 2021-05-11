@@ -1,9 +1,13 @@
 package Database.Cards.Effects;
 
+import Gameplay.Gameplay;
+
 //Yomi Ship,
 public class DestroyAttackerOnDestruction extends Effect {
-    @Override
-    public void effectAction() {
+    public DestroyAttackerOnDestruction(){
+        effectType = EffectTypes.ON_DESTRUCTION;
+    }
+    public void execute(Gameplay gameplay) {
 
     }
 }

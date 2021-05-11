@@ -70,4 +70,8 @@ abstract public class Card {
     public void addEffect(Effect effect){
         effects.add(effect);
     }
+
+    public ArrayList<Effect> getEffects(){
+        return effects;
+    }
 }

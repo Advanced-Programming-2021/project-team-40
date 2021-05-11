@@ -8,6 +8,8 @@ public class Gameplay {
     private Player currentPlayer;
     private Player opponentPlayer;
     private FieldArea selectedField = null;
+    private FieldArea attacker;
+    private FieldArea beingAttacked;
     private Phase currentPhase = Phase.DRAW_PHASE;
     private int currentRound;
     private int rounds;
@@ -82,5 +84,29 @@ public class Gameplay {
 
     public void setOwnsSelectedCard(Boolean ownsSelectedCard) {
         this.ownsSelectedCard = ownsSelectedCard;
+    }
+
+    public FieldArea getAttacker() {
+        return attacker;
+    }
+
+    public void setAttacker(FieldArea attacker) {
+        this.attacker = attacker;
+    }
+
+    public FieldArea getBeingAttacked() {
+        return beingAttacked;
+    }
+
+    public void setBeingAttacked(FieldArea beingAttacked) {
+        this.beingAttacked = beingAttacked;
+    }
+
+    public int getCurrentRound() {
+        return currentRound;
+    }
+
+    public void setCurrentRound(int currentRound) {
+        this.currentRound = currentRound;
     }
 }
