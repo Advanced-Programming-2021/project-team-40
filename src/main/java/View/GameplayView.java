@@ -103,8 +103,8 @@ public class GameplayView {
         while (true) {
             tributesInput = ProgramController.getInstance().getScanner().nextLine();
             if (tributesInput.matches(tributeRegex[number])) break;
-            else if (tributesInput.matches("cancel")) throw new CommandCancellationException("tribute");
-            else if (tributesInput.matches("help"))
+            else if (tributesInput.matches(Regex.cancelAction)) throw new CommandCancellationException("tribute");
+            else if (tributesInput.matches(Regex.help))
                 System.out.println("type " + number + " locations for monsters to tribute, or cancel");
             else System.out.println("type exactly " + number + " locations to tribute");
         }
