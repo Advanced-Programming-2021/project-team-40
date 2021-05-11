@@ -41,9 +41,9 @@ public class FieldView {
                 + "\t" + getShowcaseString(player.getField().getSpellAndTrapFieldById(4)));
         System.out.println("\t\t\t\t\t\t" + player.getPlayingDeck().getMainCards().size());
         for (int i = 0; i < player.getPlayingHand().size(); i++) {
-            System.out.println("\tc");
+            System.out.print("\tc");
         }
-        System.out.println(player.getUser().getNickname() + ":" + player.getLifePoints());
+        System.out.println("\n" + player.getUser().getNickname() + ":" + player.getLifePoints());
     }
 
     private static String getShowcaseString(FieldArea fieldArea) {

@@ -69,7 +69,7 @@ public class EfficientUser {
 
     public void setDecks(ArrayList<Deck> actualDecks) {
         for (Deck actualDeck : actualDecks) {
-            EfficientDeck newDeck = new EfficientDeck(actualDeck.getName(), actualDeck.getMainCards(), actualDeck.getSideCards());
+            EfficientDeck newDeck = new EfficientDeck(actualDeck.getName(), actualDeck.isActive(), actualDeck.getMainCards(), actualDeck.getSideCards());
             decks.add(newDeck);
         };
     }

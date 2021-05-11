@@ -24,6 +24,7 @@ public class GameplayView {
     }
 
     public void run(String command) {
+        gameplayView.showBoard();
         Matcher matcher;
         if ((matcher = Regex.getCommandMatcher(command, Regex.selectMonsterCard)).matches()) selectCard(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.selectSpellCard)).matches()) selectCard(matcher);
@@ -48,6 +49,10 @@ public class GameplayView {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
         else System.out.println("invalid command");
+    }
+
+    private void showBoard() {
+        FieldView.showBoard(GameplayController.getInstance().gameplay.getOpponentPlayer(), GameplayController.getInstance().gameplay.getCurrentPlayer());
     }
 
     private void activateEffect() {

@@ -64,8 +64,6 @@ public class Regex {
                                                "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
     public static String deselectCard = "^select -d$";
     public static String summon = "^summon$";
-    public static String tributeTwo = "^(\\d) (\\d)$";
-    public static String tributeOne = "^(\\d)$";
     public static String set = "^set$";
     public static String setPosition = "^set --position (attack|defense)$";
     public static String flipSummon = "^flip-summon$";

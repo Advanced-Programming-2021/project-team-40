@@ -23,7 +23,7 @@ public class Field {
     }
 
     public MonsterFieldArea getMonstersFieldById(int id) {
-        return monstersField[id];
+        return monstersField[id - 1];
     }
 
     public MonsterFieldArea getFreeMonsterFieldArea() {
@@ -41,7 +41,7 @@ public class Field {
     }
 
     public SpellAndTrapFieldArea getSpellAndTrapFieldById(int id) {
-        return spellAndTrapField[id];
+        return spellAndTrapField[id - 1];
     }
 
     public ArrayList<Card> getGraveyard() {

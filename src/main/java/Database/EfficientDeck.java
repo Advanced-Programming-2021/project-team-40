@@ -6,11 +6,13 @@ import java.util.ArrayList;
 
 public class EfficientDeck {
     private String name;
+    private boolean isActive;
     private ArrayList<String> mainCards = new ArrayList<>();
     private ArrayList<String> sideCards = new ArrayList<>();
 
-    public EfficientDeck(String name, ArrayList<Card> actualMainCards, ArrayList<Card> actualSideCards){
+    public EfficientDeck(String name, boolean isActive, ArrayList<Card> actualMainCards, ArrayList<Card> actualSideCards){
         this.setName(name);
+        this.setActive(isActive);
         this.setMainCards(cardArrayToStringArray(actualMainCards));
         setSideCards(cardArrayToStringArray(actualSideCards));
 
@@ -46,5 +48,13 @@ public class EfficientDeck {
 
     public void setSideCards(ArrayList<String> sideCards) {
         this.sideCards = sideCards;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

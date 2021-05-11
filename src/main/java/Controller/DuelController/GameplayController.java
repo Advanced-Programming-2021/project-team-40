@@ -131,7 +131,7 @@ public class GameplayController {
         gameplay.getCurrentPlayer().getField().endTurnActions();
         Player temp = gameplay.getOpponentPlayer();
         gameplay.setOpponentPlayer(gameplay.getCurrentPlayer());
-        gameplay.setOpponentPlayer(temp);
+        gameplay.setCurrentPlayer(temp);
         gameplay.setSelectedField(null);
         gameplay.setOwnsSelectedCard(null);
         gameplay.setHasPlacedMonster(false);
@@ -172,7 +172,7 @@ public class GameplayController {
         switch (field) {
             case "--monster":
                 if (isLocationNumberInvalid(idToCheck)) throw new InvalidCardSelectionException();
-                id = Integer.parseInt(idToCheck) - 1;
+                id = Integer.parseInt(idToCheck);
                 if (isFromOpponent) fieldArea = gameplay.getOpponentPlayer().getField().getMonstersFieldById(id);
                 else fieldArea = gameplay.getCurrentPlayer().getField().getMonstersFieldById(id);
                 if (fieldArea.getCard() == null) throw new NoCardFoundException();
@@ -180,7 +180,7 @@ public class GameplayController {
                 break;
             case "--spell":
                 if (isLocationNumberInvalid(idToCheck)) throw new InvalidCardSelectionException();
-                id = Integer.parseInt(idToCheck) - 1;
+                id = Integer.parseInt(idToCheck);
                 if (isFromOpponent) fieldArea = gameplay.getOpponentPlayer().getField().getSpellAndTrapFieldById(id);
                 else fieldArea = gameplay.getCurrentPlayer().getField().getSpellAndTrapFieldById(id);
                 if (fieldArea.getCard() == null) throw new NoCardFoundException();
@@ -188,8 +188,8 @@ public class GameplayController {
                 break;
             case "--hand":
                 if (isLocationNumberInvalid(idToCheck)) throw new InvalidCardSelectionException();
-                id = Integer.parseInt(idToCheck) - 1;
-                fieldArea = gameplay.getCurrentPlayer().getPlayingHand().get(id);
+                id = Integer.parseInt(idToCheck);
+                fieldArea = gameplay.getCurrentPlayer().getPlayingHand().get(id - 1);
                 if (fieldArea == null) throw new NoCardFoundException();
                 gameplay.setSelectedField(fieldArea);
                 break;
@@ -408,9 +408,9 @@ public class GameplayController {
         return "you opponent receives " + damage + " battle damage";
     }
 
-    private void destroyMonsterCard(Player player, MonsterFieldArea monster) {
+    public void destroyMonsterCard(Player player, MonsterFieldArea monster) {
         for (Effect effect: monster.getCard().getEffects()) {
-            if (effect.effectType == EffectTypes.ON_DESTRUCTION) effect.execute(GameplayController.gameplayController.getGameplay());
+            if (effect.effectType == EffectTypes.ON_DESTRUCTION) effect.execute(player, GameplayController.gameplayController.getGameplay());
         }
         moveCardToGraveyard(player, monster.getCard());
         monster.setVisibility(false);

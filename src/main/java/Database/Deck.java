@@ -14,6 +14,11 @@ public class Deck {
         this.name = name;
     }
 
+    public Deck (String name, boolean isActive){
+        this.name = name;
+        this.isActive = isActive;
+    }
+
     public ArrayList<Card> getMainCards() {
         return mainCards;
     }

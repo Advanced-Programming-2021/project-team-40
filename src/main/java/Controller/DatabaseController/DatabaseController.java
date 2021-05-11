@@ -154,7 +154,7 @@ public class DatabaseController {
                 EfficientUser tempUser = gson.fromJson(userJson, EfficientUser.class);
                 ArrayList<Deck> actualDecks = new ArrayList<>();
                 for (EfficientDeck deckName: tempUser.getDecks()) {
-                    actualDecks.add(createDeckFromStringArray(deckName.getName(), deckName.getMainCards(), deckName.getSideCards()));
+                    actualDecks.add(createDeckFromStringArray(deckName.getName(), deckName.isActive(), deckName.getMainCards(), deckName.getSideCards()));
                 }
                 ArrayList<Card> actualInactiveCards = new ArrayList<>();
                 for (String cardName: tempUser.getInactiveCards()) actualInactiveCards.add(Card.getCardByName(cardName));
@@ -166,8 +166,8 @@ public class DatabaseController {
         }
     }
 
-    private Deck createDeckFromStringArray (String deckName, ArrayList<String> mainCards, ArrayList<String> sideCards){
-        Deck deck = new Deck(deckName);
+    private Deck createDeckFromStringArray (String deckName, boolean isActive, ArrayList<String> mainCards, ArrayList<String> sideCards){
+        Deck deck = new Deck(deckName, isActive);
         for (String cardName: mainCards) {
             deck.getMainCards().add(Card.getCardByName(cardName));
         }
