@@ -126,12 +126,15 @@ public class GameplayController {
     }
 
     public void switchTurn() {
-        //TODO set required booleans and decrease remaining effect rounds
+        //TODO decrease remaining effect rounds
         System.out.println("its " + gameplay.getOpponentPlayer().getUser().getUsername() + "'s turn");
         gameplay.getCurrentPlayer().getField().endTurnActions();
         Player temp = gameplay.getOpponentPlayer();
         gameplay.setOpponentPlayer(gameplay.getCurrentPlayer());
         gameplay.setOpponentPlayer(temp);
+        gameplay.setSelectedField(null);
+        gameplay.setOwnsSelectedCard(null);
+        gameplay.setHasPlacedMonster(false);
         GameplayView.getInstance().setFirstOfGame(false);
     }
 
@@ -240,7 +243,7 @@ public class GameplayController {
             if (monster == null) throw new MonsterZoneFullException();
             if (((Monster) fieldArea.getCard()).getLevel() > 4)
                 tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
-            setMonsterCard(monster, fieldArea);
+            setMonsterCard(monster, (HandFieldArea) fieldArea);
             deselectCard();
         } else if (fieldArea.getCard() instanceof Spell || fieldArea.getCard() instanceof Trap) {
             SpellAndTrapFieldArea s = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
@@ -262,7 +265,7 @@ public class GameplayController {
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
         if (((Monster) fieldArea.getCard()).getLevel() > 4)
             tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
-        normalSummon(fieldArea, monsterFieldArea);
+        normalSummon((HandFieldArea) fieldArea, monsterFieldArea);
         deselectCard();
     }
 
@@ -407,9 +410,13 @@ public class GameplayController {
         for (Effect effect: monster.getCard().getEffects()) {
             if (effect.effectType == EffectTypes.ON_DESTRUCTION) effect.execute(GameplayController.gameplayController.getGameplay());
         }
-        //TODO remove monster from field
         moveCardToGraveyard(player, monster.getCard());
-        monster = new MonsterFieldArea();
+        monster.setVisibility(false);
+        monster.setHasAttacked(false);
+        monster.setHasSwitchedMode(false);
+        monster.setAttackPoint(0);
+        monster.setDefensePoint(0);
+        monster.putCard(null,false);
     }
 
     private void moveCardToGraveyard(Player player, Card card) {
@@ -424,7 +431,7 @@ public class GameplayController {
         return card;
     }
 
-    private void setMonsterCard(MonsterFieldArea monsterFieldArea, FieldArea fieldArea) {
+    private void setMonsterCard(MonsterFieldArea monsterFieldArea, HandFieldArea fieldArea) {
         monsterFieldArea.putCard(fieldArea.getCard(), false);
         gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
         gameplay.setHasPlacedMonster(true);
@@ -436,7 +443,7 @@ public class GameplayController {
     }
 
 
-    private void normalSummon(FieldArea fieldArea, MonsterFieldArea monsterFieldArea) {
+    private void normalSummon(HandFieldArea fieldArea, MonsterFieldArea monsterFieldArea) {
         monsterFieldArea.putCard(fieldArea.getCard(), true);
         gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
         gameplay.setHasPlacedMonster(true);
