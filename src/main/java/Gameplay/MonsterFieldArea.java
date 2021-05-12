@@ -22,6 +22,10 @@ public class MonsterFieldArea extends FieldArea{
             defensePoint = ((Monster) card).getDefensePoints();
             hasSwitchedMode = true;
         }
+        else {
+            attackPoint = 0;
+            defensePoint = 0;
+        }
     }
 
     public void setAttack(boolean attack) {

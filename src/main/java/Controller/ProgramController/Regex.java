@@ -78,6 +78,7 @@ public class Regex {
     public static String forceAddCardCheatCode = "^select(?: --hand (?<cardName>.+?)| --force){2}$";
     public static String increaseLifePointsCheatCode = "^increase --LP (?<amount>.+?)$";
     public static String setWinnerCheatCode = "^duel set-winner (?<nickname>.+?)$";
+    public static String addCardToHandCheatCode = "^add card (?<cardName>.+?)$";
     public static String importCard = "^import card (?<cardName>.+?)$";
     public static String exportCard = "^export card (?<cardName>.+?)$";
     public static String back = "^back$";

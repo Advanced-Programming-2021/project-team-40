@@ -22,6 +22,7 @@ import View.GameplayView;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.regex.Matcher;
 
 public class GameplayController {
     private static GameplayController gameplayController = null;
@@ -504,5 +505,12 @@ public class GameplayController {
             if (m.getCard() == card) return true;
         }
         return false;
+    }
+
+    public void forceAddCard(String cardName) throws InvalidCardNameException {
+        Card c = Card.getCardByName(cardName);
+        if (c == null) throw new InvalidCardNameException(cardName);
+        HandFieldArea h = new HandFieldArea(c);
+        gameplay.getCurrentPlayer().getPlayingHand().add(h);
     }
 }

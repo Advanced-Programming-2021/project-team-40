@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 
 public class GameplayView {
     private static GameplayView gameplayView;
-    private boolean isFirstOfGame;
+    private boolean isFirstOfGame = true;
 
     private GameplayView() {
 
@@ -44,12 +44,23 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches()) activateEffect();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches()) forceAddCard(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
         else System.out.println("invalid command");
     }
+
+    private void forceAddCard(Matcher matcher) {
+        String cardName = matcher.group("cardName");
+        try {
+            GameplayController.getInstance().forceAddCard(cardName);
+        } catch (InvalidCardNameException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 
     private void showBoard() {
         FieldView.showBoard(GameplayController.getInstance().gameplay.getOpponentPlayer(), GameplayController.getInstance().gameplay.getCurrentPlayer());
