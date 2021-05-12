@@ -80,13 +80,13 @@ public class GameplayController {
             case MAIN_PHASE_ONE:
                 if (GameplayView.getInstance().isFirstOfGame()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 else if (hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
-                gameplay.setCurrentPhase(Phase.BATTLE_PHASE);
+                else gameplay.setCurrentPhase(Phase.BATTLE_PHASE);
                 System.out.println(gameplay.getCurrentPhase().toString());
                 doPhaseAction();
                 break;
             case BATTLE_PHASE:
                 if (hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
-                gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
+                else gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
                 System.out.println(gameplay.getCurrentPhase().toString());
                 doPhaseAction();
                 break;
@@ -188,7 +188,7 @@ public class GameplayController {
                 gameplay.setSelectedField(fieldArea);
                 break;
             case "--hand":
-                if (isLocationNumberInvalid(idToCheck)) throw new InvalidCardSelectionException();
+                if (isHandLocationInvalid(idToCheck)) throw new InvalidCardSelectionException();
                 id = Integer.parseInt(idToCheck);
                 fieldArea = gameplay.getCurrentPlayer().getPlayingHand().get(id - 1);
                 if (fieldArea == null) throw new NoCardFoundException();
@@ -202,6 +202,12 @@ public class GameplayController {
                 break;
         }
         gameplay.setOwnsSelectedCard(!isFromOpponent);
+    }
+
+    private boolean isHandLocationInvalid(String idToCheck) {
+        int id = Integer.parseInt(idToCheck);
+        System.out.println("ID:" + id + "\tHand Size:" + gameplay.getCurrentPlayer().getPlayingHand().size());
+        return (gameplay.getCurrentPlayer().getPlayingHand().size() < id);
     }
 
     public void deselectCard() throws NoCardIsSelectedException {
@@ -240,6 +246,8 @@ public class GameplayController {
         if (fieldArea.getCard() instanceof Monster) {
             MonsterFieldArea monster = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
             if (monster == null) throw new MonsterZoneFullException();
+            if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
+
             if (((Monster) fieldArea.getCard()).getLevel() > 4)
                 tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
             setMonsterCard(monster, (HandFieldArea) fieldArea);
@@ -482,7 +490,7 @@ public class GameplayController {
         MonsterFieldArea[] monsterFieldAreas = gameplay.getCurrentPlayer().getField().getMonstersField();
         for (MonsterFieldArea monster :
                 monsterFieldAreas) {
-            if (monster.isAttack() && !monster.hasAttacked()) return true;
+            if (monster.isAttack()) return true;
         }
         return false;
     }

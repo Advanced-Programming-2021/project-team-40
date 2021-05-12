@@ -42,8 +42,8 @@ public class GameplayView {
             GameplayController.getInstance().surrender();
         else if (Regex.getCommandMatcher(command, Regex.flipSummon).matches()) flipSummon();
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches()) activateEffect();
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches()) forceAddCard(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
