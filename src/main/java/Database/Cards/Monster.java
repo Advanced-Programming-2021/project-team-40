@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Monster extends Card {
 
+    public Effect OnDestruction;
     private Attribute attribute;
     private MonsterType monsterType;
     private CardType cardType;

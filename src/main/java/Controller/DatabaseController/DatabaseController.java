@@ -1,13 +1,14 @@
 package Controller.DatabaseController;
 
+import Controller.DuelController.GameplayController;
 import Database.Cards.*;
-import Database.Cards.Effects.DestroyAttackerOnDestruction;
-import Database.Cards.Effects.Effect;
 import Database.Deck;
 import Database.EfficientDeck;
 import Database.EfficientUser;
 import Database.User;
-import View.ShopView;
+import Gameplay.Gameplay;
+import Gameplay.Player;
+import Gameplay.MonsterFieldArea;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opencsv.*;
@@ -96,7 +97,15 @@ public class DatabaseController {
     private void initializeMonsterCardEffects() {
         //TODO add effects to cards
         try {
-            Card.getCardByName("Yomi Ship").addEffect(new DestroyAttackerOnDestruction());
+            ((Monster) Card.getCardByName("Yomi Ship")).OnDestruction = new Effect() {
+                @Override
+                public void execute(Player cardOwner) {
+                    Gameplay gameplay = GameplayController.getInstance().getGameplay();
+                    if (cardOwner.equals(gameplay.getOpponentPlayer()))
+                        GameplayController.getInstance().destroyMonsterCard(gameplay.getCurrentPlayer(), (MonsterFieldArea) gameplay.getAttacker());
+                    System.out.println("kir shodiiiiiiiii");
+                }
+            };
 
         }catch (Exception e){
             System.out.println(e.getMessage());

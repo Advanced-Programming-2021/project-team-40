@@ -1,8 +1,6 @@
 package Database.Cards;
 
-import Database.Cards.Effects.DestroyAttackerOnDestruction;
 import Database.Cards.Effects.Effect;
-import Database.Deck;
 
 import java.util.*;
 
@@ -67,11 +65,11 @@ abstract public class Card {
         }
     };
 
-    public void addEffect(Effect effect){
+    public void addEffect(Effect effect) {
         effects.add(effect);
     }
 
-    public ArrayList<Effect> getEffects(){
+    public ArrayList<Effect> getEffects() {
         return effects;
     }
 }

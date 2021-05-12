@@ -79,13 +79,13 @@ public class GameplayController {
                 break;
             case MAIN_PHASE_ONE:
                 if (GameplayView.getInstance().isFirstOfGame()) gameplay.setCurrentPhase(Phase.END_PHASE);
-                else if (hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
+                else if (!hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 else gameplay.setCurrentPhase(Phase.BATTLE_PHASE);
                 System.out.println(gameplay.getCurrentPhase().toString());
                 doPhaseAction();
                 break;
             case BATTLE_PHASE:
-                if (hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
+                if (!hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 else gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
                 System.out.println(gameplay.getCurrentPhase().toString());
                 doPhaseAction();
@@ -419,9 +419,8 @@ public class GameplayController {
     }
 
     public void destroyMonsterCard(Player player, MonsterFieldArea monster) {
-        for (Effect effect: monster.getCard().getEffects()) {
-            if (effect.effectType == EffectTypes.ON_DESTRUCTION) effect.execute(player, GameplayController.gameplayController.getGameplay());
-        }
+        if (((Monster) monster.getCard()).OnDestruction != null)
+            ((Monster) monster.getCard()).OnDestruction.execute(player);
         moveCardToGraveyard(player, monster.getCard());
         monster.setVisibility(false);
         monster.setHasAttacked(false);
