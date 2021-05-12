@@ -4,8 +4,6 @@ package Controller.DuelController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
 import Database.Cards.Card;
-import Database.Cards.Effects.Effect;
-import Database.Cards.Effects.EffectTypes;
 import Database.Cards.Monster;
 import Database.Cards.Spell;
 import Database.Cards.Trap;
@@ -22,7 +20,6 @@ import View.GameplayView;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.regex.Matcher;
 
 public class GameplayController {
     private static GameplayController gameplayController = null;
@@ -419,8 +416,8 @@ public class GameplayController {
     }
 
     public void destroyMonsterCard(Player player, MonsterFieldArea monster) {
-        if (((Monster) monster.getCard()).OnDestruction != null)
-            ((Monster) monster.getCard()).OnDestruction.execute(player);
+        if ((monster.getCard()).onDestruction != null)
+            (monster.getCard()).onDestruction.execute(player);
         moveCardToGraveyard(player, monster.getCard());
         monster.setVisibility(false);
         monster.setHasAttacked(false);
@@ -499,9 +496,9 @@ public class GameplayController {
         defendingMonster.setVisibility(true);
     }
 
-    private int getMonsterFieldCount() {
+    public int getMonsterFieldCount(Player player) {
         int count = 0;
-        for (MonsterFieldArea m : gameplay.getCurrentPlayer().getField().getMonstersField()
+        for (MonsterFieldArea m : player.getField().getMonstersField()
         ) {
             if (m.getCard() != null) count++;
         }
