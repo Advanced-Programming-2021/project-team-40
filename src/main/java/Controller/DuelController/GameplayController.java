@@ -206,7 +206,6 @@ public class GameplayController {
 
     private boolean isHandLocationInvalid(String idToCheck) {
         int id = Integer.parseInt(idToCheck);
-        System.out.println("ID:" + id + "\tHand Size:" + gameplay.getCurrentPlayer().getPlayingHand().size());
         return (gameplay.getCurrentPlayer().getPlayingHand().size() < id);
     }
 
@@ -218,7 +217,9 @@ public class GameplayController {
 
     public void showCard() throws NoCardIsSelectedException {
         if (gameplay.getSelectedField() == null) throw new NoCardIsSelectedException();
-        CardView.showCard(gameplay.getSelectedField().getCard());
+        if (!gameplay.ownsSelectedCard() && !gameplay.getSelectedField().isVisible()){
+            CardView.invisibleCard();
+        }else CardView.showCard(gameplay.getSelectedField().getCard());
     }
 
     public void activateEffect() throws Exception {

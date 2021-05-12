@@ -26,4 +26,8 @@ public class CardView {
     public static void showCardInList(Card card){
         System.out.println(card.getName() + ":\n\t" + card.getDescription() + "\n----------------");
     }
+
+    public static void invisibleCard() {
+        System.out.println("card is not visible");
+    }
 }
