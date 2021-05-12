@@ -1,7 +1,5 @@
 package Database.Cards;
 
-import Database.Cards.Effects.Effect;
-
 import java.util.*;
 
 abstract public class Card {
@@ -9,8 +7,6 @@ abstract public class Card {
     protected String name;
     protected String description;
     protected int cardPrice = 0;
-    protected ArrayList<Effect> effects = new ArrayList<>();
-
     public Card(String name, String description, int cardPrice) {
         setName(name);
         setDescription(description);
@@ -64,12 +60,4 @@ abstract public class Card {
             return first.compareTo(second);
         }
     };
-
-    public void addEffect(Effect effect) {
-        effects.add(effect);
-    }
-
-    public ArrayList<Effect> getEffects() {
-        return effects;
-    }
 }

@@ -30,15 +30,17 @@ public class GameplayView {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.selectHandCard)).matches()) selectCard(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.selectFieldZoneCard)).matches()) selectCard(matcher);
         else if (Regex.getCommandMatcher(command, Regex.deselectCard).matches()) deselectCard();
-        else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches())
+        else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches()) {
             GameplayController.getInstance().goToNextPhase();
+        }
         else if (Regex.getCommandMatcher(command, Regex.showGraveyard).matches()) graveyardMode();
         else if (Regex.getCommandMatcher(command, Regex.showSelectedCard).matches()) showCard();
         else if (Regex.getCommandMatcher(command, Regex.summon).matches()) summon();
         else if (Regex.getCommandMatcher(command, Regex.set).matches()) set();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setPosition)).matches()) setPosition(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.surrender).matches())
+        else if (Regex.getCommandMatcher(command, Regex.surrender).matches()) {
             GameplayController.getInstance().surrender();
+        }
         else if (Regex.getCommandMatcher(command, Regex.flipSummon).matches()) flipSummon();
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches()) activateEffect();
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();

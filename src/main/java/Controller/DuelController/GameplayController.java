@@ -4,8 +4,6 @@ package Controller.DuelController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
 import Database.Cards.Card;
-import Database.Cards.Effects.Effect;
-import Database.Cards.Effects.EffectTypes;
 import Database.Cards.Monster;
 import Database.Cards.Spell;
 import Database.Cards.Trap;
@@ -22,7 +20,6 @@ import View.GameplayView;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.regex.Matcher;
 
 public class GameplayController {
     private static GameplayController gameplayController = null;
@@ -364,7 +361,7 @@ public class GameplayController {
             if (damage == 0)
                 message.append("both you and your opponent monster cards are destroyed and no one receives damage");
         } else {
-            if (beingAttackedMonster.isVisible()) {
+            if (!beingAttackedMonster.isVisible()) {
                 message.append("opponent’s monster card was ").append(beingAttackedMonster.getCard().getName()).append(" and ");
                 makeCardVisible(beingAttackedMonster);
             }
