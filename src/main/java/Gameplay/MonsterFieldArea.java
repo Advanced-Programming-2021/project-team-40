@@ -4,6 +4,9 @@ import Database.Cards.Card;
 import Database.Cards.Monster;
 
 public class MonsterFieldArea extends FieldArea{
+    private boolean canAttack = true;
+    private boolean canBeAttacked = true;//command knight,
+    private boolean canBeDestroyed = true;//marshmallon
     private boolean isAttack;
     private boolean hasAttacked;
     private boolean hasSwitchedMode;
@@ -79,5 +82,29 @@ public class MonsterFieldArea extends FieldArea{
 
     public int getTurnsLeftForEffect() {
         return turnsLeftForEffect;
+    }
+
+    public boolean isCanBeDestroyed() {
+        return canBeDestroyed;
+    }
+
+    public void setCanBeDestroyed(boolean canBeDestroyed) {
+        this.canBeDestroyed = canBeDestroyed;
+    }
+
+    public boolean isCanBeAttacked() {
+        return canBeAttacked;
+    }
+
+    public void setCanBeAttacked(boolean canBeAttacked) {
+        this.canBeAttacked = canBeAttacked;
+    }
+
+    public boolean isCanAttack() {
+        return canAttack;
+    }
+
+    public void setCanAttack(boolean canAttack) {
+        this.canAttack = canAttack;
     }
 }

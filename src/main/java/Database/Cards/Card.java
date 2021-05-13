@@ -6,8 +6,11 @@ abstract public class Card {
 
     public Effect onDestruction;//player
     public Effect onFlipSummon;//null
-    public Effect onDamageCalculation;//damage,player
+    public Effect afterDamageCalculation;//player
+    public Effect onDamageCalculation;//player,damage,attack message,return int
     public Effect onBeingAttacked;//player
+    public ContinuousEffect onTurnStart;
+    public UniqueSummon uniqueSummon;
     protected String name;
     protected String description;
     protected int cardPrice = 0;

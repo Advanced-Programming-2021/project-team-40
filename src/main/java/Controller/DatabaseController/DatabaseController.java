@@ -99,19 +99,20 @@ public class DatabaseController {
 
     private void initializeMonsterCardEffects() {
         //TODO add effects to cards
+        Gameplay gameplay = GameplayController.getInstance().getGameplay();
         try {
             Card.getCardByName("Yomi Ship").onDestruction = new Effect() {
                 @Override
-                public void execute(Object object) {
-                    Player cardOwner = (Player) object;
-                    Gameplay gameplay = GameplayController.getInstance().getGameplay();
+                public Object execute(Object... objects) {
+                    Player cardOwner = (Player) objects[0];
                     if (cardOwner.equals(gameplay.getOpponentPlayer()))
                         GameplayController.getInstance().destroyMonsterCard(gameplay.getCurrentPlayer(), (MonsterFieldArea) gameplay.getAttacker());
+                    return null;
                 }
             };
             Card.getCardByName("Man-Eater Bug").onFlipSummon = new Effect() {
                 @Override
-                public void execute(Object obj) {//TODO: implement
+                public Object execute(Object... objects) {//TODO: implement
                     System.out.println("please enter a monster id");
                     Player player = GameplayController.getInstance().getGameplay().getOpponentPlayer();
                     String idToCheck;
@@ -130,12 +131,12 @@ public class DatabaseController {
                             System.out.println(e.getMessage());
                         }
                     }
+                    return null;
                 }
             };
             Card.getCardByName("Suijin").onBeingAttacked = new Effect() {
                 @Override
-                public void execute(Object object) {
-                    Gameplay gameplay = GameplayController.getInstance().getGameplay();
+                public Object execute(Object... objects) {
                     String command;
                     while (true) {
                         System.out.println("do you want to activate Suijin?");
@@ -150,23 +151,49 @@ public class DatabaseController {
                         else if (command.equalsIgnoreCase("no")) break;
                         else System.out.println("invalid command");
                     }
+                    return null;
                 }
             };
             Card.getCardByName("Exploder Dragon").onDestruction = new Effect() {
                 @Override
-                public void execute(Object object) {
-                    Player cardOwner = (Player) object;
-                    Gameplay gameplay = GameplayController.getInstance().getGameplay();
+                public Object execute(Object... objects) {
+                    Player cardOwner = (Player) objects[0];
                     if (cardOwner.equals(gameplay.getOpponentPlayer()))
                         GameplayController.getInstance().destroyMonsterCard(gameplay.getCurrentPlayer(), (MonsterFieldArea) gameplay.getAttacker());
+                    return null;
                 }
             };
             Card.getCardByName("Exploder Dragon").onDamageCalculation = new Effect() {
                 @Override
-                public void execute(Object object) {
-                    //TODO: requires more than one input
+                public Object execute(Object... objects) {
+                    return 0;
                 }
             };
+            Card.getCardByName("Marshmallon").afterDamageCalculation = new Effect() {
+                @Override
+                public Object execute(Object... objects) {
+                    Player cardOwner = (Player) objects[0];
+                    //TODO: this is worthless,fix it
+                    if (cardOwner.equals(gameplay.getOpponentPlayer()))
+                        gameplay.getOpponentPlayer().setLifePoints(gameplay.getOpponentPlayer().getLifePoints() - 1000);
+                    else
+                        gameplay.getCurrentPlayer().setLifePoints(gameplay.getCurrentPlayer().getLifePoints() - 1000);
+                    return null;
+                }
+            };
+            Card.getCardByName("Scanner").onTurnStart = new ContinuousEffect() {
+                @Override
+                public void activate() {
+                    while (true) {
+
+                    }
+                }
+
+                @Override
+                public void deactivate() {
+
+                }
+            }
 
         }catch (Exception e){
             System.out.println(e.getMessage());

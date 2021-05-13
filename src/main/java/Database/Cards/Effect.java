@@ -1,5 +1,5 @@
 package Database.Cards;
 
 public interface Effect {
-    void execute(Object object);
+    Object execute(Object... objects);
 }

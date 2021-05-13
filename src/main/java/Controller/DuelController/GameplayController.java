@@ -268,7 +268,10 @@ public class GameplayController {
         MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
         if (monsterFieldArea == null) throw new MonsterZoneFullException();
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
-        if (((Monster) fieldArea.getCard()).getLevel() > 4)
+        if (fieldArea.getCard().uniqueSummon != null) {
+            fieldArea.getCard().uniqueSummon.summon();
+        }
+        else if (((Monster) fieldArea.getCard()).getLevel() > 4)
             tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
         normalSummon((HandFieldArea) fieldArea, monsterFieldArea);
         deselectCard();
@@ -294,6 +297,7 @@ public class GameplayController {
         if (((MonsterFieldArea) fieldArea).hasAttacked()) throw new AlreadySetPositionException();
         if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.isVisible()) throw new InvalidFlipSummonException();
         //TODO add necessary effects
+        if (fieldArea.getCard().onFlipSummon != null) fieldArea.getCard().onFlipSummon.execute(null);
         ((MonsterFieldArea) fieldArea).changePosition();
         deselectCard();
     }
@@ -327,7 +331,6 @@ public class GameplayController {
         gameplay.setAttacker(attacker);
         gameplay.setBeingAttacked(attackTarget);
         StringBuilder temp = calculateDamage((MonsterFieldArea) attacker, attackTarget);
-
         ((MonsterFieldArea) attacker).setHasAttacked(true);
         deselectCard();
         gameplay.setAttacker(null);
@@ -378,8 +381,11 @@ public class GameplayController {
         int attackMonsterPoint = attack.getAttackPoint();
         int defenseMonsterPoint = defense.getDefensePoint();
         int damage = attackMonsterPoint - defenseMonsterPoint;
-        if (!defense.isVisible())
-            if (damage > 0) destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
+        if (!defense.isVisible()) if (damage > 0) {
+            if (defense.getCard().onDamageCalculation != null)
+                damage = (int) defense.getCard().onDamageCalculation.execute();
+            destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
+        }
         if (damage < 0) {
             int newLP = gameplay.getCurrentPlayer().getLifePoints() + damage;
             gameplay.getCurrentPlayer().setLifePoints(newLP);
@@ -392,16 +398,20 @@ public class GameplayController {
         int defenseMonsterPoint = defense.getAttackPoint();
         int damage = attackMonsterPoint - defenseMonsterPoint;
         if (damage > 0) {
+            if (defense.getCard().onDamageCalculation != null)
+                damage = (int) defense.getCard().onDamageCalculation.execute();
             destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
             int newLP = gameplay.getOpponentPlayer().getLifePoints() - damage;
             gameplay.getOpponentPlayer().setLifePoints(newLP);
         }
-        if (damage < 0) {
+        else if (damage < 0) {
+            if (defense.getCard().onDamageCalculation != null)
+                damage = (int) defense.getCard().onDamageCalculation.execute();
             destroyMonsterCard(gameplay.getCurrentPlayer(), attack);
             int newLP = gameplay.getCurrentPlayer().getLifePoints() + damage;
             gameplay.getCurrentPlayer().setLifePoints(newLP);
         }
-        if (damage == 0) {
+        else if (damage == 0) {
             destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
             destroyMonsterCard(gameplay.getCurrentPlayer(), attack);
         }
