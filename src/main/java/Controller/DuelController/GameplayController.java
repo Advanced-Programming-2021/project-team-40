@@ -416,8 +416,8 @@ public class GameplayController {
     }
 
     public void destroyMonsterCard(Player player, MonsterFieldArea monster) {
-        if (((Monster) monster.getCard()).OnDestruction != null)
-            ((Monster) monster.getCard()).OnDestruction.execute(player);
+        if ((monster.getCard()).onDestruction != null)
+            (monster.getCard()).onDestruction.execute(player);
         moveCardToGraveyard(player, monster.getCard());
         monster.setVisibility(false);
         monster.setHasAttacked(false);
@@ -496,9 +496,9 @@ public class GameplayController {
         defendingMonster.setVisibility(true);
     }
 
-    private int getMonsterFieldCount() {
+    public int getMonsterFieldCount(Player player) {
         int count = 0;
-        for (MonsterFieldArea m : gameplay.getCurrentPlayer().getField().getMonstersField()
+        for (MonsterFieldArea m : player.getField().getMonstersField()
         ) {
             if (m.getCard() != null) count++;
         }

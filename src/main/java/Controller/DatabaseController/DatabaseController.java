@@ -1,6 +1,7 @@
 package Controller.DatabaseController;
 
 import Controller.DuelController.GameplayController;
+import Controller.ProgramController.ProgramController;
 import Database.Cards.*;
 import Database.Deck;
 import Database.EfficientDeck;
@@ -9,6 +10,8 @@ import Database.User;
 import Gameplay.Gameplay;
 import Gameplay.Player;
 import Gameplay.MonsterFieldArea;
+import View.Exceptions.InvalidCardSelectionException;
+import View.Exceptions.NoCardFoundException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opencsv.*;
@@ -158,12 +161,71 @@ public class DatabaseController {
         //TODO add effects to cards
         try {
             (Card.getCardByName("Yomi Ship")).OnDestruction = new Effect() {
+            Card.getCardByName("Yomi Ship").onDestruction = new Effect() {
                 @Override
-                public void execute(Player cardOwner) {
+                public void execute(Object object) {
+                    Player cardOwner = (Player) object;
                     Gameplay gameplay = GameplayController.getInstance().getGameplay();
                     if (cardOwner.equals(gameplay.getOpponentPlayer()))
                         GameplayController.getInstance().destroyMonsterCard(gameplay.getCurrentPlayer(), (MonsterFieldArea) gameplay.getAttacker());
-                    System.out.println("kir shodiiiiiiiii");
+                }
+            };
+            Card.getCardByName("Man-Eater Bug").onFlipSummon = new Effect() {
+                @Override
+                public void execute(Object obj) {//TODO: implement
+                    System.out.println("please enter a monster id");
+                    Player player = GameplayController.getInstance().getGameplay().getOpponentPlayer();
+                    String idToCheck;
+                    while (true) {
+                        idToCheck = ProgramController.getInstance().getScanner().nextLine();
+                        try {
+                            if (GameplayController.getInstance().getMonsterFieldCount(player) == 0)
+                                throw new NoCardFoundException();
+                            if (GameplayController.getInstance().isLocationNumberInvalid(idToCheck))
+                                throw new InvalidCardSelectionException();
+                            int id = Integer.parseInt(idToCheck);
+                            MonsterFieldArea monster = player.getField().getMonstersFieldById(id);
+                            GameplayController.getInstance().destroyMonsterCard(player, monster);
+                            break;
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                }
+            };
+            Card.getCardByName("Suijin").onBeingAttacked = new Effect() {
+                @Override
+                public void execute(Object object) {
+                    Gameplay gameplay = GameplayController.getInstance().getGameplay();
+                    String command;
+                    while (true) {
+                        System.out.println("do you want to activate Suijin?");
+                        command = ProgramController.getInstance().getScanner().nextLine();
+                        if (command.equalsIgnoreCase("yes")) {
+                            ((MonsterFieldArea)gameplay.getAttacker()).setAttackPoint(0);
+                            //TODO:
+                            // return after one turn
+                            // implement
+                            break;
+                        }
+                        else if (command.equalsIgnoreCase("no")) break;
+                        else System.out.println("invalid command");
+                    }
+                }
+            };
+            Card.getCardByName("Exploder Dragon").onDestruction = new Effect() {
+                @Override
+                public void execute(Object object) {
+                    Player cardOwner = (Player) object;
+                    Gameplay gameplay = GameplayController.getInstance().getGameplay();
+                    if (cardOwner.equals(gameplay.getOpponentPlayer()))
+                        GameplayController.getInstance().destroyMonsterCard(gameplay.getCurrentPlayer(), (MonsterFieldArea) gameplay.getAttacker());
+                }
+            };
+            Card.getCardByName("Exploder Dragon").onDamageCalculation = new Effect() {
+                @Override
+                public void execute(Object object) {
+                    //TODO: requires more than one input
                 }
             };
 
