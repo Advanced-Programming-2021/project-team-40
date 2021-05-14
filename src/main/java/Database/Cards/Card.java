@@ -7,6 +7,7 @@ abstract public class Card {
     public Effect onDestruction;//player
     public Effect onFlipSummon;//null
     public Effect afterDamageCalculation;//player
+    public Effect afterSummon;
     public Effect onDamageCalculation;//player,damage,attack message,return int
     public Effect onBeingAttacked;//player
     public ContinuousEffect onTurnStart;
@@ -14,6 +15,7 @@ abstract public class Card {
     protected String name;
     protected String description;
     protected int cardPrice = 0;
+    private boolean hasEffect = false;
 
     public Card(String name, String description, int cardPrice) {
         setName(name);
@@ -68,4 +70,12 @@ abstract public class Card {
             return first.compareTo(second);
         }
     };
+
+    public boolean isHasEffect() {
+        return hasEffect;
+    }
+
+    public void setHasEffect(boolean hasEffect) {
+        this.hasEffect = hasEffect;
+    }
 }

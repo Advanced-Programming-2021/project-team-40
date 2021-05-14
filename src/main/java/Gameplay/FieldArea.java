@@ -3,6 +3,7 @@ package Gameplay;
 import Database.Cards.Card;
 
 public class FieldArea {
+    private boolean isEffectAvailable = true;
     protected boolean canBePutOnBoard = false;
     protected Card card;
     protected boolean visibility;
@@ -29,5 +30,13 @@ public class FieldArea {
 
     public boolean canBePutOnBoard() {
         return canBePutOnBoard;
+    }
+
+    public boolean isEffectAvailable() {
+        return isEffectAvailable;
+    }
+
+    public void setEffectAvailable(boolean effectAvailable) {
+        isEffectAvailable = effectAvailable;
     }
 }
