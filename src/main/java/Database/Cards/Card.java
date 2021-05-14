@@ -7,6 +7,8 @@ abstract public class Card {
     protected String name;
     protected String description;
     protected int cardPrice = 0;
+    public Effect OnDestruction;
+
     public Card(String name, String description, int cardPrice) {
         setName(name);
         setDescription(description);
