@@ -12,6 +12,7 @@ import Gameplay.*;
 import View.Exceptions.InvalidCardSelectionException;
 import View.Exceptions.MonsterZoneFullException;
 import View.Exceptions.NoCardFoundException;
+import View.Exceptions.SpecialSummonNotPossibleException;
 import View.GameplayView;
 import View.GraveyardView;
 import com.google.gson.Gson;
@@ -213,7 +214,7 @@ public class DatabaseController {
                                     break;
                                 }
                             }
-                            if (!hasMonster) throw new Exception("you can't use this card's effect");
+                            if (!hasMonster) throw new SpecialSummonNotPossibleException();
                             System.out.println("now you can choose one level 4 or lower monster from your hand to summon");
                             System.out.println("please enter a hand field id:");
                             String input;
@@ -238,238 +239,29 @@ public class DatabaseController {
                         }
                     };
                     break;
-                case "The Tricky":
-                    card.uniqueSummon = new UniqueSummon() {
-                        @Override
-                        public void summon() throws Exception {
-                            if (gameplay.getCurrentPlayer().getPlayingHand().size() == 0)
-                                throw new Exception("there is no way you can special summon this card");
-                            System.out.println("discard one card from your hand to special summon this card:");
-                            System.out.println("please enter a hand field id:");
-                            String input;
-                            while (true) {
-                                //TODO check id validity
-                                input = ProgramController.getInstance().getScanner().nextLine();
-                                if (input.matches(Regex.cancelAction)) {
-                                    System.out.println("operation cancelled");
-                                    break;
-                                }
-                                int id = Integer.parseInt(input);
-                                Card toDiscard = gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard();
-                                gameplay.getCurrentPlayer().getPlayingHand().remove(id);
-                                GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), toDiscard);
+                case "The Tricky": card.uniqueSummon = new UniqueSummon() {
+                    @Override
+                    public void summon() throws Exception {
+                        if (gameplay.getCurrentPlayer().getPlayingHand().size() == 0)
+                            throw new SpecialSummonNotPossibleException();
+                        System.out.println("discard one card from your hand to special summon this card:");
+                        System.out.println("please enter a hand field id:");
+                        String input;
+                        while (true) {
+                            //TODO check id validity
+                            input = ProgramController.getInstance().getScanner().nextLine();
+                            if (input.matches(Regex.cancelAction)) {
+                                System.out.println("operation cancelled");
+                                break;
                             }
+                            int id = Integer.parseInt(input);
+                            Card toDiscard = gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard();
+                            gameplay.getCurrentPlayer().getPlayingHand().remove(id);
+                            GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), toDiscard);
                         }
-                    };
-                    break;
-            }
-        }
-    }
-
-    private void initializeSpellAndTrapEffects() {
-        Gameplay gameplay = GameplayController.getInstance().getGameplay();
-        for (Spell spell : Spell.getSpells()) {
-            switch (spell.getName()) {
-                case "Monster Reborn":
-                    spell.spellEffect = new Effect() {
-                        @Override
-                        public void execute(Object... objects) throws Exception {
-                            if (gameplay.getCurrentPlayer().getField().getGraveyard().size() == 0 && gameplay.getOpponentPlayer().getField().getGraveyard().size() == 0)
-                                throw new Exception("you can't use this card's effect");
-                            System.out.println("Please select a card from you or your opponent's graveyard:");
-                            String input;
-                            Card cardToSpecialSummon;
-                            while (true) {
-                                Matcher matcher;
-                                ArrayList<Card> graveyard = new ArrayList<>();
-                                input = ProgramController.getInstance().getScanner().nextLine();
-                                if ((matcher = Regex.getCommandMatcher(input, Regex.showGraveyard)).matches()) {
-                                    Player player;
-                                    if (matcher.group("isOpponent") == null)
-                                        player = GameplayController.getInstance().getGameplay().getCurrentPlayer();
-                                    else player = GameplayController.getInstance().getGameplay().getOpponentPlayer();
-                                    graveyard = player.getField().getGraveyard();
-                                    GraveyardView.showGraveyard(graveyard);
-                                }
-                                if (input.matches("\\d+")) {
-                                    if (Integer.parseInt(input) > graveyard.size())
-                                        System.out.println("location invalid in this graveyard");
-                                    else {
-                                        cardToSpecialSummon = graveyard.get(Integer.parseInt(input) - 1);
-                                        graveyard.remove(Integer.parseInt(input) - 1);
-                                        GameplayController.getInstance().specialSummon(cardToSpecialSummon);
-                                        break;
-                                    }
-
-                                }
-                            }
-
-                        }
-                    };
-                    break;
-
-                case "Terraforming":
-                    spell.spellEffect = new Effect() {
-                        @Override
-                        public void execute(Object... objects) throws Exception {
-                            boolean foundCard = false;
-                            System.out.println("looking for field spell card to add to hand...");
-                            for (Card card : gameplay.getCurrentPlayer().getPlayingDeck().getMainCards()) {
-                                if (((SpellAndTrap) card).getIcon().equals(Icon.FIELD)) {
-                                    HandFieldArea handFieldArea = new HandFieldArea(card);
-                                    gameplay.getCurrentPlayer().getPlayingHand().add(handFieldArea);
-                                    gameplay.getCurrentPlayer().getPlayingDeck().getMainCards().remove(card);
-                                    System.out.println("new card added to the hand : " + card.getName());
-                                    foundCard = true;
-                                    break;
-                                }
-                            }
-                            if (!foundCard) System.out.println("couldn't find any field spell cards in deck");
-
-                        }
-                    };
-                    break;
-
-                case "Pot of Greed":
-                    spell.spellEffect = new Effect() {
-                        @Override
-                        public void execute(Object... objects) throws Exception {
-                            Card card;
-                            card = GameplayController.getInstance().drawCard();
-                            System.out.println("new card added to the hand : " + card.getName());
-                            card = GameplayController.getInstance().drawCard();
-                            System.out.println("new card added to the hand : " + card.getName());
-                        }
-                    };
-                    break;
-
-                case "Raigeki":
-                    spell.spellEffect = new Effect() {
-                        @Override
-                        public void execute(Object... objects) throws Exception {
-                            MonsterFieldArea[] opponentMonsters = gameplay.getOpponentPlayer().getField().getMonstersField();
-                            for (int i = 0; i < 5; i++) {
-                                if (opponentMonsters[i].getCard() != null)
-                                    GameplayController.getInstance().destroyMonsterCard(gameplay.getOpponentPlayer(), opponentMonsters[i]);
-                            }
-                        }
-                    };
-                    break;
-
-                case "Change of Heart":
-                    //TODO
-                    break;
-
-                case "Harpie's Feather Duster":
-                    spell.spellEffect = new Effect() {
-                        @Override
-                        public void execute(Object... objects) throws Exception {
-                            SpellAndTrapFieldArea[] opponentSpellZone = gameplay.getOpponentPlayer().getField().getSpellAndTrapField();
-                            for (int i = 0; i < 5; i++) {
-                                if (opponentSpellZone[i].getCard() != null)
-                                    GameplayController.getInstance().destroySpellAndTrapCard(gameplay.getOpponentPlayer(), opponentSpellZone[i]);
-                            }
-                        }
-                    };
-                    break;
-
-                case "Swords of Revealing Light":
-                    //TODO
-                    break;
-
-                case "Dark Hole":
-                    spell.spellEffect = new Effect() {
-                        @Override
-                        public void execute(Object... objects) throws Exception {
-                            MonsterFieldArea[] monsters = gameplay.getOpponentPlayer().getField().getMonstersField();
-                            for (int i = 0; i < 5; i++) {
-                                if (monsters[i].getCard() != null)
-                                    GameplayController.getInstance().destroyMonsterCard(gameplay.getOpponentPlayer(), monsters[i]);
-                            }
-                            monsters = gameplay.getCurrentPlayer().getField().getMonstersField();
-                            for (int i = 0; i < 5; i++) {
-                                if (monsters[i].getCard() != null)
-                                    GameplayController.getInstance().destroyMonsterCard(gameplay.getCurrentPlayer(), monsters[i]);
-                            }
-                        }
-                    };
-                    break;
-
-                case "Supply Squad":
-                    //TODO
-                    break;
-
-                case "Spell Absorption":
-                    //TODO
-                    break;
-
-                case "Messenger of peace":
-                    //TODO
-                    break;
-
-                case "Twin Twisters":
-                    spell.spellEffect = new Effect() {
-                        @Override
-                        public void execute(Object... objects) throws Exception {
-                            Matcher matcher;
-                            GameplayController.getInstance().discardACard();
-                            int counter = 0;
-                            GameplayController.getInstance().deselectCard();
-                            while (counter < 2) {
-                                try {
-                                    String input = ProgramController.getInstance().getScanner().nextLine();
-                                    if ((matcher = Regex.getCommandMatcher(input, Regex.selectSpellCard)).matches()) {
-                                        boolean isOpponent = (matcher.group("isOpponent") != null);
-                                        GameplayController.getInstance().selectCard(matcher.group("id"), "--spell", isOpponent);
-                                        if (GameplayController.getInstance().getGameplay().getSelectedField().getCard() == null)
-                                            continue;
-                                        counter++;
-                                        Player player = GameplayController.getInstance().getGameplay().getCurrentPlayer();
-                                        if (isOpponent)
-                                            player = GameplayController.getInstance().gameplay.getOpponentPlayer();
-                                        GameplayController.getInstance().destroySpellAndTrapCard(player, (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField());
-                                    } else if (input.matches("done")) break;
-                                    else if (input.matches(Regex.help))
-                                        System.out.println("Select at most " + (2 - counter) + " spell and trap cards to destroy, or type done");
-                                } catch (Exception e) {
-                                    e.getMessage();
-                                }
-                            }
-
-                        }
-                    };
-                    break;
-
-                case "Mystical space typhoon":
-                    //TODO check if conditions are unsatisfiable and if "done" should be an option or if some exception should be thrown automatically
-                    spell.spellEffect = new Effect() {
-                        @Override
-                        public void execute(Object... objects) throws Exception {
-                            Matcher matcher;
-                            GameplayController.getInstance().deselectCard();
-                            while (true) {
-                                try {
-                                    String input = ProgramController.getInstance().getScanner().nextLine();
-                                    if ((matcher = Regex.getCommandMatcher(input, Regex.selectSpellCard)).matches()) {
-                                        boolean isOpponent = (matcher.group("isOpponent") != null);
-                                        GameplayController.getInstance().selectCard(matcher.group("id"), "--spell", isOpponent);
-                                        Player player = GameplayController.getInstance().getGameplay().getCurrentPlayer();
-                                        if (isOpponent)
-                                            player = GameplayController.getInstance().gameplay.getOpponentPlayer();
-                                        if (GameplayController.getInstance().getGameplay().getSelectedField().getCard() == null)
-                                            continue;
-                                        GameplayController.getInstance().destroySpellAndTrapCard(player, (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField());
-                                        break;
-                                    } else if (input.matches(Regex.help))
-                                        System.out.println("Select one spell and trap cards to destroy, or type done");
-                                } catch (Exception e) {
-                                    e.getMessage();
-                                }
-                            }
-                        }
-                    };
-                    break;
-
+                    }
+                };
+                break;
             }
         }
     }
