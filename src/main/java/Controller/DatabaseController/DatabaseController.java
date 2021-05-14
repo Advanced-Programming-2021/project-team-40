@@ -239,29 +239,30 @@ public class DatabaseController {
                         }
                     };
                     break;
-                case "The Tricky": card.uniqueSummon = new UniqueSummon() {
-                    @Override
-                    public void summon() throws Exception {
-                        if (gameplay.getCurrentPlayer().getPlayingHand().size() == 0)
-                            throw new SpecialSummonNotPossibleException();
-                        System.out.println("discard one card from your hand to special summon this card:");
-                        System.out.println("please enter a hand field id:");
-                        String input;
-                        while (true) {
-                            //TODO check id validity
-                            input = ProgramController.getInstance().getScanner().nextLine();
-                            if (input.matches(Regex.cancelAction)) {
-                                System.out.println("operation cancelled");
-                                break;
+                case "The Tricky":
+                    card.uniqueSummon = new UniqueSummon() {
+                        @Override
+                        public void summon() throws Exception {
+                            if (gameplay.getCurrentPlayer().getPlayingHand().size() == 0)
+                                throw new SpecialSummonNotPossibleException();
+                            System.out.println("discard one card from your hand to special summon this card:");
+                            System.out.println("please enter a hand field id:");
+                            String input;
+                            while (true) {
+                                //TODO check id validity
+                                input = ProgramController.getInstance().getScanner().nextLine();
+                                if (input.matches(Regex.cancelAction)) {
+                                    System.out.println("operation cancelled");
+                                    break;
+                                }
+                                int id = Integer.parseInt(input);
+                                Card toDiscard = gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard();
+                                gameplay.getCurrentPlayer().getPlayingHand().remove(id);
+                                GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), toDiscard);
                             }
-                            int id = Integer.parseInt(input);
-                            Card toDiscard = gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard();
-                            gameplay.getCurrentPlayer().getPlayingHand().remove(id);
-                            GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), toDiscard);
                         }
-                    }
-                };
-                break;
+                    };
+                    break;
             }
         }
     }

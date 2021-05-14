@@ -7,7 +7,6 @@ import View.Menu.*;
 import java.util.Scanner;
 
 
-
 public class ProgramController {
     private static ProgramController programController;
     private static Menu currentMenu = Menu.LOGIN_MENU;
@@ -21,11 +20,11 @@ public class ProgramController {
     public static ImportExport importExport = ImportExport.getInstance();
     public Scanner scanner = new Scanner(System.in);
 
-    private ProgramController(){
+    private ProgramController() {
 
     }
 
-    public static ProgramController getInstance(){
+    public static ProgramController getInstance() {
         if (programController == null) programController = new ProgramController();
         return programController;
     }
@@ -37,33 +36,33 @@ public class ProgramController {
             System.out.flush();
             String command = scanner.nextLine();
             switch (currentMenu) {
-                    case LOGIN_MENU:
-                        loginMenu.run(command);
-                        break;
-                    case MAIN_MENU:
-                        mainMenu.run(command);
-                        break;
-                    case DECK_MENU:
-                        deckMenu.run(command);
-                        break;
-                    case SHOP_MENU:
-                        shopMenu.run(command);
-                        break;
-                    case PROFILE_MENU:
-                        profileMenu.run(command);
-                        break;
-                    case IMPORT_EXPORT_MENU:
-                        importExport.run(command);
-                        break;
-                    case DUEL_MENU:
-                        duelMenu.run(command);
-                        break;
-                    case SCOREBOARD_MENU:
-                        scoreboardMenu.run(command);
-                        break;
-                    case GAMEPLAY:
-                        GameplayView.getInstance().run(command);
-                }
+                case LOGIN_MENU:
+                    loginMenu.run(command);
+                    break;
+                case MAIN_MENU:
+                    mainMenu.run(command);
+                    break;
+                case DECK_MENU:
+                    deckMenu.run(command);
+                    break;
+                case SHOP_MENU:
+                    shopMenu.run(command);
+                    break;
+                case PROFILE_MENU:
+                    profileMenu.run(command);
+                    break;
+                case IMPORT_EXPORT_MENU:
+                    importExport.run(command);
+                    break;
+                case DUEL_MENU:
+                    duelMenu.run(command);
+                    break;
+                case SCOREBOARD_MENU:
+                    scoreboardMenu.run(command);
+                    break;
+                case GAMEPLAY:
+                    GameplayView.getInstance().run(command);
+            }
         }
     }
 

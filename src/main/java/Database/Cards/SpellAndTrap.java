@@ -1,11 +1,11 @@
 package Database.Cards;
 
-abstract public class SpellAndTrap extends Card{
+abstract public class SpellAndTrap extends Card {
 
     protected Icon icon;
     protected boolean isLimited;
 
-    public SpellAndTrap(String name, Icon icon, String description, boolean isLimited, int cardPrice){
+    public SpellAndTrap(String name, Icon icon, String description, boolean isLimited, int cardPrice) {
         super(name, description, cardPrice);
         setIcon(icon);
         setLimited(isLimited);
@@ -27,7 +27,7 @@ abstract public class SpellAndTrap extends Card{
         return isLimited;
     }
 
-    public void activateSpellOrTrap(){
+    public void activateSpellOrTrap() {
 
     }
 }

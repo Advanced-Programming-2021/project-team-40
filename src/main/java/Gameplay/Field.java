@@ -74,10 +74,11 @@ public class Field {
     }
 
     public void endTurnActions() {
-        for (MonsterFieldArea monsterFieldArea: monstersField) {
+        for (MonsterFieldArea monsterFieldArea : monstersField) {
             monsterFieldArea.setHasAttacked(false);
             monsterFieldArea.setHasSwitchedMode(false);
-            if (monsterFieldArea.getTurnsLeftForEffect() > 0) monsterFieldArea.setTurnsLeftForEffect(monsterFieldArea.getTurnsLeftForEffect() - 1);
+            if (monsterFieldArea.getTurnsLeftForEffect() > 0)
+                monsterFieldArea.setTurnsLeftForEffect(monsterFieldArea.getTurnsLeftForEffect() - 1);
         }
     }
 }

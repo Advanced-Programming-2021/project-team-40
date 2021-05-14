@@ -45,23 +45,23 @@ public class Regex {
             " --new(?!.*?--new)|" +
             " --rounds (?<rounds>.+?)(?!.*?--rounds)){3}$";
     public static String startAIDuel = "^duel(?=.* --ai)(?=.* --new)(?=.* --rounds)" +
-                                       "(?: --ai(?!.*?--ai)|" +
-                                       " --new(?!.*?--new)|" +
-                                       " --rounds (?<rounds>.+?)(?!.*?--rounds)){3}$";
+            "(?: --ai(?!.*?--ai)|" +
+            " --new(?!.*?--new)|" +
+            " --rounds (?<rounds>.+?)(?!.*?--rounds)){3}$";
     public static String nextPhase = "^next phase$";
     public static String endPhase = "^end phase$";
     public static String selectMonsterCard = "^select(?=.* --monster)" +
-                                      "(?: (?<type>--monster) (?<id>.+?)(?!.*?--monster)|" +
-                                      "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
+            "(?: (?<type>--monster) (?<id>.+?)(?!.*?--monster)|" +
+            "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
     public static String selectSpellCard = "^select(?=.* --spell)" +
-                                           "(?: (?<type>--spell) (?<id>.+?)(?!.*?--spell)|" +
-                                           "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
+            "(?: (?<type>--spell) (?<id>.+?)(?!.*?--spell)|" +
+            "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
     public static String selectHandCard = "^select(?=.* --hand)" +
-                                          "(?: (?<type>--hand) (?<id>.+?)(?!.*?--hand)|" +
-                                          "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
+            "(?: (?<type>--hand) (?<id>.+?)(?!.*?--hand)|" +
+            "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
     public static String selectFieldZoneCard = "^select(?=.* --field)" +
-                                               "(?: (?<type>--field) (?!.*?--field)|" +
-                                               "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
+            "(?: (?<type>--field) (?!.*?--field)|" +
+            "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
     public static String deselectCard = "^select -d$";
     public static String summon = "^summon$";
     public static String set = "^set$";

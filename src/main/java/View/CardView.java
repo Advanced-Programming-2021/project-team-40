@@ -23,7 +23,7 @@ public class CardView {
         System.out.println("---------------------------");
     }
 
-    public static void showCardInList(Card card){
+    public static void showCardInList(Card card) {
         System.out.println(card.getName() + ":\n\t" + card.getDescription() + "\n----------------");
     }
 
