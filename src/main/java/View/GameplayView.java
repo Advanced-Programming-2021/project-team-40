@@ -201,7 +201,7 @@ public class GameplayView {
         }
     }
 
-    private void selectCard(Matcher matcher) {
+    public void selectCard(Matcher matcher) {
         String id = matcher.group("id");
         String type = matcher.group("type");
         boolean isOpponent = true;

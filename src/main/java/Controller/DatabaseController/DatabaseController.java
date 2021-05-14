@@ -15,6 +15,7 @@ import Gameplay.HandFieldArea;
 import View.Exceptions.InvalidCardSelectionException;
 import View.Exceptions.MonsterZoneFullException;
 import View.Exceptions.NoCardFoundException;
+import View.Exceptions.SpecialSummonNotPossibleException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opencsv.*;
@@ -212,7 +213,7 @@ public class DatabaseController {
                                     break;
                                 }
                             }
-                            if (!hasMonster) throw new Exception("you can't use this card's effect");
+                            if (!hasMonster) throw new SpecialSummonNotPossibleException();
                             System.out.println("now you can choose one level 4 or lower monster from your hand to summon");
                             System.out.println("please enter a hand field id:");
                             String input;
@@ -241,7 +242,7 @@ public class DatabaseController {
                     @Override
                     public void summon() throws Exception {
                         if (gameplay.getCurrentPlayer().getPlayingHand().size() == 0)
-                            throw new Exception("there is no way you can special summon this card");
+                            throw new SpecialSummonNotPossibleException();
                         System.out.println("discard one card from your hand to special summon this card:");
                         System.out.println("please enter a hand field id:");
                         String input;

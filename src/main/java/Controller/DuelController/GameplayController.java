@@ -3,10 +3,8 @@ package Controller.DuelController;
 
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
-import Database.Cards.Card;
-import Database.Cards.Monster;
-import Database.Cards.Spell;
-import Database.Cards.Trap;
+import Controller.ProgramController.Regex;
+import Database.Cards.*;
 import Gameplay.FieldArea;
 import Gameplay.Gameplay;
 import Gameplay.MonsterFieldArea;
@@ -20,6 +18,7 @@ import View.GameplayView;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.regex.Matcher;
 
 public class GameplayController {
     private static GameplayController gameplayController = null;
@@ -61,7 +60,6 @@ public class GameplayController {
                 goToNextPhase();
                 break;
         }
-
     }
 
     public void goToNextPhase() {
@@ -273,6 +271,8 @@ public class GameplayController {
         if (fieldArea.getCard().uniqueSummon != null) fieldArea.getCard().uniqueSummon.summon();
         else if (((Monster) fieldArea.getCard()).getLevel() > 4)
             tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
+        else if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL))
+            throw new InvalidSummonException();
         else normalSummon((HandFieldArea) fieldArea, monsterFieldArea);
         deselectCard();
     }
@@ -283,8 +283,28 @@ public class GameplayController {
         }
     }
 
-    public void ritualSummon() {
-
+    public void ritualSummon() throws Exception {
+        if (!hasRitualMonsterInHand()) throw new RitualSummonNotPossibleException();
+        if (!sumMeetsRitualMonsterLevel()) throw new RitualSummonNotPossibleException();
+        FieldArea ritualSpell = gameplay.getSelectedField();
+        deselectCard();
+        String input;
+        Monster monster;
+        while (true) {
+            input = ProgramController.getInstance().getScanner().nextLine();
+            Matcher matcher;
+            //TODO: take inputs for card address
+            if (gameplay.getSelectedField() != null)
+                if (gameplay.getSelectedField().getCard() instanceof Monster)
+                    if ((monster = (Monster) gameplay.getSelectedField().getCard()).getCardType().equals(CardType.RITUAL))
+                        break;
+            if ((matcher = Regex.getCommandMatcher(input, Regex.selectHandCard)).matches())
+                GameplayView.getInstance().selectCard(matcher);
+            else {
+                deselectCard();
+                System.out.println("you should ritual summon right now");
+            }
+        }
     }
 
     public void flipSummon() throws Exception {
@@ -297,7 +317,7 @@ public class GameplayController {
         if (((MonsterFieldArea) fieldArea).hasAttacked()) throw new AlreadySetPositionException();
         if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.isVisible()) throw new InvalidFlipSummonException();
         //TODO add necessary effects
-        if (fieldArea.getCard().onFlipSummon != null) fieldArea.getCard().onFlipSummon.execute(null);
+        if (fieldArea.getCard().onFlipSummon != null) fieldArea.getCard().onFlipSummon.execute();
         ((MonsterFieldArea) fieldArea).changePosition();
         deselectCard();
     }
@@ -475,6 +495,15 @@ public class GameplayController {
 
     }
 
+    private boolean hasRitualMonsterInHand() {
+        for (HandFieldArea hand :
+                gameplay.getCurrentPlayer().getPlayingHand()) {
+            if (hand.getCard() instanceof Monster)
+                if (((Monster) hand.getCard()).getCardType().equals(CardType.RITUAL)) return true;
+        }
+        return false;
+    }
+
     public boolean isLocationNumberInvalid(String string) {
         if (string.matches("^\\d+$")) {
             int id = Integer.parseInt(string);
@@ -513,9 +542,19 @@ public class GameplayController {
         return count;
     }
 
-    private boolean monsterCardExists(Card card) {
-        for (MonsterFieldArea m : gameplay.getCurrentPlayer().getField().getMonstersField()) {
-            if (m.getCard() == card) return true;
+    private boolean sumMeetsRitualMonsterLevel() {
+        boolean canSummon = true;
+        for (HandFieldArea hand :
+                gameplay.getCurrentPlayer().getPlayingHand()) {
+            if (hand.getCard() instanceof Monster)
+                if (((Monster) hand.getCard()).getCardType().equals(CardType.RITUAL)) {
+                    int levelSum = 0;
+                    for (Card card :
+                            gameplay.getCurrentPlayer().getPlayingDeck().getMainCards()) {
+                        if (card instanceof Monster) levelSum += ((Monster) card).getLevel();
+                        if (levelSum >= ((Monster) hand.getCard()).getLevel()) return true;
+                    }
+                }
         }
         return false;
     }
