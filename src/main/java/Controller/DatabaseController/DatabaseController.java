@@ -2,6 +2,7 @@ package Controller.DatabaseController;
 
 import Controller.DuelController.GameplayController;
 import Controller.ProgramController.ProgramController;
+import Controller.ProgramController.Regex;
 import Database.Cards.*;
 import Database.Deck;
 import Database.EfficientDeck;
@@ -10,7 +11,9 @@ import Database.User;
 import Gameplay.Gameplay;
 import Gameplay.Player;
 import Gameplay.MonsterFieldArea;
+import Gameplay.HandFieldArea;
 import View.Exceptions.InvalidCardSelectionException;
+import View.Exceptions.MonsterZoneFullException;
 import View.Exceptions.NoCardFoundException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,23 +27,23 @@ public class DatabaseController {
 
     private static DatabaseController databaseController;
 
-    private DatabaseController(){
+    private DatabaseController() {
         initialize();
     }
 
-    public static DatabaseController getInstance(){
+    public static DatabaseController getInstance() {
         if (databaseController == null)
             databaseController = new DatabaseController();
         return databaseController;
     }
 
-    private void initialize(){
+    private void initialize() {
         initializeMonsterCards();
         initializeSpellAndTrapCards();
         initializeUsers();
     }
 
-    public void saveUser(User user){
+    public void saveUser(User user) {
         File userFile = new File("./src/main/resources/Users/" + user.getUsername() + ".json");
         EfficientUser efficientUser = new EfficientUser(user);
         try {
@@ -52,91 +55,31 @@ public class DatabaseController {
             out.write(writeToFile);
             out.close();
             fw.close();
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
 
     }
 
-    public void initializeSpellAndTrapCards(){
-        try{
+    public void initializeSpellAndTrapCards() {
+        try {
             File spellAndTrapCards = new File("./src/main/resources/Cards/SpellTrap.csv");
-            FileReader fileReader= new FileReader(spellAndTrapCards);
+            FileReader fileReader = new FileReader(spellAndTrapCards);
             CSVReader csvReader = new CSVReader(fileReader);
             csvReader.readNext();
             String[] cardDetails;
-            while ((cardDetails = csvReader.readNext()) != null){
-                initializeSpellAndTrapUnique(cardDetails);
-                /*
-
-                switch (cardDetails[1]){
+            while ((cardDetails = csvReader.readNext()) != null) {
+                switch (cardDetails[1]) {
                     case "Trap":
-                        new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
+                        new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]));
                         break;
                     case "Spell":
-                        new Spell(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
+                        new Spell(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]));
 
                 }
-
-                 */
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
-        }
-    }
-
-    private void initializeSpellAndTrapUnique(String[] cardDetails) {
-        switch (cardDetails[0]){
-            case "Trap Hole":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) ){
-
-                };
-                break;
-            case "Mirror Force":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) ){
-
-                };
-                break;
-            case "Magic Cylinder":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-                break;
-            case "Mind Crush":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-                break;
-            case "Torrential Tribute":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-                break;
-            case "Time Seal":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-                break;
-            case "Negate Attack":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-                break;
-            case "Solemn Warning":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-                break;
-            case "Magic Jammer":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-                break;
-            case "Call of The Haunted":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-                break;
-            case "Vanity's Emptiness":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-                break;
-            case "Wall of Revealing Light":
-                new Trap(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-                break;
-
-            case "Monster Reborn":
-                new Spell(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) ){
-
-                };
-                break;
-            default:
-                System.out.println("TODO: initialize spell card " + cardDetails[0] + "\n(if already done, look for typo in all cards");
-                new Spell(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]) );
-
         }
     }
 
@@ -160,7 +103,6 @@ public class DatabaseController {
     private void initializeMonsterCardEffects() {
         //TODO add effects to cards
         try {
-            (Card.getCardByName("Yomi Ship")).OnDestruction = new Effect() {
             Card.getCardByName("Yomi Ship").onDestruction = new Effect() {
                 @Override
                 public void execute(Object object) {
@@ -228,9 +170,6 @@ public class DatabaseController {
                     //TODO: requires more than one input
                 }
             };
-
-
-
 
         }catch (Exception e){
             System.out.println(e.getMessage());

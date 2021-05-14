@@ -1,5 +1,5 @@
 package Database.Cards;
 
 public interface Effect {
-    void execute(Object object);
+    void execute(Object... objects) throws Exception;
 }
