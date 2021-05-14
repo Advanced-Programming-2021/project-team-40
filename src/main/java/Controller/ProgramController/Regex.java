@@ -70,7 +70,7 @@ public class Regex {
     public static String attack = "^attack (?<monsterId>.+?)$";
     public static String directAttack = "^attack direct$";
     public static String activateEffect = "^activate effect$";
-    public static String showGraveyard = "^show graveyard$";
+    public static String showGraveyard = "^show graveyard(?<isOpponent> --opponent)?$";
     public static String showSelectedCard = "^card show --selected$";
     public static String showCardByName = "^card show (?<cardName>.+?)$";
     public static String surrender = "^surrender$";

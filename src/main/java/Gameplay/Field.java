@@ -22,6 +22,10 @@ public class Field {
         return monstersField;
     }
 
+    public SpellAndTrapFieldArea[] getSpellAndTrapField() {
+        return spellAndTrapField;
+    }
+
     public MonsterFieldArea getMonstersFieldById(int id) {
         return monstersField[id - 1];
     }

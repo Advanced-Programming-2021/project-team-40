@@ -3,6 +3,7 @@ package View;
 import Controller.DuelController.GameplayController;
 import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
+import Database.Cards.Card;
 import Gameplay.MonsterFieldArea;
 import Gameplay.Player;
 import View.Exceptions.*;
@@ -33,7 +34,7 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches()) {
             GameplayController.getInstance().goToNextPhase();
         }
-        else if (Regex.getCommandMatcher(command, Regex.showGraveyard).matches()) graveyardMode();
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.showGraveyard)).matches()) graveyardMode(matcher);
         else if (Regex.getCommandMatcher(command, Regex.showSelectedCard).matches()) showCard();
         else if (Regex.getCommandMatcher(command, Regex.summon).matches()) summon();
         else if (Regex.getCommandMatcher(command, Regex.set).matches()) set();
@@ -127,14 +128,15 @@ public class GameplayView {
         }
     }
 
-    private void graveyardMode() {
-        GraveyardView.showGraveyard(GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getGraveyard());
+    public void graveyardMode(Matcher matcher) {
+        Player player;
+        if (matcher.group("isOpponent") == null) player = GameplayController.getInstance().getGameplay().getCurrentPlayer();
+        else player = GameplayController.getInstance().getGameplay().getOpponentPlayer();
+        GraveyardView.showGraveyard(player.getField().getGraveyard());
         String command;
         while (true) {
             command = ProgramController.getInstance().getScanner().nextLine();
-            if (command.matches(Regex.back)) break;
-            if (command.matches(Regex.showGraveyard))
-                GraveyardView.showGraveyard(GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getGraveyard());
+            if (command.matches(Regex.back)) return;
             else System.out.println("invalid command");
         }
     }
@@ -203,7 +205,7 @@ public class GameplayView {
         }
     }
 
-    private void selectCard(Matcher matcher) {
+    public void selectCard(Matcher matcher) {
         String id = matcher.group("id");
         String type = matcher.group("type");
         boolean isOpponent = true;
