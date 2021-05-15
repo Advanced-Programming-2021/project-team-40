@@ -2,6 +2,7 @@ package Controller.MenuController;
 
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
+import Database.Deck;
 import Database.User;
 import View.Exceptions.MenuNavigationNotPossibleException;
 import View.ScoreboardView;
@@ -24,16 +25,35 @@ public class ScoreboardController implements MenuNavigation {
             scoreboardController = new ScoreboardController();
         return scoreboardController;
     }
+
     private void sortUsers() {
-        Comparator<User> byScore = Comparator.comparing(User::getScore);
-        users.sort(byScore);
+        users.sort(nicknameComparator);
+        users.sort(scoreComparator);
     }
+
+    public static Comparator<User> nicknameComparator = new Comparator<>() {
+        @Override
+        public int compare(User firstUser, User secondUser) {
+            String first = firstUser.getUsername().toUpperCase();
+            String second = secondUser.getUsername().toUpperCase();
+            return first.compareTo(second);
+        }
+    };
+
+    public static Comparator<User> scoreComparator = new Comparator<>() {
+        @Override
+        public int compare(User firstUser, User secondUser) {
+            int first = firstUser.getScore();
+            int second = secondUser.getScore();
+            return Integer.compare(second, first);
+        }
+    };
 
     public void printSortedUsers() {
         setUsers(User.getUsers());
         sortUsers();
         ArrayList<Integer> ranks = new ArrayList<>();
-        int previousScore = 0;
+        int previousScore = users.get(0).getScore();
         int rank = 1;
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getScore() < previousScore) {

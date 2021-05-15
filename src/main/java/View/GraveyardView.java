@@ -6,7 +6,11 @@ import java.util.ArrayList;
 
 public class GraveyardView {
     public static void showGraveyard(ArrayList<Card> graveyard) {
-        System.out.println("cards in Graveyard:");
+        if (graveyard.size()==0){
+            System.out.println("graveyard empty");
+            return;
+        }
+        System.out.println("cards in graveyard:");
         int counter = 1;
         for (Card card : graveyard) {
             System.out.print(counter++ + ":");
