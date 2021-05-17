@@ -10,13 +10,7 @@ import Database.Cards.Card;
 import Database.Cards.Monster;
 import Database.Cards.Spell;
 import Database.Cards.Trap;
-import Gameplay.FieldArea;
-import Gameplay.Gameplay;
-import Gameplay.MonsterFieldArea;
-import Gameplay.SpellAndTrapFieldArea;
-import Gameplay.HandFieldArea;
-import Gameplay.Phase;
-import Gameplay.Player;
+import Gameplay.*;
 import View.CardView;
 import View.Exceptions.*;
 import View.GameplayView;
@@ -162,7 +156,10 @@ public class GameplayController {
                 if (gameplay.playerOneWins == 2 || gameplay.playerTwoWins == 2)
                     endGame(winner, loser);
         }
-        //TODO continue multi-round game
+        readyForNewRound();
+    }
+
+    private void readyForNewRound() {
     }
 
     public void surrender() {
@@ -255,7 +252,9 @@ public class GameplayController {
             setMonsterCard(monster, (HandFieldArea) fieldArea);
             deselectCard();
         } else if (fieldArea.getCard() instanceof Spell || fieldArea.getCard() instanceof Trap) {
-            SpellAndTrapFieldArea s = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
+            SpellAndTrapFieldArea s;
+            if (((SpellAndTrap) fieldArea.getCard()).getIcon().equals(Icon.FIELD)) s = gameplay.getCurrentPlayer().getField().getFieldZone();
+            else s = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
             if (s == null) throw new SpellZoneFullException();
             setSpellCard(s, (HandFieldArea) fieldArea);
             deselectCard();
@@ -391,7 +390,6 @@ public class GameplayController {
         deselectCard();
         gameplay.setAttacker(null);
         gameplay.setBeingAttacked(null);
-        checkWinningConditions();
         return temp;
     }
 
@@ -540,6 +538,8 @@ public class GameplayController {
     }
 
     private void setSpellCard(SpellAndTrapFieldArea spellAndTrapFieldArea, HandFieldArea handFieldArea) {
+        if (spellAndTrapFieldArea instanceof FieldZoneArea && spellAndTrapFieldArea.getCard()!=null)
+            destroySpellAndTrapCard(gameplay.getCurrentPlayer(), spellAndTrapFieldArea);
         spellAndTrapFieldArea.putCard(handFieldArea.getCard(), false);
         gameplay.getCurrentPlayer().getPlayingHand().remove(handFieldArea);
     }
@@ -555,7 +555,7 @@ public class GameplayController {
         //TODO fill body
     }
 
-    private void checkWinningConditions() {
+    public void checkWinningConditions() {
         if (gameplay.getOpponentPlayer().getLifePoints() <= 0) {
             endMatch(gameplay.getCurrentPlayer(), gameplay.getOpponentPlayer());
         } else if (gameplay.getCurrentPlayer().getLifePoints() <= 0) {
@@ -613,7 +613,6 @@ public class GameplayController {
     }
 
     private boolean sumMeetsRitualMonsterLevel() {
-        boolean canSummon = true;
         for (HandFieldArea hand :
                 gameplay.getCurrentPlayer().getPlayingHand()) {
             if (hand.getCard() instanceof Monster)
@@ -634,5 +633,9 @@ public class GameplayController {
         if (c == null) throw new InvalidCardNameException(cardName);
         HandFieldArea h = new HandFieldArea(c);
         gameplay.getCurrentPlayer().getPlayingHand().add(h);
+    }
+
+    public void updateFieldNumbers() {
+
     }
 }

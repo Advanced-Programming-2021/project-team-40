@@ -9,7 +9,7 @@ public class Field {
     private MonsterFieldArea[] monstersField = new MonsterFieldArea[5];
     private SpellAndTrapFieldArea[] spellAndTrapField = new SpellAndTrapFieldArea[5];
     private ArrayList<Card> graveyard = new ArrayList<>();
-    private FieldArea fieldZone = new FieldArea();
+    private FieldZoneArea fieldZone = new FieldZoneArea();
 
     public Field() {
         for (int i = 0; i < 5; i++) {
@@ -52,7 +52,7 @@ public class Field {
         return graveyard;
     }
 
-    public FieldArea getFieldZone() {
+    public FieldZoneArea getFieldZone() {
         return fieldZone;
     }
 
@@ -69,7 +69,7 @@ public class Field {
         this.graveyard = graveyard;
     }
 
-    public void setFieldZone(FieldArea fieldZone) {
+    public void setFieldZone(FieldZoneArea fieldZone) {
         this.fieldZone = fieldZone;
     }
 

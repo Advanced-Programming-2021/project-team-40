@@ -50,6 +50,7 @@ public class GameplayView {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
         else System.out.println("invalid command");
+        GameplayController.getInstance().updateFieldNumbers();
         gameplayView.showBoard();
     }
 
@@ -172,6 +173,7 @@ public class GameplayView {
         try {
             StringBuilder message = GameplayController.getInstance().attack(monsterId);
             System.out.println(message);
+            GameplayController.getInstance().checkWinningConditions();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
