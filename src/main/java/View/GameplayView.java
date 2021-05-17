@@ -3,6 +3,8 @@ package View;
 import Controller.DuelController.GameplayController;
 import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
+import Database.Cards.Card;
+import Gameplay.FieldArea;
 import Gameplay.MonsterFieldArea;
 import Gameplay.Player;
 import View.Exceptions.*;
@@ -43,7 +45,8 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches()) activateEffect();
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches()) forceAddCard(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches())
+            forceAddCard(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
@@ -90,6 +93,26 @@ public class GameplayView {
             System.out.println(message);
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public void getRitualTribute() throws Exception {
+        String inputRegex = "^(\\d ?)+$";
+        String tributeRegex = "((?<num>\\d+) )";
+        FieldArea ritualSpell = GameplayController.getInstance().getGameplay().getSelectedField();
+        GameplayController.getInstance().deselectCard();
+        String cardInput;
+        String tributeInput;
+        while (true) {
+            break;
+        }
+        while (true) {
+            tributeInput = ProgramController.getInstance().getScanner().nextLine();
+            if (tributeInput.matches(inputRegex)) break;
+            else if (tributeInput.matches(Regex.cancelAction)) throw new CommandCancellationException("ritual summon");
+            else if (tributeInput.matches(Regex.help))
+                System.out.println("select the card you want to ritual summon");
+            else System.out.println("you should ritual summon right now");
         }
     }
 

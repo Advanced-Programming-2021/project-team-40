@@ -245,7 +245,6 @@ public class GameplayController {
             MonsterFieldArea monster = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
             if (monster == null) throw new MonsterZoneFullException();
             if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
-
             if (((Monster) fieldArea.getCard()).getLevel() > 4)
                 tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
             setMonsterCard(monster, (HandFieldArea) fieldArea);
@@ -286,24 +285,55 @@ public class GameplayController {
     public void ritualSummon() throws Exception {
         if (!hasRitualMonsterInHand()) throw new RitualSummonNotPossibleException();
         if (!sumMeetsRitualMonsterLevel()) throw new RitualSummonNotPossibleException();
-        FieldArea ritualSpell = gameplay.getSelectedField();
+        HandFieldArea ritualSpell = (HandFieldArea) gameplay.getSelectedField();
         deselectCard();
         String input;
-        Monster monster;
         while (true) {
             input = ProgramController.getInstance().getScanner().nextLine();
             Matcher matcher;
-            //TODO: take inputs for card address
-            if (gameplay.getSelectedField() != null)
-                if (gameplay.getSelectedField().getCard() instanceof Monster)
-                    if ((monster = (Monster) gameplay.getSelectedField().getCard()).getCardType().equals(CardType.RITUAL))
-                        break;
-            if ((matcher = Regex.getCommandMatcher(input, Regex.selectHandCard)).matches())
-                GameplayView.getInstance().selectCard(matcher);
-            else {
-                deselectCard();
-                System.out.println("you should ritual summon right now");
+            if (input.matches(Regex.cancelAction)) ;
+            try {
+                if ((matcher = Regex.getCommandMatcher(input, Regex.selectHandCard)).matches()) {
+                    GameplayView.getInstance().selectCard(matcher);
+                    if (!(gameplay.getSelectedField().getCard() instanceof Monster)) {
+                        deselectCard();
+                        throw new InvalidCardSelectionException();
+                    }
+                    if (!((Monster) gameplay.getSelectedField().getCard()).getCardType().equals(CardType.RITUAL)) {
+                        deselectCard();
+                        throw new InvalidCardSelectionException();
+                    }
+                    System.out.println("now enter deck ids you want to tribute:");
+                    break;
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
+        }
+        while (true) {
+            input = ProgramController.getInstance().getScanner().nextLine();
+            if (input.matches(Regex.cancelAction)) throw new Exception("Operation cancelled");
+            String[] ids = input.split(" ");
+            ArrayList<Card> mainCards = gameplay.getCurrentPlayer().getPlayingDeck().getMainCards();
+            int levelSum = 0;
+            for (String idString :
+                    ids) {
+                if (!idString.matches("^\\d+$")) throw new Exception("you should enter a number");
+                if (Integer.parseInt(idString) <= mainCards.size()) throw new Exception("invalid number");
+                int id = Integer.parseInt(idString);
+                if (!(mainCards.get(id) instanceof Monster)) throw new Exception("invalid number");
+                levelSum += ((Monster) mainCards.get(id)).getLevel();
+            }
+            if (levelSum < ((Monster) gameplay.getSelectedField().getCard()).getLevel())
+                throw new Exception("selected monster cards levels don't match with ritual card selected");
+            gameplay.getCurrentPlayer().getPlayingHand().remove(ritualSpell);
+            for (String idString :
+                    ids) {
+                int id = Integer.parseInt(idString);
+                GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), mainCards.get(id));
+                mainCards.remove(id);
+            }
+            normalSummon((HandFieldArea) gameplay.getSelectedField(), gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea());
         }
     }
 

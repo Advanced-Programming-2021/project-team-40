@@ -76,7 +76,6 @@ public class DatabaseController {
                         break;
                     case "Spell":
                         new Spell(cardDetails[0], getIcon(cardDetails[2]), cardDetails[3], isLimited(cardDetails[4]), Integer.parseInt(cardDetails[5]));
-
                 }
             }
         } catch (IOException e) {
@@ -133,7 +132,7 @@ public class DatabaseController {
                                         throw new NoCardFoundException();
                                     if (GameplayController.getInstance().isLocationNumberInvalid(idToCheck))
                                         throw new InvalidCardSelectionException();
-                                    int id = Integer.parseInt(idToCheck);
+                                    int id = Integer.parseInt(idToCheck) - 1;
                                     MonsterFieldArea monster = player.getField().getMonstersFieldById(id);
                                     GameplayController.getInstance().destroyMonsterCard(player, monster);
                                     break;
@@ -188,12 +187,12 @@ public class DatabaseController {
                     card.onDestruction = new Effect() {
                         @Override
                         public void execute(Object... objects) throws Exception {
-                            throw new Exception("this card can't be destroyed");
+                            if (gameplay.getAttacker() != null) throw new Exception("this card can't be destroyed");
                         }
                     };
                     card.afterDamageCalculation = new Effect() {
                         @Override
-                        public void execute(Object... objects) throws Exception {
+                        public void execute(Object... objects) {
                             boolean visibility = (boolean) objects[0];
                             if (!visibility)
                                 gameplay.getCurrentPlayer().setLifePoints(gameplay.getCurrentPlayer().getLifePoints() - 1000);
@@ -227,7 +226,7 @@ public class DatabaseController {
                                         throw new InvalidCardSelectionException();
                                     MonsterFieldArea monster = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
                                     if (monster == null) throw new MonsterZoneFullException();
-                                    monster.putCard(temp,false);
+                                    monster.putCard(temp, false);
                                 } catch (InvalidCardSelectionException e) {
                                     System.out.println(e.getMessage());
                                 } catch (MonsterZoneFullException e) {
@@ -238,29 +237,30 @@ public class DatabaseController {
                         }
                     };
                     break;
-                case "The Tricky": card.uniqueSummon = new UniqueSummon() {
-                    @Override
-                    public void summon() throws Exception {
-                        if (gameplay.getCurrentPlayer().getPlayingHand().size() == 0)
-                            throw new SpecialSummonNotPossibleException();
-                        System.out.println("discard one card from your hand to special summon this card:");
-                        System.out.println("please enter a hand field id:");
-                        String input;
-                        while (true) {
-                            //TODO check id validity
-                            input = ProgramController.getInstance().getScanner().nextLine();
-                            if (input.matches(Regex.cancelAction)) {
-                                System.out.println("operation cancelled");
-                                break;
+                case "The Tricky":
+                    card.uniqueSummon = new UniqueSummon() {
+                        @Override
+                        public void summon() throws Exception {
+                            if (gameplay.getCurrentPlayer().getPlayingHand().size() == 0)
+                                throw new SpecialSummonNotPossibleException();
+                            System.out.println("discard one card from your hand to special summon this card:");
+                            System.out.println("please enter a hand field id:");
+                            String input;
+                            while (true) {
+                                //TODO check id validity
+                                input = ProgramController.getInstance().getScanner().nextLine();
+                                if (input.matches(Regex.cancelAction)) {
+                                    System.out.println("operation cancelled");
+                                    break;
+                                }
+                                int id = Integer.parseInt(input);
+                                Card toDiscard = gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard();
+                                gameplay.getCurrentPlayer().getPlayingHand().remove(id);
+                                GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), toDiscard);
                             }
-                            int id = Integer.parseInt(input);
-                            Card toDiscard = gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard();
-                            gameplay.getCurrentPlayer().getPlayingHand().remove(id);
-                            GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), toDiscard);
                         }
-                    }
-                };
-                break;
+                    };
+                    break;
             }
         }
     }
