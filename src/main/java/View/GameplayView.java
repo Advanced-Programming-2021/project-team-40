@@ -108,7 +108,10 @@ public class GameplayView {
             cardInput = ProgramController.getInstance().getScanner().nextLine();
             if ((matcher = Regex.getCommandMatcher(cardInput, Regex.selectHandCard)).matches())
                 selectCard(matcher);
-            else if (cardInput.matches(Regex.cancelAction)) throw new CommandCancellationException("ritual summon");
+            else if (cardInput.matches(Regex.cancelAction)) {
+                //TODO: more stuff here
+                throw new CommandCancellationException("ritual summon");
+            }
             else System.out.println("you should ritual summon right now");
             if (gameplay.getSelectedField() != null) {
                 try {
@@ -119,21 +122,23 @@ public class GameplayView {
                     break;
                 } catch (Exception e) {
                     deselectCard();
-                    System.out.println("you should ritual summon right now");
+                    System.out.println(e.getMessage());
                 }
             }
         }
         while (true) {
             cardInput = ProgramController.getInstance().getScanner().nextLine();
+            if (cardInput.matches(Regex.cancelAction)) {
+                //TODO: more things should be done here
+                throw new CommandCancellationException("ritual summon");
+            }
             if (cardInput.matches(Regex.summon)) {
                 summon();
                 break;
-            }
-            else if (cardInput.matches(Regex.set)) {
+            } else if (cardInput.matches(Regex.set)) {
                 set();
                 break;
-            }
-            else System.out.println("you should ritual summon right now");
+            } else System.out.println("you should ritual summon right now");
         }
     }
 
@@ -266,7 +271,27 @@ public class GameplayView {
         isFirstOfGame = firstOfGame;
     }
 
-    public FieldArea ritualTribute() {
-        return null;
+    public String[] ritualTribute() throws Exception {
+        String inputRegex = "^(\\d )+$";
+        String input;
+        String[] ids;
+        while (true) {
+            input = ProgramController.getInstance().getScanner().nextLine();
+            if (input.matches(Regex.cancelAction)) {
+                //TODO: more things should be done here
+                throw new CommandCancellationException("ritual summon");
+            }
+            try {
+                if (input.matches(inputRegex)) {
+                    ids = input.split(" ");
+                    if (!GameplayController.getInstance().isRitualInputsValid(ids))
+                        throw new Exception("selected monsters levels don't match with ritual monster");
+                    break;
+                } else System.out.println("you should ritual summon right now");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return ids;
     }
 }
