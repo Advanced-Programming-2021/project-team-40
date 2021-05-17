@@ -5,7 +5,6 @@ import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
 import Database.Cards.*;
-import Controller.ProgramController.Regex;
 import Database.Cards.Card;
 import Database.Cards.Monster;
 import Database.Cards.Spell;
@@ -29,6 +28,7 @@ public class GameplayController {
     private static GameplayController gameplayController = null;
     private ArrayList<Card> cardsToDeactivateAtEndPhase = new ArrayList<>();
     private ArrayList<Card> continuousEffectCards = new ArrayList<>();
+    private ArrayList<FieldArea> effectSpellAndTraps = new ArrayList<>();
     public Gameplay gameplay;
 
     private GameplayController() {
@@ -231,6 +231,10 @@ public class GameplayController {
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseForSpellException();
         if (fieldArea.isVisible()) throw new AlreadyActivatedException();
+        if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.RITUAL)) {
+            effectSpellAndTraps.add(fieldArea);
+            GameplayView.getInstance().selectRitualMonster();
+        }
         if (fieldArea.canBePutOnBoard()) {
             SpellAndTrapFieldArea s = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
             if (s == null) throw new SpellZoneFullException();
@@ -250,6 +254,18 @@ public class GameplayController {
             MonsterFieldArea monster = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
             if (monster == null) throw new MonsterZoneFullException();
             if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
+            if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) {
+                FieldArea ritualSpell = null;
+                for (FieldArea spellAndTrap :
+                        effectSpellAndTraps) {
+                    ritualSpell = spellAndTrap;
+                    if (spellAndTrap.getCard() instanceof Spell)
+                        if (!((Spell) spellAndTrap.getCard()).getIcon().equals(Icon.RITUAL))
+                            throw new InvalidSummonException();
+                }
+                if (ritualSpell == null) throw new InvalidSummonException();
+                ritualSummon(GameplayView.getInstance().ritualTribute());
+            }
             if (((Monster) fieldArea.getCard()).getLevel() > 4)
                 tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
             setMonsterCard(monster, (HandFieldArea) fieldArea);
@@ -287,7 +303,7 @@ public class GameplayController {
         }
     }
 
-    public void ritualSummon() throws Exception {
+    public void ritualSummon(FieldArea ritual) throws Exception {
         if (!hasRitualMonsterInHand()) throw new RitualSummonNotPossibleException();
         if (!sumMeetsRitualMonsterLevel()) throw new RitualSummonNotPossibleException();
         HandFieldArea ritualSpell = (HandFieldArea) gameplay.getSelectedField();
@@ -527,7 +543,7 @@ public class GameplayController {
                     gameplay.getCurrentPlayer().getPlayingHand().remove(gameplay.getSelectedField());
 
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
         }
@@ -634,5 +650,13 @@ public class GameplayController {
         if (c == null) throw new InvalidCardNameException(cardName);
         HandFieldArea h = new HandFieldArea(c);
         gameplay.getCurrentPlayer().getPlayingHand().add(h);
+    }
+
+    public ArrayList<FieldArea> getEffectSpellAndTraps() {
+        return effectSpellAndTraps;
+    }
+
+    public void setEffectSpellAndTraps(ArrayList<FieldArea> effectSpellAndTraps) {
+        this.effectSpellAndTraps = effectSpellAndTraps;
     }
 }

@@ -3,7 +3,11 @@ package View;
 import Controller.DuelController.GameplayController;
 import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
+import Database.Cards.Card;
+import Database.Cards.CardType;
+import Database.Cards.Monster;
 import Gameplay.FieldArea;
+import Gameplay.Gameplay;
 import Gameplay.MonsterFieldArea;
 import Gameplay.Player;
 import View.Exceptions.*;
@@ -44,7 +48,8 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches()) activateEffect();
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches()) forceAddCard(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches())
+            forceAddCard(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
@@ -94,22 +99,40 @@ public class GameplayView {
         }
     }
 
-    public void getRitualTribute() throws Exception {
-        String inputRegex = "^(\\d ?)+$";
-        String tributeRegex = "((?<num>\\d+) )";
-        FieldArea ritualSpell = GameplayController.getInstance().getGameplay().getSelectedField();
+    public void selectRitualMonster() throws Exception {
+        Gameplay gameplay = GameplayController.getInstance().getGameplay();
         GameplayController.getInstance().deselectCard();
         String cardInput;
-        String tributeInput;
         while (true) {
-            break;
+            Matcher matcher;
+            cardInput = ProgramController.getInstance().getScanner().nextLine();
+            if ((matcher = Regex.getCommandMatcher(cardInput, Regex.selectHandCard)).matches())
+                selectCard(matcher);
+            else if (cardInput.matches(Regex.cancelAction)) throw new CommandCancellationException("ritual summon");
+            else System.out.println("you should ritual summon right now");
+            if (gameplay.getSelectedField() != null) {
+                try {
+                    if (!(gameplay.getSelectedField().getCard() instanceof Monster))
+                        throw new InvalidCardSelectionException();
+                    if (!((Monster) gameplay.getSelectedField().getCard()).getCardType().equals(CardType.RITUAL))
+                        throw new InvalidCardSelectionException();
+                    break;
+                } catch (Exception e) {
+                    deselectCard();
+                    System.out.println("you should ritual summon right now");
+                }
+            }
         }
         while (true) {
-            tributeInput = ProgramController.getInstance().getScanner().nextLine();
-            if (tributeInput.matches(inputRegex)) break;
-            else if (tributeInput.matches(Regex.cancelAction)) throw new CommandCancellationException("ritual summon");
-            else if (tributeInput.matches(Regex.help))
-                System.out.println("select the card you want to ritual summon");
+            cardInput = ProgramController.getInstance().getScanner().nextLine();
+            if (cardInput.matches(Regex.summon)) {
+                summon();
+                break;
+            }
+            else if (cardInput.matches(Regex.set)) {
+                set();
+                break;
+            }
             else System.out.println("you should ritual summon right now");
         }
     }
@@ -241,5 +264,9 @@ public class GameplayView {
 
     public void setFirstOfGame(boolean firstOfGame) {
         isFirstOfGame = firstOfGame;
+    }
+
+    public FieldArea ritualTribute() {
+        return null;
     }
 }
