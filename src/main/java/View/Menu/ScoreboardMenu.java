@@ -17,7 +17,7 @@ public class ScoreboardMenu implements Help {
     }
 
     public void help() {
-        System.out.println("show scoreboard");
+        System.out.println("scoreboard show");
         System.out.println("menu show-current");
         System.out.println("help");
         System.out.println("menu exit");

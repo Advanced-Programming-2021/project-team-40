@@ -48,7 +48,7 @@ public class MainMenu implements Help {
     }
 
     public void help() {
-        System.out.println("menu enter [Duel | Deck | ScoreboardMenu | Profile | Shop | Import/Export]");
+        System.out.println("menu enter [Duel | Deck | Scoreboard | Profile | Shop | Import/Export]");
         System.out.println("menu exit");
         System.out.println("menu show-current");
         System.out.println("logout");

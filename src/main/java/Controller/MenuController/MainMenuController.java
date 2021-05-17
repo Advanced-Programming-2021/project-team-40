@@ -44,7 +44,7 @@ public class MainMenuController implements MenuNavigation {
                 deckMenu.setCurrentUser(mainMenu.currentUser);
                 menu = Menu.DECK_MENU;
                 break;
-            case "ScoreboardMenu":
+            case "Scoreboard":
                 menu = Menu.SCOREBOARD_MENU;
                 break;
             case "Profile":

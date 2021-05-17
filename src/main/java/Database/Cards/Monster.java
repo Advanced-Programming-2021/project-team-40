@@ -84,8 +84,5 @@ public class Monster extends Card {
         return defensePoints;
     }
 
-    public void activateEffect() {
-
-    }
 
 }

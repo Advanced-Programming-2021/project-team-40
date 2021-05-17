@@ -5,6 +5,11 @@ import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
 import Database.Cards.*;
+import Controller.ProgramController.Regex;
+import Database.Cards.Card;
+import Database.Cards.Monster;
+import Database.Cards.Spell;
+import Database.Cards.Trap;
 import Gameplay.FieldArea;
 import Gameplay.Gameplay;
 import Gameplay.MonsterFieldArea;
@@ -485,6 +490,18 @@ public class GameplayController {
         }
     }
 
+    public void destroySpellAndTrapCard(Player player, SpellAndTrapFieldArea area) {
+        try {
+            if ((area.getCard()).onDestruction != null)
+                (area.getCard()).onDestruction.execute(player);
+            moveCardToGraveyard(player, area.getCard());
+            area.setVisibility(false);
+            area.putCard(null, false);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void moveCardToGraveyard(Player player, Card card) {
         player.getField().getGraveyard().add(card);
     }
@@ -495,6 +512,25 @@ public class GameplayController {
         player.getPlayingHand().add(handFieldArea);
         player.getPlayingDeck().getMainCards().remove(card);
         return card;
+    }
+
+    public void discardACard() {
+        ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();
+        while (true) {
+            try {
+
+                Matcher matcher;
+                String command = ProgramController.getInstance().getScanner().nextLine();
+                if ((matcher = Regex.getCommandMatcher(command, Regex.selectHandCard)).matches()) {
+                    selectCard(matcher.group("id"), "--hand", false);
+                    moveCardToGraveyard(gameplay.getCurrentPlayer(), gameplay.getSelectedField().getCard());
+                    gameplay.getCurrentPlayer().getPlayingHand().remove(gameplay.getSelectedField());
+
+                }
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     private void setMonsterCard(MonsterFieldArea monsterFieldArea, HandFieldArea fieldArea) {
@@ -513,6 +549,10 @@ public class GameplayController {
         monsterFieldArea.putCard(fieldArea.getCard(), true);
         gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
         gameplay.setHasPlacedMonster(true);
+    }
+
+    public void specialSummon(Card card) {
+        //TODO fill body
     }
 
     private void checkWinningConditions() {

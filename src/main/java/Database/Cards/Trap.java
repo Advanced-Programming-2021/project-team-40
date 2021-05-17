@@ -10,6 +10,10 @@ public class Trap extends SpellAndTrap{
         traps.add(this);
     }
 
+    public void activateEffect(){
+
+    }
+
     public static ArrayList<Trap> getTraps() {
         return traps;
     }
