@@ -3,11 +3,11 @@ package View;
 import Controller.DuelController.GameplayController;
 import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
-import Database.Cards.Card;
+import Gameplay.SpellAndTrapActivationType;
 import Database.Cards.CardType;
 import Database.Cards.Monster;
-import Gameplay.FieldArea;
 import Gameplay.Gameplay;
+import Gameplay.SpellAndTrapFieldArea;
 import Gameplay.MonsterFieldArea;
 import Gameplay.Player;
 import View.Exceptions.*;
@@ -45,7 +45,8 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.surrender).matches())
             GameplayController.getInstance().surrender();
         else if (Regex.getCommandMatcher(command, Regex.flipSummon).matches()) flipSummon();
-        else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches()) activateEffect();
+        else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches())
+            activateEffect(SpellAndTrapActivationType.NORMAL);
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches())
@@ -72,12 +73,21 @@ public class GameplayView {
         FieldView.showBoard(GameplayController.getInstance().gameplay.getOpponentPlayer(), GameplayController.getInstance().gameplay.getCurrentPlayer());
     }
 
-    private void activateEffect() {
+    private void activateEffect(SpellAndTrapActivationType type) {
         try {
-            GameplayController.getInstance().activateEffect();
-            System.out.println("spell activated");
+            GameplayController.getInstance().activateEffect(type);
+            System.out.println("spell/trap activated");
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void chainActivateEffect(SpellAndTrapActivationType type) {
+        try {
+            GameplayController.getInstance().activateEffect(type);
+            System.out.println("spell/trap activated");
+        } catch (Exception e) {
+
         }
     }
 
@@ -111,8 +121,7 @@ public class GameplayView {
             else if (cardInput.matches(Regex.cancelAction)) {
                 //TODO: more stuff here
                 throw new CommandCancellationException("ritual summon");
-            }
-            else System.out.println("you should ritual summon right now");
+            } else System.out.println("you should ritual summon right now");
             if (gameplay.getSelectedField() != null) {
                 try {
                     if (!(gameplay.getSelectedField().getCard() instanceof Monster))
@@ -201,6 +210,8 @@ public class GameplayView {
             StringBuilder message = GameplayController.getInstance().attack(monsterId);
             System.out.println(message);
         } catch (Exception e) {
+            GameplayController.getInstance().getGameplay().setAttacker(null);
+            GameplayController.getInstance().getGameplay().setBeingAttacked(null);
             System.out.println(e.getMessage());
         }
     }
@@ -293,5 +304,28 @@ public class GameplayView {
             }
         }
         return ids;
+    }
+
+    public boolean spellAndTrapActivationPrompt() {
+        String input;
+        while (true) {
+            input = ProgramController.getInstance().getScanner().nextLine();
+            if (input.equalsIgnoreCase("yes")) return true;
+            else if (input.equalsIgnoreCase("no")) return false;
+            else System.out.println("it's not your turn to play this kind of moves");
+        }
+    }
+
+    public void spellAndTrapToChainPrompt(SpellAndTrapActivationType type) {
+        String input;
+        Gameplay gameplay = GameplayController.getInstance().getGameplay();
+        while (true) {
+            Matcher matcher;
+            input = ProgramController.getInstance().getScanner().nextLine();
+            if ((matcher = Regex.getCommandMatcher(input, Regex.selectSpellCard)).matches())
+                selectCard(matcher);
+            else if (input.matches(Regex.deselectCard)) deselectCard();
+            else if (input.matches(Regex.activateEffect)) chainActivateEffect(type);
+        }
     }
 }

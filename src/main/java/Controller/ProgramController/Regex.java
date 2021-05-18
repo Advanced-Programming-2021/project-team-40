@@ -74,6 +74,9 @@ public class Regex {
     public static String showSelectedCard = "^card show --selected$";
     public static String showCardByName = "^card show (?<cardName>.+?)$";
     public static String surrender = "^surrender$";
+    public static String switchCard = "^card switch(?=.* --main|.* -m)(?=.* --side|.* -s)" +
+                                      "(?: (?:--main|-m) (?<main>.+?)(?!.*?--main|.*?-m)| " +
+                                      "(?:--side|-s) (?<side>.+?)(?!.*?--side|.*?-s)){2}$";
     public static String increaseMoneyCheatCode = "^increase --money (?<amount>.+?)$";
     public static String forceAddCardCheatCode = "^select(?: --hand (?<cardName>.+?)| --force){2}$";
     public static String increaseLifePointsCheatCode = "^increase --LP (?<amount>.+?)$";
