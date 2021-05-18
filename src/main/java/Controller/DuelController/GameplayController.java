@@ -156,7 +156,14 @@ public class GameplayController {
                 if (gameplay.playerOneWins == 2 || gameplay.playerTwoWins == 2)
                     endGame(winner, loser);
         }
-        //TODO continue multi-round game
+        gameplay.setCurrentPlayer(winner);
+        gameplay.setOpponentPlayer(loser);
+        gameplay.setSelectedField(null);
+        gameplay.setAttacker(null);
+        gameplay.setBeingAttacked(null);
+        gameplay.setCurrentRound( gameplay.getCurrentRound() + 1);
+        gameplay.setOwnsSelectedCard(null);
+        gameplay.setHasPlacedMonster(false);
     }
 
     public void surrender() {
@@ -550,7 +557,9 @@ public class GameplayController {
     }
 
     public void specialSummon(Card card) {
-        //TODO fill body
+        MonsterFieldArea toPutOn = GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getFreeMonsterFieldArea();
+        toPutOn.putCard(card, true);
+
     }
 
     public void checkWinningConditions() {

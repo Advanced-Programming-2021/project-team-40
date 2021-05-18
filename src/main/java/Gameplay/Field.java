@@ -80,5 +80,8 @@ public class Field {
             if (monsterFieldArea.getTurnsLeftForEffect() > 0)
                 monsterFieldArea.setTurnsLeftForEffect(monsterFieldArea.getTurnsLeftForEffect() - 1);
         }
+        for (SpellAndTrapFieldArea spellAndTrapFieldArea : spellAndTrapField){
+            spellAndTrapFieldArea.setHasJustBeenSet(false);
+        }
     }
 }
