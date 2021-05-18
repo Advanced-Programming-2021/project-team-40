@@ -3,8 +3,8 @@ package Gameplay;
 import Database.Cards.Card;
 
 public class SpellAndTrapFieldArea extends FieldArea {
-    private boolean isActivated;
     private boolean hasJustBeenSet = true;
+    private boolean canBeActivated = false;
     public SpellAndTrapFieldArea() {
         super();
     }
@@ -15,5 +15,13 @@ public class SpellAndTrapFieldArea extends FieldArea {
 
     public boolean isHasJustBeenSet() {
         return hasJustBeenSet;
+    }
+
+    public boolean isCanBeActivated() {
+        return canBeActivated;
+    }
+
+    public void setCanBeActivated(boolean canBeActivated) {
+        this.canBeActivated = canBeActivated;
     }
 }

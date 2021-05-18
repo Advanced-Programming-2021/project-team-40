@@ -101,6 +101,26 @@ public class DatabaseController {
         initializeMonsterCardEffects();
     }
 
+    private void initializeTrapEffects() {
+        Gameplay gameplay = GameplayController.getInstance().getGameplay();
+        for (Card trap :
+                Trap.getTraps()) {
+            switch (trap.getName()) {
+                case "Mirror Force":
+                    trap.onBeingAttacked = new Effect() {
+                        @Override
+                        public void execute(Object... objects) throws Exception {
+                            for (MonsterFieldArea monster :
+                                    gameplay.getOpponentPlayer().getField().getMonstersField()) {
+                                if (monster.isAttack())
+                                    GameplayController.getInstance().destroyMonsterCard(gameplay.getOpponentPlayer(), monster);
+                            }
+                        }
+                    };
+            }
+        }
+    }
+
     private void initializeMonsterCardEffects() {
         //TODO add effects to cards
         Gameplay gameplay = GameplayController.getInstance().getGameplay();
