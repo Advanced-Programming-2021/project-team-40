@@ -7,7 +7,6 @@ import Gameplay.SpellAndTrapActivationType;
 import Database.Cards.CardType;
 import Database.Cards.Monster;
 import Gameplay.Gameplay;
-import Gameplay.SpellAndTrapFieldArea;
 import Gameplay.MonsterFieldArea;
 import Gameplay.Player;
 import View.Exceptions.*;
@@ -82,15 +81,6 @@ public class GameplayView {
         }
     }
 
-    private void chainActivateEffect(SpellAndTrapActivationType type) {
-        try {
-            GameplayController.getInstance().activateEffect(type);
-            System.out.println("spell/trap activated");
-        } catch (Exception e) {
-
-        }
-    }
-
     private void flipSummon() {
         try {
             GameplayController.getInstance().flipSummon();
@@ -109,7 +99,7 @@ public class GameplayView {
         }
     }
 
-    public void selectRitualMonster() throws Exception {
+    public void selectRitualMonster() throws NoCardIsSelectedException, CommandCancellationException {
         Gameplay gameplay = GameplayController.getInstance().getGameplay();
         GameplayController.getInstance().deselectCard();
         String cardInput;
@@ -208,7 +198,7 @@ public class GameplayView {
         String monsterId = matcher.group("monsterId");
         try {
             StringBuilder message = GameplayController.getInstance().attack(monsterId);
-            System.out.println(message);
+            if (message != null) System.out.println(message);
             GameplayController.getInstance().checkWinningConditions();
         } catch (Exception e) {
             GameplayController.getInstance().getGameplay().setAttacker(null);
@@ -317,16 +307,27 @@ public class GameplayView {
         }
     }
 
-    public void spellAndTrapToChainPrompt(SpellAndTrapActivationType type) {
+    public void spellAndTrapToChainPrompt(SpellAndTrapActivationType type) throws ActionNotPossibleException, AttackNotPossibleException {
         String input;
-        Gameplay gameplay = GameplayController.getInstance().getGameplay();
         while (true) {
             Matcher matcher;
             input = ProgramController.getInstance().getScanner().nextLine();
             if ((matcher = Regex.getCommandMatcher(input, Regex.selectSpellCard)).matches())
                 selectCard(matcher);
             else if (input.matches(Regex.deselectCard)) deselectCard();
-            else if (input.matches(Regex.activateEffect)) chainActivateEffect(type);
+            else if (input.matches(Regex.activateEffect)) if (chainActivateEffect(type)) break;
+            else System.out.println("it's not your turn to play this kind of moves");
         }
+    }
+
+    private boolean chainActivateEffect(SpellAndTrapActivationType type) throws ActionNotPossibleException, AttackNotPossibleException {
+        try {
+            GameplayController.getInstance().activateEffect(type);
+            System.out.println("spell/trap activated");
+            return true;
+        } catch (InvalidActivateException | RitualSummonNotPossibleException | AlreadyActivatedException | SpecialSummonNotPossibleException | CommandCancellationException | MonsterZoneFullException | WrongPhaseForSpellException | SpellZoneFullException | PreparationNotReadyException | NoCardIsSelectedException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
     }
 }

@@ -15,6 +15,7 @@ public class Gameplay {
     private int rounds;
     private Boolean ownsSelectedCard;
     private boolean hasPlacedMonster;
+    private MonsterFieldArea recentlySummonedMonster;
 
     public Gameplay(Player playerOne, Player playerTwo, int rounds) {
         this.playerOne = playerOne;
@@ -108,5 +109,13 @@ public class Gameplay {
 
     public void setCurrentRound(int currentRound) {
         this.currentRound = currentRound;
+    }
+
+    public MonsterFieldArea getRecentlySummonedMonster() {
+        return recentlySummonedMonster;
+    }
+
+    public void setRecentlySummonedMonster(MonsterFieldArea recentlySummonedMonster) {
+        this.recentlySummonedMonster = recentlySummonedMonster;
     }
 }

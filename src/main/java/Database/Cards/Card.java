@@ -12,6 +12,9 @@ abstract public class Card {
     public Effect onBeingAttacked;//player
     public ContinuousEffect onTurnStart;
     public UniqueSummon uniqueSummon;
+    public Effect onSummon;
+    public Effect onSpellActivation;
+    public Effect inStandbyPhase;
     protected String name;
     protected String description;
     protected int cardPrice = 0;
