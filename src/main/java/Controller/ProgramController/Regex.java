@@ -4,73 +4,73 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Regex {
-    public static String login = "^user login(?=.* --username)(?=.* --password)" +
-            "(?: --username (?<username>.+?)(?!.*?--username)|" +
-            " --password (?<password>.+?)(?!.*?--password)){2}$";
-    public static String createUser = "^user create(?=.* --username)(?=.* --password)(?=.* --nickname)" +
-            "(?: --username (?<username>.+?)(?!.*?--username)|" +
-            " --nickname (?<nickname>.+?)(?!.*?--nickname)|" +
-            " --password (?<password>.+?)(?!.*?--password)){3}$";
+    public static String login = "^user login(?=.* --username|.* -u)(?=.* --password|.* -p)" +
+                                 "(?: (?:--username|-u) (?<username>.+?)(?!.*?--username|.*?-u)| " +
+                                 "(?:--password|-p) (?<password>.+?)(?!.*?--password|.*?-p)){2}$";
+    public static String createUser = "^user create(?=.* --username|.* -u)(?=.* --password|.* -p)(?=.* --nickname|.* -n)" +
+                                      "(?: (?:--username|-u) (?<username>.+?)(?!.*?--username|.*?-u)| " +
+                                      "(?:--nickname|-n) (?<nickname>.+?)(?!.*?--nickname|.*?-n)| " +
+                                      "(?:--password|-p) (?<password>.+?)(?!.*?--password|.*?-p)){3}$";
     public static String strongPassword = "^(?=(.*[a-z])+)(?=(.*[A-Z])+)(?=(.*[0-9])+).{8,}$";
     public static String menuNavigation = "^menu enter (?<menuName>.+?)$";
     public static String exitMenu = "^menu exit$";
     public static String showCurrentMenu = "^menu show-current$";
     public static String logout = "^user logout$";
     public static String showScoreboard = "^scoreboard show$";
-    public static String changeNickname = "^profile change --nickname (?<nickname>.+?)$";
-    public static String changePassword = "^profile change(?=.* --current)(?=.* --password)(?=.* --new)" +
-            "(?: --password(?!.*?--password)|" +
-            " --current (?<currentPass>.+?)(?!.*?--current)|" +
-            " --new (?<newPass>.+?)(?!.*?--new)){3}$";
-    public static String showCards = "^deck show --cards$";
+    public static String changeNickname = "^profile change (?:--nickname|-n) (?<nickname>.+?)$";
+    public static String changePassword = "^profile change(?=.* --current|.* --c)(?=.* --password|.* -p)(?=.* --new|.* -n)" +
+            "(?: (?:--password|-p)(?!.*?--password)|" +
+            " (?:--current|-c) (?<currentPass>.+?)(?!.*?--current|.*?-c)|" +
+            " (?:--new|-n) (?<newPass>.+?)(?!.*?--new|.*?-n)){3}$";
+    public static String showCards = "^deck show (?:--cards|-c)$";
     public static String createDeck = "^deck create (?<deckName>.+?)$";
     public static String deleteDeck = "^deck delete (?<deckName>.+?)$";
     public static String activateDeck = "^deck set-activate (?<deckName>.+?)$";
-    public static String addCardToDeck = "^deck add-card(?=.* --card)(?=.* --deck)" +
-            "(?: --card (?<cardName>.+?)(?!.*?--card)|" +
-            " --deck (?<deckName>.+?)(?!.*?--deck)|" +
-            "(?<isSide> --side)?(?!.*?--side)){3}$";
-    public static String removeCardFromDeck = "^deck rm-card(?=.* --card)(?=.* --deck)" +
-            "(?: --card (?<cardName>.+?)(?!.*?--card)|" +
-            " --deck (?<deckName>.+?)(?!.*?--deck)|" +
-            "(?<isSide> --side)?(?!.*?--side)){3}$";
-    public static String showAllDeck = "^deck show --all$";
-    public static String showOneDeck = "^deck show(?=.* --deck-name)" +
-            "(?: --deck-name (?<deckName>.+?)(?!.*?--deck-name)|" +
-            "(?<isSide> --side)?(?!.*?--side)){2}$";
+    public static String addCardToDeck = "^deck add-card(?=.* --card|.* -c)(?=.* --deck|.* -d)" +
+            "(?: (?:--card|-c) (?<cardName>.+?)(?!.*?--card|.*?-c)|" +
+            " (?:--deck|-d) (?<deckName>.+?)(?!.*?--deck|.*?-d)|" +
+            "(?<isSide> (?:--side|-s))?(?!.*?--side|.*?-s)){3}$";
+    public static String removeCardFromDeck = "^deck rm-card(?=.* --card|.* -c)(?=.* --deck|.* -d)" +
+            "(?: (?:--card|-c) (?<cardName>.+?)(?!.*?--card|.*?-c)|" +
+            " (?:--deck|-d) (?<deckName>.+?)(?!.*?--deck|.*?-d)|" +
+            "(?<isSide> (?:--side|-s))?(?!.*?--side|.*?-s)){3}$";
+    public static String showAllDeck = "^deck show (?:--all|-a)$";
+    public static String showOneDeck = "^deck show(?=.* --deck-name|.* -d)" +
+            "(?: (?:--deck-name|-d) (?<deckName>.+?)(?!.*?--deck-name|.*?-d)|" +
+            "(?<isSide> (?:--side|-s))?(?!.*?--side|.*?-s)){2}$";
     public static String shopBuy = "^shop buy (?<cardName>.+?)$";
-    public static String shopShowAll = "^shop show --all$";
-    public static String startPlayerDuel = "^duel(?=.* --second-player)(?=.* --new)(?=.* --rounds)" +
-            "(?: --second-player (?<username>.+?)(?!.*?--second-player)|" +
-            " --new(?!.*?--new)|" +
-            " --rounds (?<rounds>.+?)(?!.*?--rounds)){3}$";
-    public static String startAIDuel = "^duel(?=.* --ai)(?=.* --new)(?=.* --rounds)" +
-            "(?: --ai(?!.*?--ai)|" +
-            " --new(?!.*?--new)|" +
-            " --rounds (?<rounds>.+?)(?!.*?--rounds)){3}$";
+    public static String shopShowAll = "^shop show (?:--all|-a)$";
+    public static String startPlayerDuel = "^duel(?=.* --second-player|.* -s)(?=.* --new|.* -n)(?=.* --rounds|.* -r)" +
+            "(?: (?:--second-player|-s) (?<username>.+?)(?!.*?--second-player|.*-s)|" +
+            " (?:--new|-n)(?!.*?--new|.*?-n)|" +
+            " (?:--rounds|-r) (?<rounds>.+?)(?!.*?--rounds|.*?-r)){3}$";
+    public static String startAIDuel = "^duel(?=.* --ai|.* -a)(?=.* --new|.* -n)(?=.* --rounds|.* -r)" +
+            "(?: (?:--ai|-a)(?!.*?--ai|.*?-a)|" +
+            " (?:--new|-n)(?!.*?--new|.*?-n)|" +
+            " (?:--rounds|-r) (?<rounds>.+?)(?!.*?--rounds|.*?-r)){3}$";
     public static String nextPhase = "^next phase$";
     public static String endPhase = "^end phase$";
-    public static String selectMonsterCard = "^select(?=.* --monster)" +
-            "(?: (?<type>--monster) (?<id>.+?)(?!.*?--monster)|" +
-            "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
-    public static String selectSpellCard = "^select(?=.* --spell)" +
-            "(?: (?<type>--spell) (?<id>.+?)(?!.*?--spell)|" +
-            "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
-    public static String selectHandCard = "^select(?=.* --hand)" +
-            "(?: (?<type>--hand) (?<id>.+?)(?!.*?--hand)|" +
-            "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
-    public static String selectFieldZoneCard = "^select(?=.* --field)" +
-            "(?: (?<type>--field) (?!.*?--field)|" +
-            "(?<isOpponent> --opponent)?(?!.*?--opponent)){2}$";
+    public static String selectMonsterCard = "^select(?=.* --monster|.* -m)" +
+            "(?: (?<type>--monster|-m) (?<id>.+?)(?!.*?--monster|.*?-m)|" +
+            "(?<isOpponent> (?:--opponent|-o))?(?!.*?--opponent|.*?-o)){2}$";
+    public static String selectSpellCard = "^select(?=.* --spell|.* -s)" +
+            "(?: (?<type>--spell|-s) (?<id>.+?)(?!.*?--spell|.*?-s)|" +
+            "(?<isOpponent> (?:--opponent|-o))?(?!.*?--opponent|.*?-o)){2}$";
+    public static String selectHandCard = "^select(?=.* --hand|.* -h)" +
+            "(?: (?<type>--hand|-h) (?<id>.+?)(?!.*?--hand|.*?-h)|" +
+            "(?<isOpponent> (?:--opponent|-o))?(?!.*?--opponent|.*?-o)){2}$";
+    public static String selectFieldZoneCard = "^select(?=.* --field|.* -f)" +
+            "(?: (?<type>--field|-f) (?!.*?--field|.*?-f)|" +
+            "(?<isOpponent> (?:--opponent|-o))?(?!.*?--opponent|.*?-o)){2}$";
     public static String deselectCard = "^select -d$";
     public static String summon = "^summon$";
     public static String set = "^set$";
-    public static String setPosition = "^set --position (attack|defense)$";
+    public static String setPosition = "^set (?:--position|-p) (attack|defense)$";
     public static String flipSummon = "^flip-summon$";
     public static String attack = "^attack (?<monsterId>.+?)$";
     public static String directAttack = "^attack direct$";
     public static String activateEffect = "^activate effect$";
-    public static String showGraveyard = "^show graveyard(?<isOpponent> --opponent)?$";
+    public static String showGraveyard = "^show graveyard(?<isOpponent> (?:--opponent|-o))?$";
     public static String showSelectedCard = "^card show --selected$";
     public static String showCardByName = "^card show (?<cardName>.+?)$";
     public static String surrender = "^surrender$";
