@@ -233,7 +233,7 @@ public class GameplayController {
         gameplay.setOwnsSelectedCard(!isFromOpponent);
     }
 
-    private boolean isHandLocationInvalid(String idToCheck) {
+    public boolean isHandLocationInvalid(String idToCheck) {
         int id = Integer.parseInt(idToCheck);
         return (gameplay.getCurrentPlayer().getPlayingHand().size() < id);
     }
@@ -259,6 +259,7 @@ public class GameplayController {
             throw new WrongPhaseForSpellException();
         if (fieldArea.isVisible()) throw new AlreadyActivatedException();
         if (fieldArea.getCard() instanceof Trap) activateTrapEffect(type, fieldArea);
+        onSpellActivationTraps();
         if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.RITUAL)) {
             if (!hasRitualMonsterInHand()) throw new RitualSummonNotPossibleException();
             if (!sumMeetsRitualMonsterLevel()) throw new RitualSummonNotPossibleException();
@@ -346,6 +347,7 @@ public class GameplayController {
             tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
         else if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) checkForRitual();
         normalSummon((HandFieldArea) fieldArea, monsterFieldArea);
+        onSummonTraps();
         deselectCard();
     }
 
@@ -440,19 +442,25 @@ public class GameplayController {
         if ((attackTarget = opponent.getField().getMonstersFieldById(id)) == null) throw new NoCardToAttackException();
         gameplay.setAttacker(attacker);
         gameplay.setBeingAttacked(attackTarget);
+        StringBuilder temp = null;
         try {
             onAttackTraps();
+            if (attackTarget.getCard().onBeingAttacked != null) attackTarget.getCard().onBeingAttacked.execute();
+            temp = calculateDamage((MonsterFieldArea) attacker, attackTarget);
+            ((MonsterFieldArea) attacker).setHasAttacked(true);
+            deselectCard();
+            gameplay.setAttacker(null);
+            gameplay.setBeingAttacked(null);
         } catch (Exception e) {
             temporarySwitchTurn();
             System.out.println(e.getMessage());
-            return null;
+        } finally {
+            for (SpellAndTrapFieldArea trap :
+                    gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
+                if (trap.getCard() != null)
+                    if (trap.getCard().onBeingAttacked != null) trap.setCanBeActivated(false);
+            }
         }
-        if (attackTarget.getCard().onBeingAttacked != null) attackTarget.getCard().onBeingAttacked.execute();
-        StringBuilder temp = calculateDamage((MonsterFieldArea) attacker, attackTarget);
-        ((MonsterFieldArea) attacker).setHasAttacked(true);
-        deselectCard();
-        gameplay.setAttacker(null);
-        gameplay.setBeingAttacked(null);
         return temp;
     }
 
@@ -464,10 +472,11 @@ public class GameplayController {
         boolean summonTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard().onBeingAttacked != null) {
-                summonTrapExists = true;
-                trap.setCanBeActivated(true);
-            }
+            if (trap.getCard() != null)
+                if (trap.getCard().onSummon != null) {
+                    summonTrapExists = true;
+                    trap.setCanBeActivated(true);
+                }
         }
         if (summonTrapExists) {
             temporarySwitchTurn();
@@ -478,9 +487,8 @@ public class GameplayController {
         }
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard().onBeingAttacked != null) {
-                trap.setCanBeActivated(false);
-            }
+            if (trap.getCard() != null)
+                if (trap.getCard().onSummon != null) trap.setCanBeActivated(false);
         }
     }
 
@@ -488,23 +496,24 @@ public class GameplayController {
         boolean opponentStandbyTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard() != null && trap.getCard().onBeingAttacked != null) {
-                opponentStandbyTrapExists = true;
-                break;
-            }
+            if (trap.getCard() != null)
+                if (trap.getCard().inStandbyPhase != null) {
+                    opponentStandbyTrapExists = true;
+                    trap.setCanBeActivated(true);
+                }
         }
         if (opponentStandbyTrapExists) {
             temporarySwitchTurn();
-            if (GameplayView.getInstance().spellAndTrapActivationPrompt()) {
+            if (GameplayView.getInstance().spellAndTrapActivationPrompt())
                 GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_STANDBY);
-            }
             temporarySwitchTurn();
         }
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard() != null && trap.getCard().onBeingAttacked != null) {
-                trap.setCanBeActivated(false);
-            }
+            if (trap.getCard() != null)
+                if (trap.getCard().inStandbyPhase != null) {
+                    trap.setCanBeActivated(false);
+                }
         }
     }
 
@@ -512,10 +521,11 @@ public class GameplayController {
         boolean attackTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard() != null && trap.getCard().onBeingAttacked != null) {
-                attackTrapExists = true;
-                trap.setCanBeActivated(true);
-            }
+            if (trap.getCard() != null)
+                if (trap.getCard().onBeingAttacked != null) {
+                    attackTrapExists = true;
+                    trap.setCanBeActivated(true);
+                }
         }
         if (attackTrapExists) {
             temporarySwitchTurn();
@@ -523,12 +533,6 @@ public class GameplayController {
                 GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_ATTACKED);
             }
             temporarySwitchTurn();
-        }
-        for (SpellAndTrapFieldArea trap :
-                gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard().onBeingAttacked != null) {
-                trap.setCanBeActivated(false);
-            }
         }
     }
 

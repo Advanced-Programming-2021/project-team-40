@@ -301,6 +301,7 @@ public class GameplayView {
 
     public boolean spellAndTrapActivationPrompt() {
         String input;
+        System.out.println("do you want to activate your trap and spell?");
         while (true) {
             input = ProgramController.getInstance().getScanner().nextLine();
             if (input.equalsIgnoreCase("yes")) return true;
@@ -311,6 +312,7 @@ public class GameplayView {
 
     public void spellAndTrapToChainPrompt(SpellAndTrapActivationType type) throws ActionNotPossibleException, AttackNotPossibleException {
         String input;
+        System.out.println("select the card you want to chain:");
         while (true) {
             Matcher matcher;
             input = ProgramController.getInstance().getScanner().nextLine();

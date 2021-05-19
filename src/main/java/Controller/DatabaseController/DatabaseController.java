@@ -187,7 +187,6 @@ public class DatabaseController {
 
     private void initializeMonsterCardEffects() {
         //TODO add effects to cards
-        Gameplay gameplay = GameplayController.getInstance().getGameplay();
         for (Card card :
                 Card.getAllCards()) {
             switch (card.getName()) {
@@ -333,16 +332,19 @@ public class DatabaseController {
                             System.out.println("please enter a hand field id:");
                             String input;
                             while (true) {
-                                //TODO check id validity
                                 input = ProgramController.getInstance().getScanner().nextLine();
                                 if (input.matches(Regex.cancelAction)) {
                                     System.out.println("operation cancelled");
+                                    throw new CommandCancellationException("special summon");
+                                }
+                                if (!GameplayController.getInstance().isHandLocationInvalid(input)) {
+                                    int id = Integer.parseInt(input);
+                                    Card toDiscard = gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard();
+                                    gameplay.getCurrentPlayer().getPlayingHand().remove(id);
+                                    GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), toDiscard);
                                     break;
                                 }
-                                int id = Integer.parseInt(input);
-                                Card toDiscard = gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard();
-                                gameplay.getCurrentPlayer().getPlayingHand().remove(id);
-                                GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), toDiscard);
+                                else System.out.println("hand location is invalid");
                             }
                         }
                     };
