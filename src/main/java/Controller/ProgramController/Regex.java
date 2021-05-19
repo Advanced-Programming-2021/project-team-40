@@ -60,7 +60,7 @@ public class Regex {
             "(?: (?<type>--hand|-h) (?<id>.+?)(?!.*?--hand|.*?-h)|" +
             "(?<isOpponent> (?:--opponent|-o))?(?!.*?--opponent|.*?-o)){2}$";
     public static String selectFieldZoneCard = "^select(?=.* --field|.* -f)" +
-            "(?: (?<type>--field|-f) (?!.*?--field|.*?-f)|" +
+            "(?: (?<type>--field|-f)(?!.*?--field|.*?-f)|" +
             "(?<isOpponent> (?:--opponent|-o))?(?!.*?--opponent|.*?-o)){2}$";
     public static String deselectCard = "^select -d$";
     public static String summon = "^summon$";

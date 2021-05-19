@@ -254,7 +254,8 @@ public class GameplayView {
     }
 
     public void selectCard(Matcher matcher) {
-        String id = matcher.group("id");
+        String id = "-1";
+        if (! matcher.group("type").matches("--field|-f")) id = matcher.group("id");
         String type = matcher.group("type");
         boolean isOpponent = true;
         if (matcher.group("isOpponent") == null) isOpponent = false;

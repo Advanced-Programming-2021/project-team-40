@@ -539,22 +539,22 @@ public class DatabaseController {
                         public void activate() {
                             for (MonsterFieldArea myField:
                                  GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
-                                if (((Monster)myField.getCard()).getMonsterType().equals(MonsterType.FIEND)
-                                || ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER)){
+                                if (myField.getCard() != null && ( ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.FIEND)
+                                || ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))){
                                     myField.setDefensePoint(myField.getDefensePoint() + 200);
                                     myField.setAttackPoint(myField.getAttackPoint() + 200);
-                                }else if (((Monster)myField.getCard()).getMonsterType().equals(MonsterType.FAIRY)){
+                                }else if (myField.getCard() != null && ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.FAIRY)){
                                     myField.setDefensePoint(myField.getDefensePoint() - 200);
                                     myField.setAttackPoint(myField.getAttackPoint() - 200);
                                 }
                             }
                             for (MonsterFieldArea opponentField:
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
-                                if (((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.FIEND)
-                                        || ((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER)){
+                                if (opponentField.getCard() != null && ( ((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.FIEND)
+                                        || ((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))){
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() + 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 200);
-                                }else if (((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.FAIRY)){
+                                }else if (opponentField.getCard() != null && ((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.FAIRY)){
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() - 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() - 200);
                                 }
@@ -574,18 +574,18 @@ public class DatabaseController {
                         public void activate() {
                             for (MonsterFieldArea myField:
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
-                                if (((Monster)myField.getCard()).getMonsterType().equals(MonsterType.INSECT)
+                                if (myField.getCard()!= null && ( ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.INSECT)
                                 || ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                || ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR)){
+                                || ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))){
                                     myField.setDefensePoint(myField.getDefensePoint() + 200);
                                     myField.setAttackPoint(myField.getAttackPoint() + 200);
                                 }
                             }
                             for (MonsterFieldArea opponentField:
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
-                                if (((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.INSECT)
+                                if (opponentField.getCard() != null && ( ((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.INSECT)
                                         || ((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                        || ((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR)){
+                                        || ((Monster)opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))){
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() + 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 200);
                                 }
@@ -610,8 +610,8 @@ public class DatabaseController {
                             }
                             for (MonsterFieldArea myField:
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
-                                if (((Monster)myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                        || ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR)){
+                                if (myField.getCard() != null && ( ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
+                                        || ((Monster)myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))){
                                     myField.setDefensePoint(myField.getDefensePoint() + 100*counter);
                                     myField.setAttackPoint(myField.getAttackPoint() + 100*counter);
                                 }
@@ -631,14 +631,14 @@ public class DatabaseController {
                         public void activate() {
                             for (MonsterFieldArea myField:
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
-                                if ( ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.AQUA)){
+                                if (myField.getCard() != null && ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.AQUA)){
                                     myField.setAttackPoint(myField.getAttackPoint() + 500);
                                     myField.setDefensePoint(myField.getDefensePoint() - 400);
                                 }
                             }
                             for (MonsterFieldArea opponentField:
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
-                                if ( ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.AQUA)){
+                                if (opponentField.getCard() != null && ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.AQUA)){
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 500);
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() - 400);
                                 }
@@ -686,8 +686,8 @@ public class DatabaseController {
 
     private CardType getCardType(String name) {
         name = name.toUpperCase();
-        for (int i = 0; i < MonsterType.values().length; i++) {
-            if (name.matches(MonsterType.values()[i].toString())) return CardType.values()[i];
+        for (int i = 0; i < CardType.values().length; i++) {
+            if (name.matches(CardType.values()[i].toString())) return CardType.values()[i];
         }
         return null;
     }

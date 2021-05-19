@@ -170,15 +170,22 @@ public class GameplayController {
             case 3:
                 if (gameplay.playerOneWins == 2 || gameplay.playerTwoWins == 2)
                     endGame(winner, loser);
+                break;
+            default:
+                gameplay.setCurrentPlayer(winner);
+                gameplay.setOpponentPlayer(loser);
+                gameplay.setSelectedField(null);
+                gameplay.setAttacker(null);
+                gameplay.setBeingAttacked(null);
+                gameplay.setCurrentRound(gameplay.getCurrentRound() + 1);
+                gameplay.setOwnsSelectedCard(null);
+                gameplay.setHasPlacedMonster(false);
+                setStartingPlayer();
+                gameplay.getCurrentPlayer().setField(new Field());
+                gameplay.getOpponentPlayer().setField(new Field());
+                dealCardsAtBeginning();
+                GameplayView.getInstance().setFirstOfGame(true);
         }
-        gameplay.setCurrentPlayer(winner);
-        gameplay.setOpponentPlayer(loser);
-        gameplay.setSelectedField(null);
-        gameplay.setAttacker(null);
-        gameplay.setBeingAttacked(null);
-        gameplay.setCurrentRound(gameplay.getCurrentRound() + 1);
-        gameplay.setOwnsSelectedCard(null);
-        gameplay.setHasPlacedMonster(false);
     }
 
     public void surrender() {
@@ -481,7 +488,7 @@ public class GameplayController {
         boolean opponentStandbyTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard().onBeingAttacked != null) {
+            if (trap.getCard() != null && trap.getCard().onBeingAttacked != null) {
                 opponentStandbyTrapExists = true;
                 break;
             }
@@ -495,7 +502,7 @@ public class GameplayController {
         }
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard().onBeingAttacked != null) {
+            if (trap.getCard() != null && trap.getCard().onBeingAttacked != null) {
                 trap.setCanBeActivated(false);
             }
         }
@@ -505,7 +512,7 @@ public class GameplayController {
         boolean attackTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard().onBeingAttacked != null) {
+            if (trap.getCard() != null && trap.getCard().onBeingAttacked != null) {
                 attackTrapExists = true;
                 trap.setCanBeActivated(true);
             }
