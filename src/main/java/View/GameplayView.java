@@ -255,7 +255,7 @@ public class GameplayView {
 
     public void selectCard(Matcher matcher) {
         String id = "-1";
-        if (! matcher.group("type").matches("--field|-f")) id = matcher.group("id");
+        if (!matcher.group("type").matches("--field|-f")) id = matcher.group("id");
         String type = matcher.group("type");
         boolean isOpponent = true;
         if (matcher.group("isOpponent") == null) isOpponent = false;
@@ -319,8 +319,9 @@ public class GameplayView {
             if ((matcher = Regex.getCommandMatcher(input, Regex.selectSpellCard)).matches())
                 selectCard(matcher);
             else if (input.matches(Regex.deselectCard)) deselectCard();
-            else if (input.matches(Regex.activateEffect)) if (chainActivateEffect(type)) break;
-            else System.out.println("it's not your turn to play this kind of moves");
+            else if (input.matches(Regex.activateEffect)) {
+                if (chainActivateEffect(type)) break;
+            } else System.out.println("it's not your turn to play this kind of moves");
         }
     }
 
