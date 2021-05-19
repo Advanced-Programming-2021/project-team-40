@@ -792,27 +792,29 @@ public class GameplayController {
         return levelSum >= ((Monster) gameplay.getSelectedField().getCard()).getLevel();
     }
 
-    private void resetFieldZoneEffects(){
+    private void resetFieldZoneEffects() {
         MonsterFieldArea[] myField = gameplay.getCurrentPlayer().getField().getMonstersField();
         MonsterFieldArea[] opponentField = gameplay.getOpponentPlayer().getField().getMonstersField();
-        for (MonsterFieldArea i:myField) {
-            if (i.getCard() != null){
+        for (MonsterFieldArea i : myField) {
+            if (i.getCard() != null) {
                 i.setAttackPoint(((Monster) i.getCard()).getAttackPoints());
-                i.setDefensePoint(((Monster) ((Monster) i.getCard())).getDefensePoints());
+                i.setDefensePoint(((Monster) i.getCard()).getDefensePoints());
             }
         }
-        for (MonsterFieldArea j:opponentField) {
-            if (j.getCard() != null){
+        for (MonsterFieldArea j : opponentField) {
+            if (j.getCard() != null) {
                 j.setAttackPoint(((Monster) j.getCard()).getAttackPoints());
-                j.setDefensePoint(((Monster) ((Monster) j.getCard())).getDefensePoints());
+                j.setDefensePoint(((Monster) j.getCard()).getDefensePoints());
             }
         }
     }
 
-    public void calculateFieldZoneEffects(){
+    public void calculateFieldZoneEffects() {
         resetFieldZoneEffects();
-        ((Spell) gameplay.getCurrentPlayer().getField().getFieldZone().getCard()).fieldZoneEffect.activate();
-        ((Spell) gameplay.getOpponentPlayer().getField().getFieldZone().getCard()).fieldZoneEffect.activate();
+        if (gameplay.getCurrentPlayer().getField().getFieldZone().getCard() != null)
+            ((Spell) gameplay.getCurrentPlayer().getField().getFieldZone().getCard()).fieldZoneEffect.activate();
+        if (gameplay.getOpponentPlayer().getField().getFieldZone().getCard() != null)
+            ((Spell) gameplay.getOpponentPlayer().getField().getFieldZone().getCard()).fieldZoneEffect.activate();
     }
 
 }
