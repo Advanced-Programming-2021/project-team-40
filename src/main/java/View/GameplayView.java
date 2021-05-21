@@ -104,6 +104,7 @@ public class GameplayView {
         Gameplay gameplay = GameplayController.getInstance().getGameplay();
         GameplayController.getInstance().deselectCard();
         String cardInput;
+        System.out.println("select the ritual monster you want to summon/set:");
         while (true) {
             Matcher matcher;
             cardInput = ProgramController.getInstance().getScanner().nextLine();
@@ -120,9 +121,8 @@ public class GameplayView {
                     if (!((Monster) gameplay.getSelectedField().getCard()).getCardType().equals(CardType.RITUAL))
                         throw new InvalidCardSelectionException();
                     break;
-                } catch (Exception e) {
-                    deselectCard();
-                    System.out.println(e.getMessage());
+                } catch (InvalidCardSelectionException e) {
+                    System.out.println("you should ritual summon right now");
                 }
             }
         }

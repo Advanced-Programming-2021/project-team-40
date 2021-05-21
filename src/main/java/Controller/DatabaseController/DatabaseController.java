@@ -8,12 +8,15 @@ import Database.Deck;
 import Database.EfficientDeck;
 import Database.EfficientUser;
 import Database.User;
-import Gameplay.*;
+import Gameplay.HandFieldArea;
+import Gameplay.MonsterFieldArea;
+import Gameplay.Player;
+import Gameplay.SpellAndTrapFieldArea;
 import View.Exceptions.*;
 import View.GraveyardView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.opencsv.*;
+import com.opencsv.CSVReader;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -108,7 +111,7 @@ public class DatabaseController {
                                 Effect.gameplay.getOpponentPlayer().getField().getMonstersField()) {
                             if (monster.getCard() != null)
                                 if (monster.isAttack())
-                                GameplayController.getInstance().destroyMonsterCard(Effect.gameplay.getOpponentPlayer(), monster);
+                                    GameplayController.getInstance().destroyMonsterCard(Effect.gameplay.getOpponentPlayer(), monster);
                         }
                         throw new ActionNotPossibleException("trap destroyed all your monster cards!");
                     };
@@ -120,6 +123,13 @@ public class DatabaseController {
                         throw new AttackNotPossibleException();
                     };
                     break;
+                case "Magic Cylinder":
+                    trap.onBeingAttacked = objects -> {
+                        MonsterFieldArea attackingMonster = (MonsterFieldArea) Effect.gameplay.getAttacker();
+                        Effect.gameplay.getOpponentPlayer().setLifePoints(Effect.gameplay.getOpponentPlayer().getLifePoints() - attackingMonster.getAttackPoint());
+
+                    };
+                    break;
                 case "Torrential Tribute":
                     trap.onSummon = objects -> {
                         for (MonsterFieldArea monster :
@@ -129,32 +139,26 @@ public class DatabaseController {
                         }
                     };
                     break;
+                case "Trap Hole":
+                    trap.onSummon = objects -> {
+                        MonsterFieldArea summonedMonster = Effect.gameplay.getRecentlySummonedMonster();
+                        if (summonedMonster.getAttackPoint() > 1000)
+                            GameplayController.getInstance().destroyMonsterCard(Effect.gameplay.getOpponentPlayer(), summonedMonster);
+                    };
+                    break;
                 case "Magic Jammer":
                     trap.onSpellActivation = objects -> {
                         System.out.print("choose one card to discard for Magic Jammer:");
                         while (true) {
                             String input = ProgramController.getInstance().getScanner().nextLine();
-                            if (GameplayController.getInstance().isHandLocationInvalid(input)) {
+                            if (!GameplayController.getInstance().isHandLocationInvalid(input)) {
                                 int id = Integer.parseInt(input);
                                 GameplayController.getInstance().moveCardToGraveyard(Effect.gameplay.getCurrentPlayer(), Effect.gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard());
                                 Effect.gameplay.getCurrentPlayer().getPlayingHand().remove(id);
                                 break;
                             }
                         }
-                    };
-                    break;
-                case "Trap Hole":
-                    trap.onSummon = objects -> {
-                        MonsterFieldArea summonedMonster = Effect.gameplay.getRecentlySummonedMonster();
-                        if (summonedMonster.getAttackPoint() > 1000)
-                            GameplayController.getInstance().destroyMonsterCard(Effect.gameplay.getCurrentPlayer(), summonedMonster);
-                    };
-                    break;
-                case "Magic Cylinder":
-                    trap.onBeingAttacked = objects -> {
-                        MonsterFieldArea attackingMonster = (MonsterFieldArea) Effect.gameplay.getAttacker();
-                        Effect.gameplay.getOpponentPlayer().setLifePoints(Effect.gameplay.getOpponentPlayer().getLifePoints() - attackingMonster.getAttackPoint());
-
+                        throw new ActionNotPossibleException("Opponent's magic jammer destroyed your card!");
                     };
                     break;
                 case "Mind Crush":
