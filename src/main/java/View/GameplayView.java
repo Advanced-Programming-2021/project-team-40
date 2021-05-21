@@ -276,15 +276,13 @@ public class GameplayView {
     }
 
     public String[] ritualTribute() throws Exception {
-        String inputRegex = "^(\\d )+$";
+        Gameplay gameplay = GameplayController.getInstance().getGameplay();
+        String inputRegex = "^(\\d+\\s?)+$";
         String input;
         String[] ids;
+        System.out.println("select cards you want to tribute for ritual summon:");
         while (true) {
             input = ProgramController.getInstance().getScanner().nextLine();
-            if (input.matches(Regex.cancelAction)) {
-                //TODO: more things should be done here
-                throw new CommandCancellationException("ritual summon");
-            }
             try {
                 if (input.matches(inputRegex)) {
                     ids = input.split(" ");
