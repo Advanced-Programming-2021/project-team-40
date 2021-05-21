@@ -36,6 +36,8 @@ public class ShopMenu implements Help {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.shopBuy)).matches()) buy(matcher);
         else if (Regex.getCommandMatcher(command, Regex.shopShowAll).matches()) shopView.showAll();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.showCardByName)).matches()) showACard(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches())
+            ShopController.getInstance().increaseMoneyCheat(matcher);
         else System.out.println("invalid command");
     }
 
@@ -67,6 +69,10 @@ public class ShopMenu implements Help {
         } catch (InvalidCardNameException | NotEnoughMoneyException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 
     public void setCurrentUser(User currentUser) {

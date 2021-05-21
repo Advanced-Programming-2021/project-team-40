@@ -7,6 +7,9 @@ import Database.User;
 import View.Exceptions.InvalidCardNameException;
 import View.Exceptions.MenuNavigationNotPossibleException;
 import View.Exceptions.NotEnoughMoneyException;
+import View.Menu.ShopMenu;
+
+import java.util.regex.Matcher;
 
 public class ShopController implements MenuNavigation{
     private static ShopController shopController;
@@ -36,5 +39,10 @@ public class ShopController implements MenuNavigation{
         } catch (MenuNavigationNotPossibleException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public void increaseMoneyCheat(Matcher matcher){
+        int amount = Integer.parseInt(matcher.group("amount"));
+        ShopMenu.getInstance().getCurrentUser().increaseBalance(amount);
     }
 }

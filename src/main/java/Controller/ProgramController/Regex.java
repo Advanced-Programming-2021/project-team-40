@@ -71,7 +71,7 @@ public class Regex {
     public static String directAttack = "^attack direct$";
     public static String activateEffect = "^activate effect$";
     public static String showGraveyard = "^show graveyard(?<isOpponent> (?:--opponent|-o))?$";
-    public static String showSelectedCard = "^card show --selected$";
+    public static String showSelectedCard = "^card show (?:--selected|-s)$";
     public static String showCardByName = "^card show (?<cardName>.+?)$";
     public static String surrender = "^surrender$";
     public static String switchCard = "^card switch(?=.* --main|.* -m)(?=.* --side|.* -s)" +

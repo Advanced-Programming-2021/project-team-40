@@ -67,6 +67,12 @@ public class GameplayController {
     }
 
     public void goToNextPhase() {
+        if (GameplayController.getInstance().getGameplay().getSelectedField() != null) {
+            try {
+                deselectCard();
+            } catch (NoCardIsSelectedException ignored) {
+            }
+        }
         switch (gameplay.getCurrentPhase()) {
             case DRAW_PHASE:
                 gameplay.setCurrentPhase(Phase.STANDBY_PHASE);
@@ -104,16 +110,27 @@ public class GameplayController {
         }
     }
 
+    public void goToEndPhase(){
+        gameplay.setCurrentPhase(Phase.END_PHASE);
+        System.out.println(gameplay.getCurrentPhase().toString());
+        doPhaseAction();
+    }
+
     public void setStartingPlayer() {
         int firstPlayerPick = new Random().nextInt(3);
         int secondPlayerPick = new Random().nextInt(3);
-        if (firstPlayerPick > secondPlayerPick) {
-            gameplay.setCurrentPlayer(gameplay.getPlayerOne());
-            gameplay.setOpponentPlayer(gameplay.getPlayerTwo());
-        } else if (secondPlayerPick > firstPlayerPick) {
-            gameplay.setCurrentPlayer(gameplay.getPlayerTwo());
-            gameplay.setOpponentPlayer(gameplay.getPlayerOne());
-        } else setStartingPlayer();
+        if (firstPlayerPick == secondPlayerPick) {
+            setStartingPlayer();
+        } else {
+            if (firstPlayerPick > secondPlayerPick) {
+                gameplay.setCurrentPlayer(gameplay.getPlayerOne());
+                gameplay.setOpponentPlayer(gameplay.getPlayerTwo());
+            } else {
+                gameplay.setCurrentPlayer(gameplay.getPlayerTwo());
+                gameplay.setOpponentPlayer(gameplay.getPlayerOne());
+            }
+            System.out.println("its " + gameplay.getCurrentPlayer().getUser().getUsername() + "'s turn");
+        }
     }
 
     public void dealCardsAtBeginning() {
@@ -129,7 +146,6 @@ public class GameplayController {
 
     public void switchTurn() {
         //TODO decrease remaining effect rounds
-        System.out.println("its " + gameplay.getOpponentPlayer().getUser().getUsername() + "'s turn");
         gameplay.getCurrentPlayer().getField().endTurnActions();
         Player temp = gameplay.getOpponentPlayer();
         gameplay.setOpponentPlayer(gameplay.getCurrentPlayer());
@@ -138,6 +154,7 @@ public class GameplayController {
         gameplay.setOwnsSelectedCard(null);
         gameplay.setHasPlacedMonster(false);
         GameplayView.getInstance().setFirstOfGame(false);
+        System.out.println("its " + gameplay.getCurrentPlayer().getUser().getUsername() + "'s turn");
     }
 
     public void temporarySwitchTurn() {
@@ -209,7 +226,8 @@ public class GameplayController {
             case "--spell":
                 if (isLocationNumberInvalid(idToCheck)) throw new InvalidCardSelectionException();
                 id = Integer.parseInt(idToCheck);
-                if (isFromOpponent) fieldArea = gameplay.getOpponentPlayer().getField().getSpellAndTrapFieldById(id);
+                if (isFromOpponent)
+                    fieldArea = gameplay.getOpponentPlayer().getField().getSpellAndTrapFieldById(id);
                 else fieldArea = gameplay.getCurrentPlayer().getField().getSpellAndTrapFieldById(id);
                 if (fieldArea.getCard() == null) throw new NoCardFoundException();
                 gameplay.setSelectedField(fieldArea);
@@ -251,7 +269,8 @@ public class GameplayController {
         } else CardView.showCard(gameplay.getSelectedField().getCard());
     }
 
-    public void activateEffect(SpellAndTrapActivationType type) throws NoCardIsSelectedException, InvalidActivateException, WrongPhaseForSpellException, AlreadyActivatedException, SpecialSummonNotPossibleException, PreparationNotReadyException, ActionNotPossibleException, MonsterZoneFullException, AttackNotPossibleException, RitualSummonNotPossibleException, CommandCancellationException, SpellZoneFullException {
+    public void activateEffect(SpellAndTrapActivationType type) throws
+            NoCardIsSelectedException, InvalidActivateException, WrongPhaseForSpellException, AlreadyActivatedException, SpecialSummonNotPossibleException, PreparationNotReadyException, ActionNotPossibleException, MonsterZoneFullException, AttackNotPossibleException, RitualSummonNotPossibleException, CommandCancellationException, SpellZoneFullException {
         FieldArea fieldArea = gameplay.getSelectedField();
         if (fieldArea == null) throw new NoCardIsSelectedException();
         if (fieldArea.getCard() instanceof Monster) throw new InvalidActivateException();
@@ -273,7 +292,8 @@ public class GameplayController {
         }
     }
 
-    private void activateTrapEffect(SpellAndTrapActivationType type, FieldArea fieldArea) throws PreparationNotReadyException, AttackNotPossibleException, ActionNotPossibleException, SpecialSummonNotPossibleException, MonsterZoneFullException, NoCardIsSelectedException {
+    private void activateTrapEffect(SpellAndTrapActivationType type, FieldArea fieldArea) throws
+            PreparationNotReadyException, AttackNotPossibleException, ActionNotPossibleException, SpecialSummonNotPossibleException, MonsterZoneFullException, NoCardIsSelectedException {
         if (!((SpellAndTrapFieldArea) fieldArea).isCanBeActivated()) throw new PreparationNotReadyException();
         switch (type) {
             case ON_ATTACKED:
@@ -307,8 +327,7 @@ public class GameplayController {
             if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
             if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) {
                 FieldArea ritualSpell = null;
-                for (FieldArea spellAndTrap :
-                        effectSpellAndTraps) {
+                for (FieldArea spellAndTrap : effectSpellAndTraps) {
                     ritualSpell = spellAndTrap;
                     if (spellAndTrap.getCard() instanceof Spell)
                         if (!((Spell) spellAndTrap.getCard()).getIcon().equals(Icon.RITUAL))
@@ -407,7 +426,8 @@ public class GameplayController {
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseException();
         if (((MonsterFieldArea) fieldArea).hasAttacked()) throw new AlreadySetPositionException();
-        if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.isVisible()) throw new InvalidFlipSummonException();
+        if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.isVisible())
+            throw new InvalidFlipSummonException();
         //TODO add necessary effects
         if (fieldArea.getCard().onFlipSummon != null) fieldArea.getCard().onFlipSummon.execute();
         ((MonsterFieldArea) fieldArea).changePosition();
@@ -439,7 +459,8 @@ public class GameplayController {
         if (((MonsterFieldArea) attacker).hasAttacked()) throw new AlreadyAttackedException();
         if (isLocationNumberInvalid(number)) throw new InvalidCardSelectionException();
         int id = Integer.parseInt(number);
-        if ((attackTarget = opponent.getField().getMonstersFieldById(id)) == null) throw new NoCardToAttackException();
+        if ((attackTarget = opponent.getField().getMonstersFieldById(id)) == null)
+            throw new NoCardToAttackException();
         gameplay.setAttacker(attacker);
         gameplay.setBeingAttacked(attackTarget);
         StringBuilder temp = null;
@@ -550,7 +571,8 @@ public class GameplayController {
         return temp;
     }
 
-    private StringBuilder calculateDamage(MonsterFieldArea attackingMonster, MonsterFieldArea beingAttackedMonster) throws Exception {
+    private StringBuilder calculateDamage(MonsterFieldArea attackingMonster, MonsterFieldArea beingAttackedMonster) throws
+            Exception {
         StringBuilder message = new StringBuilder();
         boolean initialVisibility = beingAttackedMonster.isVisible();
         if (beingAttackedMonster.isAttack()) {
@@ -778,6 +800,10 @@ public class GameplayController {
         if (c == null) throw new InvalidCardNameException(cardName);
         HandFieldArea h = new HandFieldArea(c);
         gameplay.getCurrentPlayer().getPlayingHand().add(h);
+    }
+
+    public void increaseLifePointsCheat(int amount){
+        gameplay.getCurrentPlayer().setLifePoints(gameplay.getCurrentPlayer().getLifePoints() + amount);
     }
 
     public ArrayList<FieldArea> getEffectSpellAndTraps() {

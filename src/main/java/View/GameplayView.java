@@ -36,6 +36,8 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.deselectCard).matches()) deselectCard();
         else if (Regex.getCommandMatcher(command, Regex.nextPhase).matches())
             GameplayController.getInstance().goToNextPhase();
+        else if (Regex.getCommandMatcher(command, Regex.endPhase).matches())
+            GameplayController.getInstance().goToEndPhase();
         else if (Regex.getCommandMatcher(command, Regex.showGraveyard).matches()) graveyardMode();
         else if (Regex.getCommandMatcher(command, Regex.showSelectedCard).matches()) showCard();
         else if (Regex.getCommandMatcher(command, Regex.summon).matches()) summon();
@@ -49,9 +51,9 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches())
-            forceAddCard(matcher);
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
+            forceAddCardCheat(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches())
+            increaseLifePointsCheat(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
         else System.out.println("invalid command");
@@ -59,13 +61,18 @@ public class GameplayView {
         gameplayView.showBoard();
     }
 
-    private void forceAddCard(Matcher matcher) {
+    private void forceAddCardCheat(Matcher matcher) {
         String cardName = matcher.group("cardName");
         try {
             GameplayController.getInstance().forceAddCard(cardName);
         } catch (InvalidCardNameException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private void increaseLifePointsCheat(Matcher matcher) {
+        int amount = Integer.parseInt(matcher.group("amount"));
+        GameplayController.getInstance().increaseLifePointsCheat(amount);
     }
 
 
@@ -255,7 +262,7 @@ public class GameplayView {
 
     public void selectCard(Matcher matcher) {
         String id = "-1";
-        if (! matcher.group("type").matches("--field|-f")) id = matcher.group("id");
+        if (!matcher.group("type").matches("--field|-f")) id = matcher.group("id");
         String type = matcher.group("type");
         boolean isOpponent = true;
         if (matcher.group("isOpponent") == null) isOpponent = false;
