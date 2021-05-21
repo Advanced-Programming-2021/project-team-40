@@ -1,6 +1,7 @@
 package Controller.DuelController;
 
 
+import Controller.MenuController.DeckMenuController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
@@ -9,11 +10,13 @@ import Database.Cards.Card;
 import Database.Cards.Monster;
 import Database.Cards.Spell;
 import Database.Cards.Trap;
+import Database.User;
 import Gameplay.*;
 import View.CardView;
 import View.Exceptions.*;
 import View.GameplayView;
 
+import javax.swing.text.FieldView;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -110,7 +113,7 @@ public class GameplayController {
         }
     }
 
-    public void goToEndPhase(){
+    public void goToEndPhase() {
         gameplay.setCurrentPhase(Phase.END_PHASE);
         System.out.println(gameplay.getCurrentPhase().toString());
         doPhaseAction();
@@ -164,7 +167,7 @@ public class GameplayController {
         gameplay.setCurrentPlayer(temp);
         gameplay.setSelectedField(null);
         gameplay.setOwnsSelectedCard(null);
-        //TODO: show board
+        GameplayView.getInstance().showBoard();
     }
 
     public void endGame(Player winner, Player loser) {
@@ -286,8 +289,9 @@ public class GameplayController {
                     effectSpellAndTraps.add(fieldArea);
                     GameplayView.getInstance().selectRitualMonster();
                 } else if (fieldArea.canBePutOnBoard()) {
-                    SpellAndTrapFieldArea s = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
-                    if (s == null) throw new SpellZoneFullException();
+                    SpellAndTrapFieldArea spell = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
+                    if (spell == null) throw new SpellZoneFullException();
+
                     onSpellActivationTraps();
                     //TODO: set and activate at the same time
                 }
@@ -411,7 +415,7 @@ public class GameplayController {
         if (ritualSpell instanceof SpellAndTrapFieldArea)
             destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) ritualSpell);
         moveCardToGraveyard(gameplay.getCurrentPlayer(), ritualSpell.getCard());
-        //TODO: shuffle deck
+        DeckMenuController.getInstance().shuffleDeck(gameplay.getCurrentPlayer().getPlayingDeck());
         normalSummon((HandFieldArea) gameplay.getSelectedField(), gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea());
     }
 
@@ -819,7 +823,16 @@ public class GameplayController {
         gameplay.getCurrentPlayer().getPlayingHand().add(h);
     }
 
-    public void increaseLifePointsCheat(int amount){
+    public void setWinnerCheat(String nickname) {
+        User userToWin = User.getUserByNickname(nickname);
+        if (gameplay.getCurrentPlayer().getUser().equals(userToWin)){
+            endGame(gameplay.getCurrentPlayer(), gameplay.getOpponentPlayer());
+        }else if (gameplay.getOpponentPlayer().getUser().equals(userToWin)){
+            endGame(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
+        }
+    }
+
+    public void increaseLifePointsCheat(int amount) {
         gameplay.getCurrentPlayer().setLifePoints(gameplay.getCurrentPlayer().getLifePoints() + amount);
     }
 

@@ -55,10 +55,15 @@ public class GameplayView {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches())
             increaseLifePointsCheat(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) setWinnerCheat(matcher);
         else System.out.println("invalid command");
         GameplayController.getInstance().calculateFieldZoneEffects();
         gameplayView.showBoard();
+    }
+
+    private void setWinnerCheat(Matcher matcher){
+        String nickname = matcher.group("nickname");
+        GameplayController.getInstance().setWinnerCheat(nickname);
     }
 
     private void forceAddCardCheat(Matcher matcher) {
@@ -76,7 +81,7 @@ public class GameplayView {
     }
 
 
-    private void showBoard() {
+    public void showBoard() {
         FieldView.showBoard(GameplayController.getInstance().gameplay.getOpponentPlayer(), GameplayController.getInstance().gameplay.getCurrentPlayer());
     }
 

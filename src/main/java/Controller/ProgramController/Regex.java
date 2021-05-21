@@ -77,8 +77,8 @@ public class Regex {
     public static String switchCard = "^card switch(?=.* --main|.* -m)(?=.* --side|.* -s)" +
                                       "(?: (?:--main|-m) (?<main>.+?)(?!.*?--main|.*?-m)| " +
                                       "(?:--side|-s) (?<side>.+?)(?!.*?--side|.*?-s)){2}$";
-    public static String increaseMoneyCheatCode = "^increase --money (?<amount>.+?)$";
-    public static String forceAddCardCheatCode = "^select(?: --hand (?<cardName>.+?)| --force){2}$";
+    public static String increaseMoneyCheatCode = "^increase (?:--money|-m) (?<amount>.+?)$";
+    public static String forceAddCardCheatCode = "^select(?: (?:--hand|-h) (?<cardName>.+?)| (?:--force|-f)){2}$";
     public static String increaseLifePointsCheatCode = "^increase --LP (?<amount>.+?)$";
     public static String setWinnerCheatCode = "^duel set-winner (?<nickname>.+?)$";
     public static String addCardToHandCheatCode = "^add card (?<cardName>.+?)$";
