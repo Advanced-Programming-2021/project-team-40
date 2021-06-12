@@ -1,7 +1,6 @@
 package GUI;
 
 import Controller.MenuController.LoginController;
-import View.Exceptions.InvalidLoginException;
 import View.Exceptions.RepetitiveNicknameException;
 import View.Exceptions.RepetitiveUsernameException;
 import View.Exceptions.WeakPasswordException;
@@ -15,32 +14,37 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-public class LoginMenu extends Application {
+import java.time.temporal.Temporal;
+
+public class SignupMenu extends Application {
+
     @FXML
     TextField username;
     @FXML
     PasswordField password;
+    @FXML
+    TextField nickname;
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("fxml/login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("fxml/signup.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
 
-    public void login(MouseEvent mouseEvent) {
+    public void signup(MouseEvent mouseEvent) {
         String username = this.username.getText();
         String password = this.password.getText();
+        String nickname = this.nickname.getText();
         try {
-            LoginController.loginUser(username, password);
-            System.out.println("user logged in successfully!");
+            LoginController.registerUser(username, password, nickname);
+            System.out.println("user created successfully!");
             //TODO
-        } catch (InvalidLoginException e) {
+        } catch (RepetitiveUsernameException | RepetitiveNicknameException | WeakPasswordException e) {
             System.out.println(e.getMessage());
         }
     }
-
 
     public void back(MouseEvent mouseEvent) throws Exception {
         new WelcomeMenu().start(WelcomeMenu.stage);

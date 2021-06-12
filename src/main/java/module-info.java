@@ -6,5 +6,7 @@ module APProject40 {
     requires java.sql;
     requires opencsv;
     opens GUI to javafx.fxml,java.sql,javafx.media;
+    opens Database to gson, opencsv, java.sql;
+    exports Database;
     exports GUI;
 }

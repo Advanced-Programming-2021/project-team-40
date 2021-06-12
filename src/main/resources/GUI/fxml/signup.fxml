@@ -8,7 +8,7 @@
 
 <GridPane xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
-          fx:controller="GUI.LoginMenu"
+          fx:controller="GUI.SignupMenu"
           prefHeight="400.0" prefWidth="600.0"
           alignment="CENTER">
 
@@ -21,7 +21,11 @@
             <Label text="Password"/>
             <PasswordField fx:id="password"/>
         </HBox>
-        <Button text="Login" onMouseClicked="#login" prefHeight="50" prefWidth="150"/>
+        <HBox spacing="10">
+            <Label text="Nickname"/>
+            <TextField fx:id="nickname"/>
+        </HBox>
+        <Button text="Signup" onMouseClicked="#signup" prefHeight="50" prefWidth="150"/>
         <Button text="Back" onMouseClicked="#back" prefHeight="50" prefWidth="150"/>
     </VBox>
 
