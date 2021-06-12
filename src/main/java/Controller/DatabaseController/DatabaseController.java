@@ -116,10 +116,8 @@ public class DatabaseController {
                         throw new ActionNotPossibleException("trap destroyed all your monster cards!");
                     };
                     break;
-                case "Negate Attack":
+                case "Negate Attack"://TODO: fix this shit
                     trap.onBeingAttacked = objects -> {
-                        GameplayController.getInstance().goToNextPhase();
-                        //TODO: not sure about correct printing order
                         throw new AttackNotPossibleException();
                     };
                     break;
@@ -127,7 +125,7 @@ public class DatabaseController {
                     trap.onBeingAttacked = objects -> {
                         MonsterFieldArea attackingMonster = (MonsterFieldArea) Effect.gameplay.getAttacker();
                         Effect.gameplay.getOpponentPlayer().setLifePoints(Effect.gameplay.getOpponentPlayer().getLifePoints() - attackingMonster.getAttackPoint());
-
+                        throw new ActionNotPossibleException("Magic Cylinder trap reduced your LP by " + attackingMonster.getAttackPoint());
                     };
                     break;
                 case "Torrential Tribute":

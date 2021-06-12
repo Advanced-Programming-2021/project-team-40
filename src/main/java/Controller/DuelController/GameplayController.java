@@ -17,8 +17,6 @@ import java.util.regex.Matcher;
 public class GameplayController {
     private static GameplayController gameplayController = null;
     public Gameplay gameplay;
-    private ArrayList<Card> cardsToDeactivateAtEndPhase = new ArrayList<>();
-    private ArrayList<Card> continuousEffectCards = new ArrayList<>();
     private ArrayList<FieldArea> effectSpellAndTraps = new ArrayList<>();
 
     private GameplayController() {
@@ -399,7 +397,6 @@ public class GameplayController {
             GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), mainCards.get(id));
             mainCards.remove(id);
         }
-        setMonsterCard(gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea(), (HandFieldArea) gameplay.getSelectedField());
     }
 
     public void flipSummon() throws Exception {
@@ -596,7 +593,7 @@ public class GameplayController {
         int attackMonsterPoint = attack.getAttackPoint();
         int defenseMonsterPoint = defense.getDefensePoint();
         int damage = attackMonsterPoint - defenseMonsterPoint;
-        if (!defense.isVisible()) if (damage > 0) destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
+        if (damage > 0) destroyMonsterCard(gameplay.getOpponentPlayer(), defense);
         if (damage < 0) {
             int newLP = gameplay.getCurrentPlayer().getLifePoints() + damage;
             gameplay.getCurrentPlayer().setLifePoints(newLP);
