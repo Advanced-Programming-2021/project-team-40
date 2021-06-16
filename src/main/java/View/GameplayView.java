@@ -3,12 +3,9 @@ package View;
 import Controller.DuelController.GameplayController;
 import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
-import Gameplay.SpellAndTrapActivationType;
 import Database.Cards.CardType;
 import Database.Cards.Monster;
-import Gameplay.Gameplay;
-import Gameplay.MonsterFieldArea;
-import Gameplay.Player;
+import Gameplay.*;
 import View.Exceptions.*;
 
 import java.util.ArrayList;
@@ -49,17 +46,22 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.directAttack).matches()) directAttack();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches())
-            forceAddCard(matcher);
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseMoneyCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) ;
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches()) ;
+            forceAddCardCheat(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) increaseLifePointsCheat(matcher);
+//        else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) forceAddCardCheat(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches())
+            setWinnerCheat(matcher);
         else System.out.println("invalid command");
         GameplayController.getInstance().calculateFieldZoneEffects();
         gameplayView.showBoard();
     }
 
-    private void forceAddCard(Matcher matcher) {
+    private void setWinnerCheat(Matcher matcher) {
+        String nickname = matcher.group("nickname");
+        GameplayController.getInstance().setWinnerCheat(nickname);
+    }
+
+    private void forceAddCardCheat(Matcher matcher) {
         String cardName = matcher.group("cardName");
         try {
             GameplayController.getInstance().forceAddCard(cardName);
@@ -68,8 +70,13 @@ public class GameplayView {
         }
     }
 
+    private void increaseLifePointsCheat(Matcher matcher) {
+        int amount = Integer.parseInt(matcher.group("amount"));
+        GameplayController.getInstance().increaseLifePointsCheat(amount);
+    }
 
-    private void showBoard() {
+
+    public void showBoard() {
         FieldView.showBoard(GameplayController.getInstance().gameplay.getOpponentPlayer(), GameplayController.getInstance().gameplay.getCurrentPlayer());
     }
 
@@ -104,9 +111,9 @@ public class GameplayView {
         Gameplay gameplay = GameplayController.getInstance().getGameplay();
         GameplayController.getInstance().deselectCard();
         String cardInput;
+        Matcher matcher;
         System.out.println("select the ritual monster you want to summon/set:");
         while (true) {
-            Matcher matcher;
             cardInput = ProgramController.getInstance().getScanner().nextLine();
             if ((matcher = Regex.getCommandMatcher(cardInput, Regex.selectHandCard)).matches())
                 selectCard(matcher);
@@ -130,7 +137,7 @@ public class GameplayView {
             cardInput = ProgramController.getInstance().getScanner().nextLine();
             if (cardInput.matches(Regex.cancelAction)) {
                 //TODO: more things should be done here
-                throw new CommandCancellationException("ritual summon");
+                throw new CommandCancellationException("Ritual summon");
             }
             if (cardInput.matches(Regex.summon)) {
                 summon();
@@ -275,8 +282,7 @@ public class GameplayView {
         isFirstOfGame = firstOfGame;
     }
 
-    public String[] ritualTribute() throws Exception {
-        Gameplay gameplay = GameplayController.getInstance().getGameplay();
+    public String[] ritualTribute() {
         String inputRegex = "^(\\d+\\s?)+$";
         String input;
         String[] ids;
@@ -332,5 +338,24 @@ public class GameplayView {
             System.out.println(e.getMessage());
         }
         return false;
+    }
+
+    public void selectMonsterForEquip(FieldArea equipSpell) throws CommandCancellationException {
+        System.out.println("choose your card to equip:");
+        Matcher matcher;
+        while (true) {
+            String input = ProgramController.getInstance().getScanner().nextLine();
+            if (input.matches(Regex.cancelAction)) throw new CommandCancellationException("Equip");
+            if ((matcher = Regex.getCommandMatcher(input, Regex.selectMonsterCard)).matches()) {
+                selectCard(matcher);
+                if (GameplayController.getInstance().gameplay.getSelectedField() == null) continue;
+                if (equipSpell.getCard().equipEffect.isMonsterCorrect((MonsterFieldArea) GameplayController.getInstance().gameplay.getSelectedField()))
+                    return;
+                else {
+                    System.out.println("Wrong Card Selection!");
+                    deselectCard();
+                }
+            } else System.out.println("you have to equip a monster right now");
+        }
     }
 }

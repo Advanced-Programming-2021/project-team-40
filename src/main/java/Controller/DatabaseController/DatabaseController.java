@@ -355,6 +355,106 @@ public class DatabaseController {
     private void initializeSpellEffects() {
         for (Spell spell : Spell.getSpells()) {
             switch (spell.getName()) {
+                case "United We Stand":
+                    spell.equipEffect = new EquipEffect() {
+                        int initialSum;
+
+                        @Override
+                        public void activate(MonsterFieldArea toEquipMonster) {
+                            int count = 0;
+                            for (MonsterFieldArea monster :
+                                    GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersField()) {
+                                if (monster.isVisible()) count++;
+                            }
+                            initialSum = count * 800;
+                            toEquipMonster.setAttackPoint(toEquipMonster.getAttackPoint() + initialSum);
+                            toEquipMonster.setDefensePoint(toEquipMonster.getDefensePoint() + initialSum);
+                        }
+
+                        @Override
+                        public void deactivate(MonsterFieldArea toDeequipMonster) {
+                            toDeequipMonster.setAttackPoint(toDeequipMonster.getAttackPoint() - initialSum);
+                            toDeequipMonster.setDefensePoint(toDeequipMonster.getDefensePoint() - initialSum);
+                            if (toDeequipMonster.getAttackPoint() < 0) toDeequipMonster.setAttackPoint(0);
+                            if (toDeequipMonster.getDefensePoint() < 0) toDeequipMonster.setDefensePoint(0);
+                        }
+
+                        @Override
+                        public boolean isMonsterCorrect(MonsterFieldArea chosenMonster) {
+                            return true;
+                        }
+                    };
+                    break;
+                case "Magnum Shield":
+                    spell.equipEffect = new EquipEffect() {
+                        boolean initialAttack = false;
+
+                        @Override
+                        public void activate(MonsterFieldArea toEquipMonster) {
+                            if (toEquipMonster.isAttack()) {
+                                toEquipMonster.setDefensePoint(toEquipMonster.getDefensePoint() + toEquipMonster.getAttackPoint());
+                                initialAttack = true;
+                            } else
+                                toEquipMonster.setAttackPoint(toEquipMonster.getDefensePoint() + toEquipMonster.getAttackPoint());
+                        }
+
+                        @Override
+                        public void deactivate(MonsterFieldArea toDeequipMonster) {
+                            if (initialAttack)
+                                toDeequipMonster.setDefensePoint(toDeequipMonster.getDefensePoint() - toDeequipMonster.getAttackPoint());
+                            else
+                                toDeequipMonster.setAttackPoint(toDeequipMonster.getAttackPoint() - toDeequipMonster.getDefensePoint());
+                            if (toDeequipMonster.getAttackPoint() < 0) toDeequipMonster.setAttackPoint(0);
+                            if (toDeequipMonster.getDefensePoint() < 0) toDeequipMonster.setDefensePoint(0);
+                        }
+
+                        @Override
+                        public boolean isMonsterCorrect(MonsterFieldArea chosenMonster) {
+                            return ((Monster) chosenMonster.getCard()).getMonsterType().equals(MonsterType.WARRIOR);
+                        }
+                    };
+                    break;
+                case "Black Pendant":
+                    spell.equipEffect = new EquipEffect() {
+                        @Override
+                        public void activate(MonsterFieldArea toEquipMonster) {
+                            toEquipMonster.setAttackPoint(toEquipMonster.getAttackPoint() + 500);
+                        }
+
+                        @Override
+                        public void deactivate(MonsterFieldArea toDeequipMonster) {
+                            toDeequipMonster.setAttackPoint(toDeequipMonster.getAttackPoint() - 500);
+                            if (toDeequipMonster.getAttackPoint() < 0) toDeequipMonster.setAttackPoint(0);
+                        }
+
+                        @Override
+                        public boolean isMonsterCorrect(MonsterFieldArea chosenMonster) {
+                            return true;
+                        }
+                    };
+                    break;
+                case "Sword of dark destruction":
+                    spell.equipEffect = new EquipEffect() {
+                        @Override
+                        public void activate(MonsterFieldArea toEquipMonster) {
+                            toEquipMonster.setAttackPoint(toEquipMonster.getAttackPoint() + 400);
+                            toEquipMonster.setDefensePoint(toEquipMonster.getDefensePoint() - 200);
+                        }
+
+                        @Override
+                        public void deactivate(MonsterFieldArea toDeequipMonster) {
+                            toDeequipMonster.setAttackPoint(toDeequipMonster.getAttackPoint() - 400);
+                            toDeequipMonster.setDefensePoint(toDeequipMonster.getDefensePoint() + 200);
+                            if (toDeequipMonster.getAttackPoint() < 0) toDeequipMonster.setAttackPoint(0);
+                        }
+
+                        @Override
+                        public boolean isMonsterCorrect(MonsterFieldArea chosenMonster) {
+                            if (chosenMonster.getAttackPoint() < 200) return false;
+                            return ((Monster) chosenMonster.getCard()).getMonsterType().equals(MonsterType.FIEND) || ((Monster) chosenMonster.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER);
+                        }
+                    };
+                    break;
                 case "Monster Reborn":
                     spell.spellEffect = objects -> {
                         if (Effect.gameplay.getCurrentPlayer().getField().getGraveyard().size() == 0 && Effect.gameplay.getOpponentPlayer().getField().getGraveyard().size() == 0)

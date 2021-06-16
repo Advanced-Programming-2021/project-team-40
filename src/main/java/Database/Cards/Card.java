@@ -15,6 +15,7 @@ abstract public class Card {
     public Effect onSummon;
     public Effect onSpellActivation;
     public Effect inStandbyPhase;
+    public EquipEffect equipEffect;
     protected String name;
     protected String description;
     protected int cardPrice = 0;
