@@ -279,10 +279,20 @@ public class GameplayController {
                     SpellAndTrapFieldArea spell = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
                     if (spell == null) throw new SpellZoneFullException();
                     onSpellActivationTraps();
-                    activateEquip(fieldArea, spell);
+                    if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) activateEquip(fieldArea, spell);
+                    else if (((Spell) spell.getCard()).spellEffect == null) throw new ActionNotPossibleException("Nazadim ino");
+                    else {
+                        ((Spell) spell.getCard()).spellEffect.execute();
+                        destroySpellAndTrapCard(gameplay.getCurrentPlayer(),spell);
+                    }
                 } else if (fieldArea instanceof SpellAndTrapFieldArea) {
                     onSpellActivationTraps();
-                    activateEquip(fieldArea, (SpellAndTrapFieldArea) fieldArea);
+                    if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) activateEquip(fieldArea, (SpellAndTrapFieldArea) fieldArea);
+                    else if (((Spell) fieldArea.getCard()).spellEffect == null) throw new ActionNotPossibleException("Nazadim ino");
+                    else {
+                        ((Spell) fieldArea.getCard()).spellEffect.execute();
+                        destroySpellAndTrapCard(gameplay.getCurrentPlayer(),(SpellAndTrapFieldArea) fieldArea);
+                    }
                 }
             } catch (ActionNotPossibleException | AttackNotPossibleException e) {
                 temporarySwitchTurn();
@@ -294,17 +304,15 @@ public class GameplayController {
     }
 
     private void activateEquip(FieldArea fieldArea, SpellAndTrapFieldArea spell) throws NoCardIsSelectedException, CommandCancellationException {
-        if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) {
-            deselectCard();
-            GameplayView.getInstance().selectMonsterForEquip(fieldArea);
-            MonsterFieldArea toEquipMonster = (MonsterFieldArea) gameplay.getSelectedField();
-            fieldArea.getCard().equipEffect.activate(toEquipMonster);
-            gameplay.getCurrentPlayer().getEquippedMonsters().put(spell, toEquipMonster);
-            if (fieldArea instanceof HandFieldArea) spell.putCard(fieldArea.getCard(), true);
-            if (fieldArea instanceof SpellAndTrapFieldArea) {
-                ((SpellAndTrapFieldArea) fieldArea).setCanBeActivated(false);
-                fieldArea.setVisibility(true);
-            }
+        deselectCard();
+        GameplayView.getInstance().selectMonsterForEquip(fieldArea);
+        MonsterFieldArea toEquipMonster = (MonsterFieldArea) gameplay.getSelectedField();
+        fieldArea.getCard().equipEffect.activate(toEquipMonster);
+        gameplay.getCurrentPlayer().getEquippedMonsters().put(spell, toEquipMonster);
+        if (fieldArea instanceof HandFieldArea) spell.putCard(fieldArea.getCard(), true);
+        if (fieldArea instanceof SpellAndTrapFieldArea) {
+            ((SpellAndTrapFieldArea) fieldArea).setCanBeActivated(false);
+            fieldArea.setVisibility(true);
         }
     }
 
@@ -619,7 +627,7 @@ public class GameplayController {
                 message.append("no card is destroyed and you received ").append(-damage).append(" battle damage");
             if (damage == 0) message.append("no card is destroyed");
         }
-        if (beingAttackedMonster.getCard().afterDamageCalculation != null)
+        if (beingAttackedMonster.getCard() != null && beingAttackedMonster.getCard().afterDamageCalculation != null)
             beingAttackedMonster.getCard().afterDamageCalculation.execute(initialVisibility);
         return message;
     }
@@ -665,10 +673,17 @@ public class GameplayController {
     public void destroyMonsterCard(Player player, MonsterFieldArea monster) {
         try {
             for (SpellAndTrapFieldArea equipSpell :
-                    player.getEquippedMonsters().keySet()) {
-                if (player.getEquippedMonsters().get(equipSpell).equals(monster)) {
-                    player.getEquippedMonsters().remove(equipSpell);
-                    destroySpellAndTrapCard(player, equipSpell);
+                    gameplay.getCurrentPlayer().getEquippedMonsters().keySet()) {
+                if (gameplay.getCurrentPlayer().getEquippedMonsters().get(equipSpell).equals(monster)) {
+                    gameplay.getCurrentPlayer().getEquippedMonsters().remove(equipSpell);
+                    destroySpellAndTrapCard(gameplay.getCurrentPlayer(), equipSpell);
+                }
+            }
+            for (SpellAndTrapFieldArea equipSpell :
+                    gameplay.getOpponentPlayer().getEquippedMonsters().keySet()) {
+                if (gameplay.getOpponentPlayer().getEquippedMonsters().get(equipSpell).equals(monster)) {
+                    gameplay.getOpponentPlayer().getEquippedMonsters().remove(equipSpell);
+                    destroySpellAndTrapCard(gameplay.getOpponentPlayer(), equipSpell);
                 }
             }
             if ((monster.getCard()).onDestruction != null)
