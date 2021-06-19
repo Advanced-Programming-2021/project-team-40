@@ -280,10 +280,9 @@ public class GameplayController {
                     if (spell == null) throw new SpellZoneFullException();
                     onSpellActivationTraps();
                     if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) activateEquip(fieldArea, spell);
-                    else if (((Spell) spell.getCard()).spellEffect == null) throw new ActionNotPossibleException("Nazadim ino");
+                    else if (((Spell) fieldArea.getCard()).spellEffect == null) throw new ActionNotPossibleException("Nazadim ino");
                     else {
-                        ((Spell) spell.getCard()).spellEffect.execute();
-                        destroySpellAndTrapCard(gameplay.getCurrentPlayer(),spell);
+                        ((Spell) fieldArea.getCard()).spellEffect.execute();
                     }
                 } else if (fieldArea instanceof SpellAndTrapFieldArea) {
                     onSpellActivationTraps();
@@ -309,7 +308,10 @@ public class GameplayController {
         MonsterFieldArea toEquipMonster = (MonsterFieldArea) gameplay.getSelectedField();
         fieldArea.getCard().equipEffect.activate(toEquipMonster);
         gameplay.getCurrentPlayer().getEquippedMonsters().put(spell, toEquipMonster);
-        if (fieldArea instanceof HandFieldArea) spell.putCard(fieldArea.getCard(), true);
+        if (fieldArea instanceof HandFieldArea) {
+            spell.putCard(fieldArea.getCard(), true);
+            gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
+        }
         if (fieldArea instanceof SpellAndTrapFieldArea) {
             ((SpellAndTrapFieldArea) fieldArea).setCanBeActivated(false);
             fieldArea.setVisibility(true);
