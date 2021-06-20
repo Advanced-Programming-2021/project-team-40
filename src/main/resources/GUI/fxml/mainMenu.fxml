@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="GUI.MainMenu"
+          prefHeight="600.0" prefWidth="750.0"
+          alignment="CENTER">
+
+    <VBox alignment="CENTER" spacing="10">
+        <Button text="New Duel" onMouseClicked="#newDuel" prefHeight="50" prefWidth="150"/>
+        <Button text="Deck Menu" onMouseClicked="#deckMenu" prefHeight="50" prefWidth="150"/>
+        <Button text="Scoreboard" onMouseClicked="#scoreboard" prefHeight="50" prefWidth="150"/>
+        <Button text="Profile Menu" onMouseClicked="#profileMenu" prefHeight="50" prefWidth="150"/>
+        <Button text="Shop" onMouseClicked="#shop" prefHeight="50" prefWidth="150"/>
+        <Button text="Import/Export" onMouseClicked="#importExport" prefHeight="50" prefWidth="150"/>
+        <Button text="Logout" onMouseClicked="#logout" prefHeight="50" prefWidth="150"/>
+    </VBox>
+
+</GridPane>

@@ -11,7 +11,7 @@
           xmlns:fx="http://javafx.com/fxml"
           fx:controller="GUI.WelcomeMenu"
           alignment="CENTER"
-          prefHeight="400.0" prefWidth="600.0">
+          prefHeight="600.0" prefWidth="750.0">
 
     <VBox alignment="CENTER" spacing="10">
         <Button text="Signup" onMouseClicked="#signup" prefHeight="50" prefWidth="150"/>
