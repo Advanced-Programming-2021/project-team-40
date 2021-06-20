@@ -39,7 +39,7 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.set).matches()) set();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setPosition)).matches()) setPosition(matcher);
         else if (Regex.getCommandMatcher(command, Regex.surrender).matches())
-            GameplayController.getInstance().surrender();
+            surrender();
         else if (Regex.getCommandMatcher(command, Regex.flipSummon).matches()) flipSummon();
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches())
             activateEffect(SpellAndTrapActivationType.NORMAL);
@@ -48,17 +48,31 @@ public class GameplayView {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches())
             forceAddCardCheat(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) increaseLifePointsCheat(matcher);
-//        else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) forceAddCardCheat(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) forceAddCardCheat(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches())
             setWinnerCheat(matcher);
         else System.out.println("invalid command");
+        String message = GameplayController.getInstance().checkWinningConditions();
+        if (message != null) {
+            System.out.println(message);
+            GameplayController.getInstance().doPhaseAction();
+        }
         GameplayController.getInstance().calculateFieldZoneEffects();
         gameplayView.showBoard();
     }
 
+    private void surrender() {
+        String message = GameplayController.getInstance().surrender();
+        System.out.println(message);
+        GameplayController.getInstance().doPhaseAction();
+    }
+
     private void setWinnerCheat(Matcher matcher) {
         String nickname = matcher.group("nickname");
-        GameplayController.getInstance().setWinnerCheat(nickname);
+        String message = GameplayController.getInstance().setWinnerCheat(nickname);
+        if (message == null) return;
+        System.out.println(message);
+        GameplayController.getInstance().doPhaseAction();
     }
 
     private void forceAddCardCheat(Matcher matcher) {
@@ -77,6 +91,7 @@ public class GameplayView {
 
 
     public void showBoard() {
+        if (GameplayController.getInstance().gameplay == null) return;
         FieldView.showBoard(GameplayController.getInstance().gameplay.getOpponentPlayer(), GameplayController.getInstance().gameplay.getCurrentPlayer());
     }
 
@@ -207,7 +222,6 @@ public class GameplayView {
         try {
             StringBuilder message = GameplayController.getInstance().attack(monsterId);
             if (message != null) System.out.println(message);
-            GameplayController.getInstance().checkWinningConditions();
         } catch (Exception e) {
             GameplayController.getInstance().getGameplay().setAttacker(null);
             GameplayController.getInstance().getGameplay().setBeingAttacked(null);

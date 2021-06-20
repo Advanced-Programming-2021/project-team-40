@@ -36,7 +36,7 @@ public class User {
     public static User getUserByNickname(String nickname) {
         for (User user: users
         ) {
-            if (user.getUsername().equals(nickname)) return user;
+            if (user.getNickname().equals(nickname)) return user;
         }
         return null;
     }

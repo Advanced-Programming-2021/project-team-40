@@ -37,4 +37,11 @@ public class ShopController implements MenuNavigation{
             System.out.println(e.getMessage());
         }
     }
+
+    public void increaseMoneyCheat(String amount, User currentUser) {
+        if (!amount.matches("^\\d+$")) return;
+        int balance = Integer.parseInt(amount);
+        currentUser.setBalance(currentUser.getBalance() + balance);
+        System.out.println(currentUser.getBalance());
+    }
 }

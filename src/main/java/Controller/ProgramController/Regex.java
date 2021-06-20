@@ -71,14 +71,14 @@ public class Regex {
     public static String directAttack = "^attack direct$";
     public static String activateEffect = "^activate effect$";
     public static String showGraveyard = "^show graveyard(?<isOpponent> (?:--opponent|-o))?$";
-    public static String showSelectedCard = "^card show (--selected|-s)$";
+    public static String showSelectedCard = "^card show (?:--selected|-s)$";
     public static String showCardByName = "^card show (?<cardName>.+?)$";
     public static String surrender = "^surrender$";
     public static String switchCard = "^card switch(?=.* --main|.* -m)(?=.* --side|.* -s)" +
                                       "(?: (?:--main|-m) (?<main>.+?)(?!.*?--main|.*?-m)| " +
                                       "(?:--side|-s) (?<side>.+?)(?!.*?--side|.*?-s)){2}$";
-    public static String increaseMoneyCheatCode = "^increase --money (?<amount>.+?)$";
-    public static String forceAddCardCheatCode = "^select(?: --hand (?<cardName>.+?)| --force){2}$";
+    public static String increaseMoneyCheatCode = "^increase (?:--money|-m) (?<amount>.+?)$";
+    public static String forceAddCardCheatCode = "^select(?: (?:--hand|-h) (?<cardName>.+?)| (?:--force|-f)){2}$";
     public static String increaseLifePointsCheatCode = "^increase --LP (?<amount>.+?)$";
     public static String setWinnerCheatCode = "^duel set-winner (?<nickname>.+?)$";
     public static String addCardToHandCheatCode = "^add card (?<cardName>.+?)$";

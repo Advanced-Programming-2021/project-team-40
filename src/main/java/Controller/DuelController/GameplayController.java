@@ -42,6 +42,7 @@ public class GameplayController {
     }
 
     public void doPhaseAction() {
+        if (gameplay == null) return;
         switch (gameplay.getCurrentPhase()) {
             case DRAW_PHASE:
                 Card card = drawCard();
@@ -57,7 +58,6 @@ public class GameplayController {
                 goToNextPhase();
                 break;
             case END_PHASE:
-                checkWinningConditions();
                 switchTurn();
                 goToNextPhase();
                 break;
@@ -159,27 +159,26 @@ public class GameplayController {
         GameplayView.getInstance().showBoard();
     }
 
-    public void endGame(Player winner, Player loser) {
+    public String endWholeMatch(Player winner, Player loser) {
         int multiplier = gameplay.getRounds();
         winner.getUser().increaseScore(1000 * multiplier);
         winner.getUser().increaseBalance((1000 + winner.getMaxLP()) * multiplier);
         loser.getUser().increaseBalance(100 * multiplier);
         setGameplay(null);
         ProgramController.getInstance().setCurrentMenu(Menu.MAIN_MENU);
+        return winner.getUser().getUsername() + " won the whole match with score: " + winner.getUser().getScore();
     }
 
-    public void endMatch(Player winner, Player loser) {
+    public String endARound(Player winner, Player loser) {
         winner.setMaxLP(winner.getLifePoints());
         if (winner.equals(gameplay.getPlayerOne())) gameplay.playerOneWins++;
         else gameplay.playerTwoWins++;
         switch (gameplay.getRounds()) {
             case 1:
-                endGame(winner, loser);
-                break;
+                return endWholeMatch(winner, loser);
             case 3:
                 if (gameplay.playerOneWins == 2 || gameplay.playerTwoWins == 2)
-                    endGame(winner, loser);
-                break;
+                    return endWholeMatch(winner, loser);
             default:
                 gameplay.setCurrentPlayer(winner);
                 gameplay.setOpponentPlayer(loser);
@@ -192,13 +191,17 @@ public class GameplayController {
                 setStartingPlayer();
                 gameplay.getCurrentPlayer().setField(new Field());
                 gameplay.getOpponentPlayer().setField(new Field());
+                gameplay.getOpponentPlayer().getPlayingHand().clear();
+                gameplay.getCurrentPlayer().getPlayingHand().clear();
                 dealCardsAtBeginning();
                 GameplayView.getInstance().setFirstOfGame(true);
+                gameplay.setCurrentPhase(Phase.DRAW_PHASE);
+                return winner.getUser().getUsername() + " won the game and the score is: " + winner.getUser().getScore();
         }
     }
 
-    public void surrender() {
-        endMatch(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
+    public String surrender() {
+        return endARound(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
     }
 
     public void selectCard(String idToCheck, String field, boolean isFromOpponent) throws Exception {
@@ -280,17 +283,20 @@ public class GameplayController {
                     if (spell == null) throw new SpellZoneFullException();
                     onSpellActivationTraps();
                     if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) activateEquip(fieldArea, spell);
-                    else if (((Spell) fieldArea.getCard()).spellEffect == null) throw new ActionNotPossibleException("Nazadim ino");
+                    else if (((Spell) fieldArea.getCard()).spellEffect == null)
+                        throw new ActionNotPossibleException("Nazadim ino");
                     else {
                         ((Spell) fieldArea.getCard()).spellEffect.execute();
                     }
                 } else if (fieldArea instanceof SpellAndTrapFieldArea) {
                     onSpellActivationTraps();
-                    if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) activateEquip(fieldArea, (SpellAndTrapFieldArea) fieldArea);
-                    else if (((Spell) fieldArea.getCard()).spellEffect == null) throw new ActionNotPossibleException("Nazadim ino");
+                    if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP))
+                        activateEquip(fieldArea, (SpellAndTrapFieldArea) fieldArea);
+                    else if (((Spell) fieldArea.getCard()).spellEffect == null)
+                        throw new ActionNotPossibleException("Nazadim ino");
                     else {
                         ((Spell) fieldArea.getCard()).spellEffect.execute();
-                        destroySpellAndTrapCard(gameplay.getCurrentPlayer(),(SpellAndTrapFieldArea) fieldArea);
+                        destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) fieldArea);
                     }
                 }
             } catch (ActionNotPossibleException | AttackNotPossibleException e) {
@@ -602,7 +608,6 @@ public class GameplayController {
         if (!isOpponentFieldEmpty()) throw new DirectAttackNotPossibleException();
         String temp = calculateDirectDamage((MonsterFieldArea) fieldArea);
         deselectCard();
-        checkWinningConditions();
         //TODO winning blow print may not happen correctly
         return temp;
     }
@@ -775,14 +780,15 @@ public class GameplayController {
 
     }
 
-    public void checkWinningConditions() {
-        if (gameplay.getOpponentPlayer().getLifePoints() <= 0) {
-            endMatch(gameplay.getCurrentPlayer(), gameplay.getOpponentPlayer());
-        } else if (gameplay.getCurrentPlayer().getLifePoints() <= 0) {
-            endMatch(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
-        }
+    public String checkWinningConditions() {
+        if (gameplay == null) return null;
+        String message = null;
+        if (gameplay.getOpponentPlayer().getLifePoints() <= 0)
+            message = endARound(gameplay.getCurrentPlayer(), gameplay.getOpponentPlayer());
+        else if (gameplay.getCurrentPlayer().getLifePoints() <= 0)
+            message = endARound(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
+        return message;
         //TODO check for more possible conditions
-
     }
 
     private boolean hasRitualMonsterInHand() {
@@ -852,16 +858,25 @@ public class GameplayController {
         Card c = Card.getCardByName(cardName);
         if (c == null) throw new InvalidCardNameException(cardName);
         HandFieldArea h = new HandFieldArea(c);
+        for (Card card :
+                gameplay.getCurrentPlayer().getPlayingDeck().getMainCards()) {
+            if (card.getName().equals(c.getName())) {
+                gameplay.getCurrentPlayer().getPlayingDeck().getMainCards().remove(card);
+                return;
+            }
+        }
         gameplay.getCurrentPlayer().getPlayingHand().add(h);
     }
 
-    public void setWinnerCheat(String nickname) {
+    public String setWinnerCheat(String nickname) {
         User userToWin = User.getUserByNickname(nickname);
+        if (userToWin == null) return null;
         if (gameplay.getCurrentPlayer().getUser().equals(userToWin)) {
-            endGame(gameplay.getCurrentPlayer(), gameplay.getOpponentPlayer());
+            return endWholeMatch(gameplay.getCurrentPlayer(), gameplay.getOpponentPlayer());
         } else if (gameplay.getOpponentPlayer().getUser().equals(userToWin)) {
-            endGame(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
+            return endWholeMatch(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
         }
+        return null;
     }
 
     public void increaseLifePointsCheat(int amount) {
@@ -915,6 +930,7 @@ public class GameplayController {
     }
 
     public void calculateFieldZoneEffects() {
+        if (gameplay == null) return;
         resetFieldZoneEffects();
         if (gameplay.getCurrentPlayer().getField().getFieldZone().getCard() != null)
             ((Spell) gameplay.getCurrentPlayer().getField().getFieldZone().getCard()).fieldZoneEffect.activate();
