@@ -4,7 +4,6 @@ package Controller.DuelController;
 import Controller.MenuController.DeckMenuController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
-import Controller.ProgramController.Regex;
 import Database.Cards.*;
 import Database.User;
 import Gameplay.*;
@@ -14,13 +13,10 @@ import View.GameplayView;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.regex.Matcher;
 
 public class GameplayController {
     private static GameplayController gameplayController = null;
     public Gameplay gameplay;
-    private ArrayList<Card> cardsToDeactivateAtEndPhase = new ArrayList<>();
-    private ArrayList<Card> continuousEffectCards = new ArrayList<>();
     private ArrayList<FieldArea> effectSpellAndTraps = new ArrayList<>();
 
     private GameplayController() {
@@ -735,23 +731,11 @@ public class GameplayController {
         return card;
     }
 
-    public void discardACard() {
-        ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();
-        while (true) {
-            try {
-
-                Matcher matcher;
-                String command = ProgramController.getInstance().getScanner().nextLine();
-                if ((matcher = Regex.getCommandMatcher(command, Regex.selectHandCard)).matches()) {
-                    selectCard(matcher.group("id"), "--hand", false);
-                    moveCardToGraveyard(gameplay.getCurrentPlayer(), gameplay.getSelectedField().getCard());
-                    gameplay.getCurrentPlayer().getPlayingHand().remove(gameplay.getSelectedField());
-
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
+    public void discardACard() throws InvalidCardSelectionException {
+        if (gameplay.getSelectedField() == null) return;
+        if (!gameplay.ownsSelectedCard()) throw new InvalidCardSelectionException();
+        moveCardToGraveyard(gameplay.getCurrentPlayer(), gameplay.getSelectedField().getCard());
+        gameplay.getCurrentPlayer().getPlayingHand().remove(gameplay.getSelectedField());
     }
 
     private void setMonsterCard(MonsterFieldArea monsterFieldArea, HandFieldArea fieldArea) {
@@ -777,7 +761,6 @@ public class GameplayController {
     public void specialSummon(Card card) {
         MonsterFieldArea toPutOn = GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getFreeMonsterFieldArea();
         toPutOn.putCard(card, true);
-
     }
 
     public String checkWinningConditions() {
@@ -885,10 +868,6 @@ public class GameplayController {
 
     public ArrayList<FieldArea> getEffectSpellAndTraps() {
         return effectSpellAndTraps;
-    }
-
-    public void setEffectSpellAndTraps(ArrayList<FieldArea> effectSpellAndTraps) {
-        this.effectSpellAndTraps = effectSpellAndTraps;
     }
 
     public boolean isRitualInputsValid(String[] ids) {

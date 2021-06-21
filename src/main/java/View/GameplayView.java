@@ -38,8 +38,7 @@ public class GameplayView {
         else if (Regex.getCommandMatcher(command, Regex.summon).matches()) summon();
         else if (Regex.getCommandMatcher(command, Regex.set).matches()) set();
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setPosition)).matches()) setPosition(matcher);
-        else if (Regex.getCommandMatcher(command, Regex.surrender).matches())
-            surrender();
+        else if (Regex.getCommandMatcher(command, Regex.surrender).matches()) surrender();
         else if (Regex.getCommandMatcher(command, Regex.flipSummon).matches()) flipSummon();
         else if (Regex.getCommandMatcher(command, Regex.activateEffect).matches())
             activateEffect(SpellAndTrapActivationType.NORMAL);
@@ -47,8 +46,10 @@ public class GameplayView {
         else if ((matcher = Regex.getCommandMatcher(command, Regex.attack)).matches()) attack(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.addCardToHandCheatCode)).matches())
             forceAddCardCheat(matcher);
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches()) increaseLifePointsCheat(matcher);
-        else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches()) forceAddCardCheat(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.increaseLifePointsCheatCode)).matches())
+            increaseLifePointsCheat(matcher);
+        else if ((matcher = Regex.getCommandMatcher(command, Regex.forceAddCardCheatCode)).matches())
+            forceAddCardCheat(matcher);
         else if ((matcher = Regex.getCommandMatcher(command, Regex.setWinnerCheatCode)).matches())
             setWinnerCheat(matcher);
         else System.out.println("invalid command");
@@ -73,6 +74,23 @@ public class GameplayView {
         if (message == null) return;
         System.out.println(message);
         GameplayController.getInstance().doPhaseAction();
+    }
+
+    public void discardACard() {
+        while (true) {
+            try {
+                Matcher matcher;
+                String command = ProgramController.getInstance().getScanner().nextLine();
+                if ((matcher = Regex.getCommandMatcher(command, Regex.selectHandCard)).matches()) {
+                    selectCard(matcher);
+                    GameplayController.getInstance().discardACard();
+                    break;
+                }
+            } catch (InvalidCardSelectionException e) {
+                System.out.println(e.getMessage());
+                deselectCard();
+            }
+        }
     }
 
     private void forceAddCardCheat(Matcher matcher) {
@@ -135,7 +153,8 @@ public class GameplayView {
             else if (cardInput.matches(Regex.cancelAction)) {
                 //TODO: more stuff here
                 throw new CommandCancellationException("ritual summon");
-            } else System.out.println("you should ritual summon right now");
+            } else if (cardInput.matches(Regex.showSelectedCard)) showCard();
+            else System.out.println("you should ritual summon right now");
             if (gameplay.getSelectedField() != null) {
                 try {
                     if (!(gameplay.getSelectedField().getCard() instanceof Monster))
@@ -147,6 +166,7 @@ public class GameplayView {
                     System.out.println("you should ritual summon right now");
                 }
             }
+            gameplayView.showBoard();
         }
         while (true) {
             cardInput = ProgramController.getInstance().getScanner().nextLine();
@@ -176,6 +196,7 @@ public class GameplayView {
             else if (tributesInput.matches(Regex.help))
                 System.out.println("type " + number + " locations for monsters to tribute, or cancel");
             else System.out.println("type exactly " + number + " locations to tribute");
+            gameplayView.showBoard();
         }
         String[] splitTributeInputs = tributesInput.split(" ");
         try {
@@ -205,6 +226,7 @@ public class GameplayView {
             if (command.matches(Regex.showGraveyard))
                 GraveyardView.showGraveyard(GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getGraveyard());
             else System.out.println("invalid command");
+            //TODO: show board?
         }
     }
 
@@ -313,6 +335,7 @@ public class GameplayView {
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
+            gameplayView.showBoard();
         }
         return ids;
     }
@@ -325,6 +348,8 @@ public class GameplayView {
             if (input.equalsIgnoreCase("yes")) return true;
             else if (input.equalsIgnoreCase("no")) return false;
             else System.out.println("it's not your turn to play this kind of moves");
+            gameplayView.showBoard();
+            //TODO: check correct side
         }
     }
 
@@ -340,6 +365,7 @@ public class GameplayView {
             else if (input.matches(Regex.activateEffect)) {
                 if (chainActivateEffect(type)) break;
             } else System.out.println("it's not your turn to play this kind of moves");
+            gameplayView.showBoard();
         }
     }
 
@@ -360,16 +386,18 @@ public class GameplayView {
         while (true) {
             String input = ProgramController.getInstance().getScanner().nextLine();
             if (input.matches(Regex.cancelAction)) throw new CommandCancellationException("Equip");
-            if ((matcher = Regex.getCommandMatcher(input, Regex.selectMonsterCard)).matches()) {
-                selectCard(matcher);
-                if (GameplayController.getInstance().gameplay.getSelectedField() == null) continue;
-                if (equipSpell.getCard().equipEffect.isMonsterCorrect((MonsterFieldArea) GameplayController.getInstance().gameplay.getSelectedField()))
+            else if (input.matches(Regex.help)) System.out.println("choose you card for equip; or cancel the operation");
+            else if ((matcher = Regex.getCommandMatcher(input, Regex.selectMonsterCard)).matches()) {
+                    selectCard(matcher);
+                    if (GameplayController.getInstance().gameplay.getSelectedField() == null) continue;
+                    if (equipSpell.getCard().equipEffect.isMonsterCorrect((MonsterFieldArea) GameplayController.getInstance().gameplay.getSelectedField()))
                     return;
                 else {
                     System.out.println("Wrong Card Selection!");
                     deselectCard();
                 }
             } else System.out.println("you have to equip a monster right now");
+            gameplayView.showBoard();
         }
     }
 }

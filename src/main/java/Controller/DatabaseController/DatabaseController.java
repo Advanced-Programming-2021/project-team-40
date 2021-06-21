@@ -13,6 +13,7 @@ import Gameplay.MonsterFieldArea;
 import Gameplay.Player;
 import Gameplay.SpellAndTrapFieldArea;
 import View.Exceptions.*;
+import View.GameplayView;
 import View.GraveyardView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -581,7 +582,7 @@ public class DatabaseController {
                 case "Twin Twisters":
                     spell.spellEffect = objects -> {
                         Matcher matcher;
-                        GameplayController.getInstance().discardACard();
+                        GameplayView.getInstance().discardACard();
                         int counter = 0;
                         GameplayController.getInstance().deselectCard();
                         while (counter < 2) {
