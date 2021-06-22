@@ -23,7 +23,7 @@ public enum Menu {
             case IMPORT_EXPORT_MENU -> "Import/Export";
             case DUEL_MENU -> "Duel";
             case SCOREBOARD_MENU -> "ScoreboardMenu";
-            case GAMEPLAY -> "Gameplay";
+            case GAMEPLAY -> "src/test/Gameplay";
             default -> "";
         };
     }

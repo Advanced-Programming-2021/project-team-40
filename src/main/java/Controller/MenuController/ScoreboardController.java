@@ -2,7 +2,6 @@ package Controller.MenuController;
 
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
-import Database.Deck;
 import Database.User;
 import View.Exceptions.MenuNavigationNotPossibleException;
 import View.ScoreboardView;
