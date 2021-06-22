@@ -45,6 +45,10 @@ public class User {
         return users;
     }
 
+    public static void clearUsers() {
+        users.clear();
+    }
+
     public Deck getDeckByName(String deckName){
         for (Deck deck: decks
         ) {
