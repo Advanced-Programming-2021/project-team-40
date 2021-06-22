@@ -45,6 +45,10 @@ public class User {
         return users;
     }
 
+    //Used in jUnit tests
+    public static void emptyUsers(){
+        users.removeAll(users);
+    }
     public Deck getDeckByName(String deckName){
         for (Deck deck: decks
         ) {
@@ -52,6 +56,7 @@ public class User {
         }
         return null;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -138,4 +143,5 @@ public class User {
     public void addCard(Card card){
         inactiveCards.add(card);
     }
+
 }
