@@ -1,10 +1,10 @@
 import Controller.DatabaseController.DatabaseController;
 import Controller.MenuController.LoginController;
+import Controller.MenuController.ProfileMenuController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
 import Database.User;
 import View.Exceptions.*;
-import org.apache.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.function.Executable;
@@ -19,7 +19,7 @@ public class SignupLoginTests {
     }
 
     @Test
-    public void createSecondUserTest(){
+    public void createSecondUserTest() {
         Executable weakPassword = new Executable() {
             @Override
             public void execute() throws Throwable {
@@ -57,7 +57,7 @@ public class SignupLoginTests {
     }
 
     @Test
-    public void loginTests(){
+    public void loginTests() {
         Executable usernameNotFound = new Executable() {
             @Override
             public void execute() throws Throwable {
@@ -83,6 +83,49 @@ public class SignupLoginTests {
         Assertions.assertThrows(InvalidLoginException.class, invalidLogin);
         Assertions.assertDoesNotThrow(everythingFine);
         Assertions.assertEquals(ProgramController.getInstance().getCurrentMenu(), Menu.MAIN_MENU);
+    }
+
+    @Test
+    public void profileMenuTests() {
+        Executable wrongPassword = new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                ProfileMenuController.getInstance().changePassword("666Password", "Password666", User.getUserByName("Testali"));
+            }
+        };
+
+        Executable passwordChangeSuccessful = new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                ProfileMenuController.getInstance().changePassword("1234Pass", "Password666", User.getUserByName("Testali"));
+            }
+        };
+
+        Executable repetitiveNickname = new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                ProfileMenuController.getInstance().changeNickname("TestUser1", User.getUserByName("MammadTest"));
+            }
+        };
+
+        Executable nicknameChangeSuccessful = new Executable() {
+            @Override
+            public void execute() throws Throwable {
+                ProfileMenuController.getInstance().changeNickname("ChangedNickname", User.getUserByNickname("MammadTest"));
+            }
+        };
+
+        Assertions.assertThrows(InvalidPasswordException.class, wrongPassword);
+        Assertions.assertDoesNotThrow(passwordChangeSuccessful);
+        Assertions.assertEquals(User.getUserByName("Testali").getPassword(), "Password666");
+        Assertions.assertThrows(RepetitiveNicknameException.class, repetitiveNickname);
+        Assertions.assertDoesNotThrow(nicknameChangeSuccessful);
+        Assertions.assertEquals("ChangedNickname", User.getUserByName("MammadTest").getNickname());
+    }
+
+    @AfterAll
+    static void clearUsers(){
+        User.clearUsers();
     }
 
 }

@@ -1,5 +1,6 @@
 package Controller.MenuController;
 
+import Controller.DatabaseController.DatabaseController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
 import Database.Cards.Card;
@@ -24,6 +25,7 @@ public class ShopController implements MenuNavigation{
         if (card.getCardPrice() > currentUser.getBalance()) throw new NotEnoughMoneyException();
         currentUser.setBalance(currentUser.getBalance() - card.getCardPrice());
         currentUser.getInactiveCards().add(card);
+        DatabaseController.getInstance().saveUser(currentUser);
     }
 
     public void toUpperMenu() {
@@ -42,6 +44,7 @@ public class ShopController implements MenuNavigation{
         if (!amount.matches("^\\d+$")) return;
         int balance = Integer.parseInt(amount);
         currentUser.setBalance(currentUser.getBalance() + balance);
+        DatabaseController.getInstance().saveUser(currentUser);
         System.out.println(currentUser.getBalance());
     }
 }
