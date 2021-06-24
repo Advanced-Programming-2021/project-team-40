@@ -178,6 +178,8 @@ public class GameplayController {
             default:
                 gameplay.setCurrentPlayer(winner);
                 gameplay.setOpponentPlayer(loser);
+                GameplayView.getInstance().utiliseSideDeckPrompt(gameplay.getCurrentPlayer());
+                GameplayView.getInstance().utiliseSideDeckPrompt(gameplay.getOpponentPlayer());
                 gameplay.setSelectedField(null);
                 gameplay.setAttacker(null);
                 gameplay.setBeingAttacked(null);

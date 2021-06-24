@@ -50,4 +50,14 @@ public class DeckView {
         System.out.println("Spell and Traps:");
         for (SpellAndTrap spellAndTrap : spellAndTraps) CardView.showCardInList(spellAndTrap);
     }
+
+    public static void showDeckMidGame(Deck deck){
+        int mainCounter = 1, sideCounter = 1;
+        for (Card card : deck.getMainCards()) {
+            System.out.println(mainCounter++ + ": " + card.getName());
+        }
+        for (Card card : deck.getSideCards()) {
+            System.out.println(sideCounter++ + ": " + card.getName());
+        }
+    }
 }

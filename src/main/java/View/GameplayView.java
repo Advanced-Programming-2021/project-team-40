@@ -5,6 +5,7 @@ import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
 import Database.Cards.CardType;
 import Database.Cards.Monster;
+import Database.User;
 import Gameplay.*;
 import View.Exceptions.*;
 
@@ -386,11 +387,12 @@ public class GameplayView {
         while (true) {
             String input = ProgramController.getInstance().getScanner().nextLine();
             if (input.matches(Regex.cancelAction)) throw new CommandCancellationException("Equip");
-            else if (input.matches(Regex.help)) System.out.println("choose you card for equip; or cancel the operation");
+            else if (input.matches(Regex.help))
+                System.out.println("choose you card for equip; or cancel the operation");
             else if ((matcher = Regex.getCommandMatcher(input, Regex.selectMonsterCard)).matches()) {
-                    selectCard(matcher);
-                    if (GameplayController.getInstance().gameplay.getSelectedField() == null) continue;
-                    if (equipSpell.getCard().equipEffect.isMonsterCorrect((MonsterFieldArea) GameplayController.getInstance().gameplay.getSelectedField()))
+                selectCard(matcher);
+                if (GameplayController.getInstance().gameplay.getSelectedField() == null) continue;
+                if (equipSpell.getCard().equipEffect.isMonsterCorrect((MonsterFieldArea) GameplayController.getInstance().gameplay.getSelectedField()))
                     return;
                 else {
                     System.out.println("Wrong Card Selection!");
@@ -398,6 +400,24 @@ public class GameplayView {
                 }
             } else System.out.println("you have to equip a monster right now");
             gameplayView.showBoard();
+        }
+    }
+
+    public void utiliseSideDeckPrompt(Player player) {
+        System.out.println("it's " + player.getUser().getNickname() + "'s turn to utilise their side deck" );
+        System.out.println("type \"--main <main> --side <side>\" to switch cards between side deck and main deck, or \"done\"");
+        Matcher matcher;
+        while (true) {
+            DeckView.showDeckMidGame(player.getPlayingDeck());
+            String input = ProgramController.getInstance().getScanner().nextLine();
+            if (input.matches("done")) break;
+            else if ((matcher = Regex.getCommandMatcher(input, Regex.switchCard)).matches()) {
+                try {
+                    GameplayController.getInstance().getGameplay().switchCards(matcher, player);
+                } catch (InvalidSideSwitchException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         }
     }
 }
