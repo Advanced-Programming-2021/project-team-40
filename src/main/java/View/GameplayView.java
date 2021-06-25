@@ -85,7 +85,7 @@ public class GameplayView {
                 String command = ProgramController.getInstance().getScanner().nextLine();
                 if ((matcher = Regex.getCommandMatcher(command, Regex.selectHandCard)).matches()) {
                     selectCard(matcher);
-                    GameplayController.getInstance().discardACard();
+                    GameplayController.getInstance().discardSelectedCard();
                     break;
                 }
             } catch (InvalidCardSelectionException e) {
@@ -357,13 +357,15 @@ public class GameplayView {
 
     public void spellAndTrapToChainPrompt(SpellAndTrapActivationType type) throws ActionNotPossibleException, AttackNotPossibleException {
         String input;
-        System.out.println("select the card you want to chain:");
+        System.out.println("select the Trap card you want to chain:");
         while (true) {
             Matcher matcher;
             input = ProgramController.getInstance().getScanner().nextLine();
             if ((matcher = Regex.getCommandMatcher(input, Regex.selectSpellCard)).matches())
                 selectCard(matcher);
+            else if (input.matches(Regex.showSelectedCard)) showCard();
             else if (input.matches(Regex.deselectCard)) deselectCard();
+            else if (input.matches(Regex.help)) System.out.println("select the Trap card you want to chain");
             else if (input.matches(Regex.activateEffect)) {
                 if (chainActivateEffect(type)) break;
             } else System.out.println("it's not your turn to play this kind of moves");
