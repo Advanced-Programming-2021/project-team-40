@@ -5,12 +5,10 @@ import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
 import Database.Cards.CardType;
 import Database.Cards.Monster;
-import Database.User;
 import Gameplay.*;
 import View.Exceptions.*;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.regex.Matcher;
 
 public class GameplayView {
@@ -95,6 +93,25 @@ public class GameplayView {
         }
     }
 
+    public void discardACard(FieldArea toDiscard) throws CardCantDiscardItselfException {
+        if (GameplayController.getInstance().getGameplay().getSelectedField().equals(toDiscard))
+            throw new CardCantDiscardItselfException();
+        while (true) {
+            try {
+                Matcher matcher;
+                String command = ProgramController.getInstance().getScanner().nextLine();
+                if ((matcher = Regex.getCommandMatcher(command, Regex.selectHandCard)).matches()) {
+                    selectCard(matcher);
+                    GameplayController.getInstance().discardSelectedCard();
+                    break;
+                }
+            } catch (InvalidCardSelectionException e) {
+                System.out.println(e.getMessage());
+                deselectCard();
+            }
+        }
+    }
+
     private void forceAddCardCheat(Matcher matcher) {
         String cardName = matcher.group("cardName");
         try {
@@ -150,10 +167,10 @@ public class GameplayView {
         System.out.println("select the ritual monster you want to summon/set:");
         while (true) {
             cardInput = ProgramController.getInstance().getScanner().nextLine();
-            if ((matcher = Regex.getCommandMatcher(cardInput, Regex.selectHandCard)).matches())
+            if ((matcher = Regex.getCommandMatcher(cardInput, Regex.selectHandCard)).matches() && matcher.group("isOpponent") == null)
                 selectCard(matcher);
             else if (cardInput.matches(Regex.cancelAction)) {
-                //TODO: more stuff here
+                GameplayController.getInstance().effectSpellAndTraps.clear();
                 throw new CommandCancellationException("ritual summon");
             } else if (cardInput.matches(Regex.showSelectedCard)) showCard();
             else System.out.println("you should ritual summon right now");
@@ -173,7 +190,8 @@ public class GameplayView {
         while (true) {
             cardInput = ProgramController.getInstance().getScanner().nextLine();
             if (cardInput.matches(Regex.cancelAction)) {
-                //TODO: more things should be done here
+                GameplayController.getInstance().effectSpellAndTraps.clear();
+                GameplayController.getInstance().deselectCard();
                 throw new CommandCancellationException("Ritual summon");
             }
             if (cardInput.matches(Regex.summon)) {
@@ -325,6 +343,7 @@ public class GameplayView {
         String inputRegex = "^(\\d+\\s?)+$";
         String input;
         String[] ids;
+        DeckView.showDeckWithLevels(GameplayController.getInstance().getGameplay().getCurrentPlayer().getPlayingDeck());
         System.out.println("select cards you want to tribute for ritual summon:");
         while (true) {
             input = ProgramController.getInstance().getScanner().nextLine();
@@ -408,7 +427,7 @@ public class GameplayView {
     }
 
     public void utiliseSideDeckPrompt(Player player) {
-        System.out.println("it's " + player.getUser().getNickname() + "'s turn to utilise their side deck" );
+        System.out.println("it's " + player.getUser().getNickname() + "'s turn to utilise their side deck");
         System.out.println("type \"card switch --main <main> --side <side>\" to switch cards between side deck and main deck, or \"done\"");
         Matcher matcher;
         while (true) {
