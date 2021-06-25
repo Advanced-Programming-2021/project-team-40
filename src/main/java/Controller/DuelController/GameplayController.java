@@ -284,6 +284,7 @@ public class GameplayController {
                         throw new ActionNotPossibleException("Nazadim ino");
                     else {
                         ((Spell) fieldArea.getCard()).spellEffect.execute();
+                        destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) fieldArea);
                     }
                 } else if (fieldArea instanceof SpellAndTrapFieldArea) {
                     onSpellActivationTraps();
@@ -454,7 +455,7 @@ public class GameplayController {
             throw new InvalidChangePositionException();
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseException();
-        if (((MonsterFieldArea) fieldArea).hasAttacked()) throw new AlreadySetPositionException();
+        if (((MonsterFieldArea) fieldArea).hasSwitchedMode()) throw new AlreadySetPositionException();
         if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.isVisible()) throw new InvalidFlipSummonException();
         //TODO add necessary effects
         if (fieldArea.getCard().onFlipSummon != null) fieldArea.getCard().onFlipSummon.execute();
@@ -773,7 +774,6 @@ public class GameplayController {
         else if (gameplay.getCurrentPlayer().getLifePoints() <= 0)
             message = endARound(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
         return message;
-        //TODO check for more possible conditions
     }
 
     private boolean hasRitualMonsterInHand() {
