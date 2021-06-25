@@ -842,7 +842,7 @@ public class GameplayController {
     private boolean isOpponentFieldEmpty() {
         MonsterFieldArea[] monsterFieldAreas = gameplay.getOpponentPlayer().getField().getMonstersField();
         for (MonsterFieldArea monster : monsterFieldAreas) {
-            if (monster != null) return false;
+            if (monster.getCard() != null) return false;
         }
         return true;
     }

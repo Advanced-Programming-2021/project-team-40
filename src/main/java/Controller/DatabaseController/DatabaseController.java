@@ -196,7 +196,6 @@ public class DatabaseController {
                         Card cardToSpecialSummon;
                         while (true) {
                             ArrayList<Card> graveyard = new ArrayList<>();
-                            input = ProgramController.getInstance().getScanner().nextLine();
                             for (Card card : Effect.gameplay.getCurrentPlayer().getField().getGraveyard()) {
                                 if (card instanceof Monster) graveyard.add(card);
                             }
@@ -204,6 +203,7 @@ public class DatabaseController {
                                 if (card instanceof Monster) graveyard.add(card);
                             }
                             GraveyardView.showGraveyard(graveyard);
+                            input = ProgramController.getInstance().getScanner().nextLine();
                             if (input.matches("\\d+")) {
                                 if (Integer.parseInt(input) > graveyard.size())
                                     System.out.println("location invalid in this graveyard");
@@ -506,7 +506,6 @@ public class DatabaseController {
                         Card cardToSpecialSummon;
                         while (true) {
                             ArrayList<Card> graveyard = new ArrayList<>();
-                            input = ProgramController.getInstance().getScanner().nextLine();
                             for (Card card : Effect.gameplay.getCurrentPlayer().getField().getGraveyard()) {
                                 if (card instanceof Monster) graveyard.add(card);
                             }
@@ -514,6 +513,7 @@ public class DatabaseController {
                                 if (card instanceof Monster) graveyard.add(card);
                             }
                             GraveyardView.showGraveyard(graveyard);
+                            input = ProgramController.getInstance().getScanner().nextLine();
                             if (input.matches("\\d+")) {
                                 if (Integer.parseInt(input) > graveyard.size())
                                     System.out.println("location invalid in this graveyard");
@@ -602,9 +602,12 @@ public class DatabaseController {
                 case "Twin Twisters":
                     spell.spellEffect = objects -> {
                         Matcher matcher;
+                        SpellAndTrapFieldArea thisCard = (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField();
+                        System.out.println("Discard one card from your own hand");
                         GameplayView.getInstance().discardACard();
                         int counter = 0;
                         GameplayController.getInstance().deselectCard();
+                        System.out.println("Select at most 2 spell and trap cards to destroy, or type done");
                         while (counter < 2) {
                             try {
                                 String input = ProgramController.getInstance().getScanner().nextLine();
@@ -613,6 +616,10 @@ public class DatabaseController {
                                     GameplayController.getInstance().selectCard(matcher.group("id"), "--spell", isOpponent);
                                     if (GameplayController.getInstance().getGameplay().getSelectedField().getCard() == null)
                                         continue;
+                                    if (GameplayController.getInstance().getGameplay().getSelectedField() == thisCard){
+                                        System.out.println("You can't discard this card");
+                                        continue;
+                                    }
                                     counter++;
                                     Player player = GameplayController.getInstance().getGameplay().getCurrentPlayer();
                                     if (isOpponent)
@@ -621,6 +628,7 @@ public class DatabaseController {
                                 } else if (input.matches("done")) break;
                                 else if (input.matches(Regex.help))
                                     System.out.println("Select at most " + (2 - counter) + " spell and trap cards to destroy, or type done");
+                                GameplayView.getInstance().showBoard();
                             } catch (Exception e) {
                                 System.out.println(e.getMessage());
                             }
@@ -682,11 +690,6 @@ public class DatabaseController {
                                 }
                             }
                         }
-
-                        @Override
-                        public void deactivate() {
-
-                        }
                     };
                     break;
 
@@ -713,12 +716,6 @@ public class DatabaseController {
                                 }
                             }
                         }
-
-
-                        @Override
-                        public void deactivate() {
-
-                        }
                     };
                     break;
 
@@ -738,11 +735,6 @@ public class DatabaseController {
                                     myField.setAttackPoint(myField.getAttackPoint() + 100 * counter);
                                 }
                             }
-                        }
-
-                        @Override
-                        public void deactivate() {
-
                         }
                     };
                     break;
@@ -765,11 +757,6 @@ public class DatabaseController {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() - 400);
                                 }
                             }
-                        }
-
-                        @Override
-                        public void deactivate() {
-
                         }
                     };
                     break;
