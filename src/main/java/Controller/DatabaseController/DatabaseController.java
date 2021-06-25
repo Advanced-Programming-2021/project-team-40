@@ -147,15 +147,20 @@ public class DatabaseController {
                     break;
                 case "Magic Jammer":
                     trap.onSpellActivation = objects -> {
-                        System.out.print("choose one card to discard for Magic Jammer:");
-                        while (true) {
+                        System.out.println("choose one card to discard for Magic Jammer:");
+                        Matcher matcher;
 
+                        while (true) {
                             String input = ProgramController.getInstance().getScanner().nextLine();
-                            if (!GameplayController.getInstance().isHandLocationInvalid(input)) {
-                                int id = Integer.parseInt(input);
-                                GameplayController.getInstance().moveCardToGraveyard(Effect.gameplay.getCurrentPlayer(), Effect.gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard());
-                                Effect.gameplay.getCurrentPlayer().getPlayingHand().remove(id);
-                                break;
+                            if ((matcher = Regex.getCommandMatcher(input,Regex.selectHandCard)).matches()) {
+                                GameplayView.getInstance().selectCard(matcher);
+                                try {
+                                    if (Effect.gameplay.getSelectedField() == null || !(Effect.gameplay.getSelectedField() instanceof HandFieldArea)) throw new InvalidCardSelectionException();
+                                    GameplayController.getInstance().discardSelectedCard();
+                                    break;
+                                } catch (InvalidCardSelectionException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                         throw new ActionNotPossibleException("Opponent's magic jammer destroyed your card!");
@@ -276,9 +281,8 @@ public class DatabaseController {
                     };
                     card.onDamageCalculation = new Effect() {
                         @Override
-                        public void execute(Object... objects) {
-                            Player damageTaken = (Player) objects[0];
-                            int damage = (int) objects[1];
+                        public void execute(Object... objects) throws ActionNotPossibleException {
+                            throw new ActionNotPossibleException("");
                         }
                     };
                     break;
@@ -308,7 +312,7 @@ public class DatabaseController {
                             boolean hasMonster = false;
                             for (HandFieldArea hand :
                                     gameplay.getCurrentPlayer().getPlayingHand()) {
-                                if (hand.getCard() instanceof Monster) {
+                                if (hand.getCard() instanceof Monster && ((Monster) hand.getCard()).getLevel() <= 4) {
                                     hasMonster = true;
                                     break;
                                 }
@@ -335,6 +339,7 @@ public class DatabaseController {
                                         System.out.println("selected card special summoned successfully");
                                         break;
                                     }
+                                    else if (input.matches(Regex.help)) System.out.println("you can select one level 4 or lower monster from your hand to summon");
                                 } catch (InvalidCardSelectionException e) {
                                     System.out.println(e.getMessage());
                                 }
@@ -382,9 +387,7 @@ public class DatabaseController {
                     card.setHasEffect(true);
                     card.uniqueSummon = new UniqueSummon() {
                         @Override
-                        public void summon() throws SpecialSummonNotPossibleException, NotEnoughCardsException, CommandCancellationException {
-                            if (gameplay.getCurrentPlayer().getPlayingHand().size() == 1)
-                                throw new SpecialSummonNotPossibleException();
+                        public void summon() throws NotEnoughCardsException, CommandCancellationException {
                             GameplayController.getInstance().tributeCards(GameplayView.getInstance().getTributes(3));
                         }
                     };

@@ -276,6 +276,7 @@ public class GameplayView {
         try {
             GameplayController.getInstance().summon();
             System.out.println("summoned successfully");
+            GameplayController.getInstance().checkForAfterSummon();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
