@@ -86,8 +86,7 @@ public class GameplayController {
                 doPhaseAction();
                 break;
             case BATTLE_PHASE:
-                if (!hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
-                else gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
+                gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
                 System.out.println(gameplay.getCurrentPhase().toString());
                 doPhaseAction();
                 break;
@@ -494,7 +493,7 @@ public class GameplayController {
         StringBuilder temp = null;
         try {
             onAttackTraps();
-            if (attackTarget.getCard().onBeingAttacked != null) attackTarget.getCard().onBeingAttacked.execute();
+            if (attackTarget.getCard() != null && attackTarget.getCard().onBeingAttacked != null) attackTarget.getCard().onBeingAttacked.execute();
             temp = calculateDamage((MonsterFieldArea) attacker, attackTarget);
             ((MonsterFieldArea) attacker).setHasAttacked(true);
             deselectCard();
@@ -504,6 +503,7 @@ public class GameplayController {
             temporarySwitchTurn();
             System.out.println(e.getMessage());
         } finally {
+            //TODO wtf is finally? Also wtf is temporarySwitchTurn doing in the catch?
             for (SpellAndTrapFieldArea trap :
                     gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
                 if (trap.getCard() != null)
