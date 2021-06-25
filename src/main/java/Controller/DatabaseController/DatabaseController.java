@@ -187,7 +187,40 @@ public class DatabaseController {
                     break;
                 case "Call of The Haunted":
                     trap.inStandbyPhase = objects -> {
-                        //TODO: easy easy
+                        if (Effect.gameplay.getCurrentPlayer().getField().getGraveyard().size() == 0 && Effect.gameplay.getOpponentPlayer().getField().getGraveyard().size() == 0)
+                            throw new ActionNotPossibleException("you can't use this card effects");
+                        if (Effect.gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea() == null)
+                            throw new MonsterZoneFullException();
+                        System.out.println("Please select a card from you or your opponent's graveyard:");
+                        String input;
+                        Card cardToSpecialSummon;
+                        while (true) {
+                            ArrayList<Card> graveyard = new ArrayList<>();
+                            for (Card card : Effect.gameplay.getCurrentPlayer().getField().getGraveyard()) {
+                                if (card instanceof Monster) graveyard.add(card);
+                            }
+                            for (Card card : Effect.gameplay.getOpponentPlayer().getField().getGraveyard()) {
+                                if (card instanceof Monster) graveyard.add(card);
+                            }
+                            GraveyardView.showGraveyard(graveyard);
+                            input = ProgramController.getInstance().getScanner().nextLine();
+                            if (input.matches("\\d+")) {
+                                if (Integer.parseInt(input) > graveyard.size())
+                                    System.out.println("location invalid in this graveyard");
+                                else {
+                                    cardToSpecialSummon = graveyard.get(Integer.parseInt(input) - 1);
+                                    graveyard.remove(Integer.parseInt(input) - 1);
+                                    if (Effect.gameplay.getCurrentPlayer().getField().getGraveyard().contains(cardToSpecialSummon))
+                                        Effect.gameplay.getCurrentPlayer().getField().getGraveyard().remove(cardToSpecialSummon);
+                                    else
+                                        Effect.gameplay.getOpponentPlayer().getField().getGraveyard().remove(cardToSpecialSummon);
+                                    GameplayController.getInstance().specialSummon(cardToSpecialSummon);
+                                    break;
+                                }
+
+                            }
+                        }
+
                     };
                     break;
             }
@@ -473,7 +506,6 @@ public class DatabaseController {
                         Card cardToSpecialSummon;
                         while (true) {
                             ArrayList<Card> graveyard = new ArrayList<>();
-                            input = ProgramController.getInstance().getScanner().nextLine();
                             for (Card card : Effect.gameplay.getCurrentPlayer().getField().getGraveyard()) {
                                 if (card instanceof Monster) graveyard.add(card);
                             }
@@ -481,6 +513,7 @@ public class DatabaseController {
                                 if (card instanceof Monster) graveyard.add(card);
                             }
                             GraveyardView.showGraveyard(graveyard);
+                            input = ProgramController.getInstance().getScanner().nextLine();
                             if (input.matches("\\d+")) {
                                 if (Integer.parseInt(input) > graveyard.size())
                                     System.out.println("location invalid in this graveyard");
@@ -506,6 +539,7 @@ public class DatabaseController {
                         boolean foundCard = false;
                         System.out.println("looking for field spell card to add to hand...");
                         for (Card card : Effect.gameplay.getCurrentPlayer().getPlayingDeck().getMainCards()) {
+                            if (!(card instanceof SpellAndTrap)) continue;
                             if (((SpellAndTrap) card).getIcon().equals(Icon.FIELD)) {
                                 HandFieldArea handFieldArea = new HandFieldArea(card);
                                 Effect.gameplay.getCurrentPlayer().getPlayingHand().add(handFieldArea);
@@ -540,10 +574,6 @@ public class DatabaseController {
                     };
                     break;
 
-                case "Change of Heart":
-                    //TODO
-                    break;
-
                 case "Harpie's Feather Duster":
                     spell.spellEffect = objects -> {
                         SpellAndTrapFieldArea[] opponentSpellZone = Effect.gameplay.getOpponentPlayer().getField().getSpellAndTrapField();
@@ -552,10 +582,6 @@ public class DatabaseController {
                                 GameplayController.getInstance().destroySpellAndTrapCard(Effect.gameplay.getOpponentPlayer(), opponentSpellZone[i]);
                         }
                     };
-                    break;
-
-                case "Swords of Revealing Light":
-                    //TODO
                     break;
 
                 case "Dark Hole":
@@ -573,24 +599,15 @@ public class DatabaseController {
                     };
                     break;
 
-                case "Supply Squad":
-                    //TODO
-                    break;
-
-                case "Spell Absorption":
-                    //TODO
-                    break;
-
-                case "Messenger of peace":
-                    //TODO
-                    break;
-
                 case "Twin Twisters":
                     spell.spellEffect = objects -> {
                         Matcher matcher;
+                        SpellAndTrapFieldArea thisCard = (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField();
+                        System.out.println("Discard one card from your own hand");
                         GameplayView.getInstance().discardACard();
                         int counter = 0;
                         GameplayController.getInstance().deselectCard();
+                        System.out.println("Select at most 2 spell and trap cards to destroy, or type done");
                         while (counter < 2) {
                             try {
                                 String input = ProgramController.getInstance().getScanner().nextLine();
@@ -599,6 +616,10 @@ public class DatabaseController {
                                     GameplayController.getInstance().selectCard(matcher.group("id"), "--spell", isOpponent);
                                     if (GameplayController.getInstance().getGameplay().getSelectedField().getCard() == null)
                                         continue;
+                                    if (GameplayController.getInstance().getGameplay().getSelectedField() == thisCard){
+                                        System.out.println("You can't discard this card");
+                                        continue;
+                                    }
                                     counter++;
                                     Player player = GameplayController.getInstance().getGameplay().getCurrentPlayer();
                                     if (isOpponent)
@@ -607,6 +628,7 @@ public class DatabaseController {
                                 } else if (input.matches("done")) break;
                                 else if (input.matches(Regex.help))
                                     System.out.println("Select at most " + (2 - counter) + " spell and trap cards to destroy, or type done");
+                                GameplayView.getInstance().showBoard();
                             } catch (Exception e) {
                                 System.out.println(e.getMessage());
                             }
@@ -648,7 +670,7 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.FIEND)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 200);
                                     myField.setAttackPoint(myField.getAttackPoint() + 200);
                                 } else if (myField.getCard() != null && ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.FAIRY)) {
@@ -659,7 +681,7 @@ public class DatabaseController {
                             for (MonsterFieldArea opponentField :
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
                                 if (opponentField.getCard() != null && (((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.FIEND)
-                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
+                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() + 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 200);
                                 } else if (opponentField.getCard() != null && ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.FAIRY)) {
@@ -667,11 +689,6 @@ public class DatabaseController {
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() - 200);
                                 }
                             }
-                        }
-
-                        @Override
-                        public void deactivate() {
-
                         }
                     };
                     break;
@@ -683,8 +700,8 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.INSECT)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 200);
                                     myField.setAttackPoint(myField.getAttackPoint() + 200);
                                 }
@@ -692,18 +709,12 @@ public class DatabaseController {
                             for (MonsterFieldArea opponentField :
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
                                 if (opponentField.getCard() != null && (((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.INSECT)
-                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST)
+                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() + 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 200);
                                 }
                             }
-                        }
-
-
-                        @Override
-                        public void deactivate() {
-
                         }
                     };
                     break;
@@ -719,16 +730,11 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 100 * counter);
                                     myField.setAttackPoint(myField.getAttackPoint() + 100 * counter);
                                 }
                             }
-                        }
-
-                        @Override
-                        public void deactivate() {
-
                         }
                     };
                     break;
@@ -751,11 +757,6 @@ public class DatabaseController {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() - 400);
                                 }
                             }
-                        }
-
-                        @Override
-                        public void deactivate() {
-
                         }
                     };
                     break;

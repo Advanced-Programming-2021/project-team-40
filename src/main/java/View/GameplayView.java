@@ -10,6 +10,7 @@ import Gameplay.*;
 import View.Exceptions.*;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.regex.Matcher;
 
 public class GameplayView {
@@ -407,7 +408,7 @@ public class GameplayView {
 
     public void utiliseSideDeckPrompt(Player player) {
         System.out.println("it's " + player.getUser().getNickname() + "'s turn to utilise their side deck" );
-        System.out.println("type \"--main <main> --side <side>\" to switch cards between side deck and main deck, or \"done\"");
+        System.out.println("type \"card switch --main <main> --side <side>\" to switch cards between side deck and main deck, or \"done\"");
         Matcher matcher;
         while (true) {
             DeckView.showDeckMidGame(player.getPlayingDeck());
