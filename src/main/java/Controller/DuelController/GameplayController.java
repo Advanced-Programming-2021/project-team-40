@@ -420,13 +420,8 @@ public class GameplayController {
     }
 
     private void ritualTribute(String[] ids, FieldArea ritualSpell) {
-        ArrayList<Card> mainCards = gameplay.getCurrentPlayer().getPlayingDeck().getMainCards();
-        for (String idString :
-                ids) {
-            int id = Integer.parseInt(idString);
-            GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), mainCards.get(id));
-            mainCards.remove(id);
-        }
+        removeTributesFromHand(ids);
+        DeckMenuController.getInstance().shuffleDeck(gameplay.getCurrentPlayer().getPlayingDeck());
         effectSpellAndTraps.remove(ritualSpell);
         if (ritualSpell instanceof HandFieldArea)
             gameplay.getCurrentPlayer().getPlayingHand().remove(ritualSpell);
@@ -437,15 +432,31 @@ public class GameplayController {
         normalSummon((HandFieldArea) gameplay.getSelectedField(), gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea());
     }
 
-    private void ritualSet(String[] ids) {
+    private void ritualSet(String[] ids, FieldArea ritualSpell) {
+        removeTributesFromHand(ids);
+        DeckMenuController.getInstance().shuffleDeck(gameplay.getCurrentPlayer().getPlayingDeck());
+        effectSpellAndTraps.remove(ritualSpell);
+        if (ritualSpell instanceof HandFieldArea)
+            gameplay.getCurrentPlayer().getPlayingHand().remove(ritualSpell);
+        if (ritualSpell instanceof SpellAndTrapFieldArea)
+            destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) ritualSpell);
+        moveCardToGraveyard(gameplay.getCurrentPlayer(), ritualSpell.getCard());
+        setMonsterCard(gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea(), (HandFieldArea) gameplay.getSelectedField());
+    }
+
+    private void removeTributesFromHand(String[] ids) {
         ArrayList<Card> mainCards = gameplay.getCurrentPlayer().getPlayingDeck().getMainCards();
+        ArrayList<Card> cardsToRemove = new ArrayList<>();
         for (String idString :
                 ids) {
             int id = Integer.parseInt(idString);
-            GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), mainCards.get(id));
-            mainCards.remove(id);
+            GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), mainCards.get(id - 1));
+            cardsToRemove.add(mainCards.get(id - 1));
+            System.out.println("Card to remove: " + mainCards.get(id - 1).getName());
         }
-        setMonsterCard(gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea(), (HandFieldArea) gameplay.getSelectedField());
+        for (Card card : cardsToRemove) {
+            mainCards.remove(card);
+        }
     }
 
     public void flipSummon() throws Exception {
@@ -783,7 +794,7 @@ public class GameplayController {
         }
     }
 
-    public void destroyHandFieldCard(Player player, HandFieldArea area){
+    public void destroyHandFieldCard(Player player, HandFieldArea area) {
         try {
             if ((area.getCard()).onDestruction != null)
                 (area.getCard()).onDestruction.execute(player);
@@ -951,8 +962,8 @@ public class GameplayController {
         for (String idString :
                 ids) {
             if ((id = Integer.parseInt(idString)) > mainCards.size()) return false;
-            if (!(mainCards.get(id) instanceof Monster)) return false;
-            levelSum += ((Monster) mainCards.get(id)).getLevel();
+            if (!(mainCards.get(id - 1) instanceof Monster)) return false;
+            levelSum += ((Monster) mainCards.get(id - 1)).getLevel();
         }
         return levelSum >= ((Monster) gameplay.getSelectedField().getCard()).getLevel();
     }

@@ -29,7 +29,20 @@ public class DeckView {
     public static void showDeck(Deck deck) {
         if (deck == null) return;
         System.out.println(deck.getName() + ": main deck " + deck.getMainCards().size() + ", side deck " +
-                           deck.getSideCards().size() + ", " + DeckMenuController.getInstance().deckValidityString(deck));
+                deck.getSideCards().size() + ", " + DeckMenuController.getInstance().deckValidityString(deck));
+    }
+
+    public static void showDeckWithLevels(Deck deck) {
+        int mainCounter = 1;
+        System.out.println("-----\nMain deck:");
+        for (Card card : deck.getMainCards()) {
+            if (! (card instanceof Monster)) {
+                mainCounter++;
+                continue;
+            }
+            System.out.println(mainCounter++ + ": " + card.getName() + " - Level : " + ((Monster) card).getLevel());
+        }
+        System.out.println("-----");
     }
 
     public void showDetailedDeck(Deck deck, boolean isSide) {
@@ -51,7 +64,7 @@ public class DeckView {
         for (SpellAndTrap spellAndTrap : spellAndTraps) CardView.showCardInList(spellAndTrap);
     }
 
-    public static void showDeckMidGame(Deck deck){
+    public static void showDeckMidGame(Deck deck) {
         int mainCounter = 1, sideCounter = 1;
         System.out.println("-----\nMain deck:");
         for (Card card : deck.getMainCards()) {
