@@ -118,7 +118,6 @@ public class DatabaseController {
                 case "Negate Attack":
                     trap.onBeingAttacked = objects -> {
                         GameplayController.getInstance().goToNextPhase();
-                        //TODO: not sure about correct printing order
                         throw new ActionNotPossibleException("Your attack was negated!");
                     };
                     break;
@@ -126,6 +125,7 @@ public class DatabaseController {
                     trap.onBeingAttacked = objects -> {
                         MonsterFieldArea attackingMonster = (MonsterFieldArea) Effect.gameplay.getAttacker();
                         Effect.gameplay.getOpponentPlayer().setLifePoints(Effect.gameplay.getOpponentPlayer().getLifePoints() - attackingMonster.getAttackPoint());
+                        throw new ActionNotPossibleException("Your attack was negated!");
                     };
                     break;
                 case "Torrential Tribute":
@@ -250,6 +250,7 @@ public class DatabaseController {
                                     Effect.gameplay.setOwnsSelectedCard(true);
                                     break;
                                 }
+                                else System.out.println("you should choose an opponent monster to destroy now");
                             } else System.out.println("you should choose an opponent monster to destroy now");
                         }
                     };
