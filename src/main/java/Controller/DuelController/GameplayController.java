@@ -238,8 +238,11 @@ public class GameplayController {
     }
 
     public boolean isHandLocationInvalid(String idToCheck) {
-        int id = Integer.parseInt(idToCheck);
-        return (gameplay.getCurrentPlayer().getPlayingHand().size() < id);
+        if (idToCheck.matches("^\\d+$")) {
+            int id = Integer.parseInt(idToCheck);
+            return (gameplay.getCurrentPlayer().getPlayingHand().size() < id);
+        }
+        return true;
     }
 
     public void deselectCard() throws NoCardIsSelectedException {
@@ -350,7 +353,8 @@ public class GameplayController {
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseException();
         if (fieldArea.getCard() instanceof Monster) setInMonsterCondition(fieldArea);
-        else if (fieldArea.getCard() instanceof Spell || fieldArea.getCard() instanceof Trap) setInSpellCondition(fieldArea);
+        else if (fieldArea.getCard() instanceof Spell || fieldArea.getCard() instanceof Trap)
+            setInSpellCondition(fieldArea);
     }
 
     private void setInSpellCondition(FieldArea fieldArea) throws SpellZoneFullException, NoCardIsSelectedException {
@@ -370,8 +374,7 @@ public class GameplayController {
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
         if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) {
             checkForRitual(false);
-        }
-        else if (((Monster) fieldArea.getCard()).getLevel() > 4)
+        } else if (((Monster) fieldArea.getCard()).getLevel() > 4)
             tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
         setMonsterCard(monster, (HandFieldArea) fieldArea);
         deselectCard();
@@ -754,7 +757,7 @@ public class GameplayController {
             }
         } catch (Exception ignored) {
         }
-            return damage;
+        return damage;
     }
 
     private String calculateDirectDamage(MonsterFieldArea monster) {
