@@ -760,7 +760,7 @@ public class DatabaseController {
                     };
                     break;
 
-                case "Umiruka":
+                case "Umiiruka":
                     spell.fieldZoneEffect = new ContinuousEffect() {
                         @Override
                         public void activate() {
