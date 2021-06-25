@@ -246,7 +246,6 @@ public class GameplayView {
             if (command.matches(Regex.showGraveyard))
                 GraveyardView.showGraveyard(GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getGraveyard());
             else System.out.println("invalid command");
-            //TODO: show board?
         }
     }
 
@@ -371,7 +370,6 @@ public class GameplayView {
             else if (input.equalsIgnoreCase("no")) return false;
             else System.out.println("it's not your turn to play this kind of moves");
             gameplayView.showBoard();
-            //TODO: check correct side
         }
     }
 

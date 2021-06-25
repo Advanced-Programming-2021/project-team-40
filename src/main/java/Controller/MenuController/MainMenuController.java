@@ -22,10 +22,10 @@ public class MainMenuController implements MenuNavigation {
 
     public void resetMenusForLogout() {
         deckMenu.setCurrentUser(null);
+        duelMenu.setCurrentUser(null);
         profileMenu.setCurrentUser(null);
         shopMenu.setCurrentUser(null);
         mainMenu.setCurrentUser(null);
-        //TODO complete list and add to login as well
     }
 
     public void toUpperMenu() {
