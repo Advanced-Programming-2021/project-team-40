@@ -32,7 +32,9 @@ public class MainGameTests {
             }
         }
         ShopController.getInstance().buy("Yami", kian);
+        ShopController.getInstance().buy("Bitron", kian);
         ShopController.getInstance().buy("Yami", dani);
+        ShopController.getInstance().buy("Bitron", dani);
     }
 
     @BeforeAll
@@ -43,9 +45,11 @@ public class MainGameTests {
         DeckMenuController.getInstance().activateDeck("DeckB", kian);
         DeckMenuController.getInstance().createDeck("DeckJ", dani);
         DeckMenuController.getInstance().activateDeck("DeckJ", dani);
+        DeckMenuController.getInstance().addCard("DeckB", "Bitron", true, kian);
         while (! kian.getInactiveCards().isEmpty()){
             DeckMenuController.getInstance().addCard("DeckB", kian.getInactiveCards().get(0).getName(), false, kian);
         }
+        DeckMenuController.getInstance().addCard("DeckJ", "Bitron", true, dani);
         while (! dani.getInactiveCards().isEmpty()){
             DeckMenuController.getInstance().addCard("DeckJ", dani.getInactiveCards().get(0).getName(), false, dani);
         }
@@ -76,7 +80,7 @@ public class MainGameTests {
         };
         Assertions.assertThrows(InvalidSummonException.class, opponentCardSummon);
         GameplayController.getInstance().forceAddCard("Feral Imp");
-        GameplayController.getInstance().selectCard("7", "-h", true);
+        GameplayController.getInstance().selectCard("6", "-h", true);
         GameplayController.getInstance().summon();
         GameplayController.getInstance().goToNextPhase();
         GameplayController.getInstance().selectCard("1", "-m", true);

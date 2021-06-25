@@ -53,11 +53,14 @@ public class DeckView {
 
     public static void showDeckMidGame(Deck deck){
         int mainCounter = 1, sideCounter = 1;
+        System.out.println("-----\nMain deck:");
         for (Card card : deck.getMainCards()) {
             System.out.println(mainCounter++ + ": " + card.getName());
         }
+        System.out.println("Side deck:");
         for (Card card : deck.getSideCards()) {
             System.out.println(sideCounter++ + ": " + card.getName());
         }
+        System.out.println("-----");
     }
 }
