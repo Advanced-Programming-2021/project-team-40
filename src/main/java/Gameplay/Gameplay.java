@@ -5,6 +5,9 @@ import View.Exceptions.InvalidSideSwitchException;
 
 import java.util.regex.Matcher;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Gameplay {
     private Player playerOne;
     public int playerOneWins = 0;

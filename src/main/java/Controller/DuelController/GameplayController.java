@@ -46,11 +46,7 @@ public class GameplayController {
                 goToNextPhase();
                 break;
             case STANDBY_PHASE:
-                try {
-                    onStandbyTraps();
-                } catch (ActionNotPossibleException | AttackNotPossibleException e) {
-                    System.out.println(e.getMessage());
-                }
+                onStandbyTraps();
                 goToNextPhase();
                 break;
             case END_PHASE:
@@ -382,6 +378,7 @@ public class GameplayController {
     public void summon() throws Exception {
         FieldArea fieldArea = gameplay.getSelectedField();
         if (fieldArea == null) throw new NoCardIsSelectedException();
+        if (fieldArea instanceof MonsterFieldArea) throw new InvalidSummonException();
         if (!(fieldArea.getCard() instanceof Monster) || !gameplay.ownsSelectedCard())
             throw new InvalidSummonException();
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
@@ -396,7 +393,7 @@ public class GameplayController {
         normalSummon((HandFieldArea) fieldArea, monsterFieldArea);
         gameplay.setRecentlySummonedMonster(monsterFieldArea);
         onSummonTraps();
-        deselectCard();
+        if (gameplay.getSelectedField() != null) deselectCard();
     }
 
     private void checkForRitual() throws Exception {
@@ -412,7 +409,7 @@ public class GameplayController {
         ritualTribute(GameplayView.getInstance().ritualTribute(), ritualSpell);
     }
 
-    private void tributeCards(ArrayList<MonsterFieldArea> toTribute) {
+    public void tributeCards(ArrayList<MonsterFieldArea> toTribute) {
         for (MonsterFieldArea monsterFieldArea : toTribute) {
             destroyMonsterCard(gameplay.getCurrentPlayer(), monsterFieldArea);
         }
@@ -456,7 +453,6 @@ public class GameplayController {
             throw new WrongPhaseException();
         if (((MonsterFieldArea) fieldArea).hasAttacked()) throw new AlreadySetPositionException();
         if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.isVisible()) throw new InvalidFlipSummonException();
-        //TODO add necessary effects
         if (fieldArea.getCard().onFlipSummon != null) fieldArea.getCard().onFlipSummon.execute();
         ((MonsterFieldArea) fieldArea).changePosition();
         deselectCard();
@@ -487,29 +483,18 @@ public class GameplayController {
         if (((MonsterFieldArea) attacker).hasAttacked()) throw new AlreadyAttackedException();
         if (isLocationNumberInvalid(number)) throw new InvalidCardSelectionException();
         int id = Integer.parseInt(number);
-        if ((attackTarget = opponent.getField().getMonstersFieldById(id)) == null) throw new NoCardToAttackException();
+        if ((attackTarget = opponent.getField().getMonstersFieldById(id)).getCard() == null) throw new NoCardFoundException();
         gameplay.setAttacker(attacker);
         gameplay.setBeingAttacked(attackTarget);
-        StringBuilder temp = null;
-        try {
-            onAttackTraps();
-            if (attackTarget.getCard() != null && attackTarget.getCard().onBeingAttacked != null) attackTarget.getCard().onBeingAttacked.execute();
-            temp = calculateDamage((MonsterFieldArea) attacker, attackTarget);
-            ((MonsterFieldArea) attacker).setHasAttacked(true);
-            deselectCard();
-            gameplay.setAttacker(null);
-            gameplay.setBeingAttacked(null);
-        } catch (Exception e) {
-            temporarySwitchTurn();
-            System.out.println(e.getMessage());
-        } finally {
-            //TODO wtf is finally? Also wtf is temporarySwitchTurn doing in the catch?
-            for (SpellAndTrapFieldArea trap :
-                    gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-                if (trap.getCard() != null)
-                    if (trap.getCard().onBeingAttacked != null) trap.setCanBeActivated(false);
-            }
-        }
+        StringBuilder temp;
+        boolean trapExceptionThrown = onAttackTraps();
+        if (trapExceptionThrown) return null;
+        if (attackTarget.getCard() != null && attackTarget.getCard().onBeingAttacked != null) attackTarget.getCard().onBeingAttacked.execute();
+        temp = calculateDamage((MonsterFieldArea) attacker, attackTarget);
+        ((MonsterFieldArea) attacker).setHasAttacked(true);
+        if (gameplay.getSelectedField() != null) deselectCard();
+        gameplay.setAttacker(null);
+        gameplay.setBeingAttacked(null);
         return temp;
     }
 
@@ -529,7 +514,7 @@ public class GameplayController {
         }
     }
 
-    private void onSummonTraps() throws ActionNotPossibleException, AttackNotPossibleException {
+    private void onSummonTraps() {
         boolean summonTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
@@ -542,18 +527,21 @@ public class GameplayController {
         if (summonTrapExists) {
             temporarySwitchTurn();
             if (GameplayView.getInstance().spellAndTrapActivationPrompt()) {
-                GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_SUMMON);
+                try {
+                    GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_SUMMON);
+                } catch (ActionNotPossibleException | AttackNotPossibleException e) {
+                    temporarySwitchTurn();
+                    resetOpponentTraps(SpellAndTrapActivationType.ON_SUMMON);
+                    System.out.println(e.getMessage());
+                    return;
+                }
             }
             temporarySwitchTurn();
         }
-        for (SpellAndTrapFieldArea trap :
-                gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard() != null)
-                if (trap.getCard().onSummon != null) trap.setCanBeActivated(false);
-        }
+        resetOpponentTraps(SpellAndTrapActivationType.ON_SUMMON);
     }
 
-    private void onStandbyTraps() throws ActionNotPossibleException, AttackNotPossibleException {
+    private void onStandbyTraps() {
         boolean opponentStandbyTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
@@ -565,20 +553,22 @@ public class GameplayController {
         }
         if (opponentStandbyTrapExists) {
             temporarySwitchTurn();
-            if (GameplayView.getInstance().spellAndTrapActivationPrompt())
-                GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_STANDBY);
+            if (GameplayView.getInstance().spellAndTrapActivationPrompt()) {
+                try {
+                    GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_STANDBY);
+                } catch (ActionNotPossibleException | AttackNotPossibleException e) {
+                    temporarySwitchTurn();
+                    resetOpponentTraps(SpellAndTrapActivationType.ON_STANDBY);
+                    System.out.println(e.getMessage());
+                    return;
+                }
+            }
             temporarySwitchTurn();
         }
-        for (SpellAndTrapFieldArea trap :
-                gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard() != null)
-                if (trap.getCard().inStandbyPhase != null) {
-                    trap.setCanBeActivated(false);
-                }
-        }
+        resetOpponentTraps(SpellAndTrapActivationType.ON_STANDBY);
     }
 
-    private void onAttackTraps() throws ActionNotPossibleException, AttackNotPossibleException {
+    private boolean onAttackTraps() {
         boolean attackTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
@@ -591,9 +581,65 @@ public class GameplayController {
         if (attackTrapExists) {
             temporarySwitchTurn();
             if (GameplayView.getInstance().spellAndTrapActivationPrompt()) {
-                GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_ATTACKED);
+                try {
+                    GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_ATTACKED);
+                } catch (ActionNotPossibleException | AttackNotPossibleException e) {
+                    temporarySwitchTurn();
+                    resetOpponentTraps(SpellAndTrapActivationType.ON_ATTACKED);
+                    System.out.println(e.getMessage());
+                    return true;
+                } catch (Exception e) {
+                    temporarySwitchTurn();
+                    e.printStackTrace();
+                    return false;
+                }
             }
             temporarySwitchTurn();
+        }
+        resetOpponentTraps(SpellAndTrapActivationType.ON_ATTACKED);
+        return false;
+    }
+
+    private void resetOpponentTraps(SpellAndTrapActivationType type) {
+        switch (type) {
+            case ON_ATTACKED:
+                for (SpellAndTrapFieldArea trap :
+                        gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
+                    if (trap.getCard() != null)
+                        if (trap.getCard().onBeingAttacked != null) {
+                            trap.setCanBeActivated(false);
+                        }
+                }
+                break;
+            case ON_SUMMON:
+                for (SpellAndTrapFieldArea trap :
+                        gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
+                    if (trap.getCard() != null)
+                        if (trap.getCard().onSummon != null) {
+                            trap.setCanBeActivated(false);
+                        }
+                }
+                break;
+            case ON_SPELL:
+                for (SpellAndTrapFieldArea trap :
+                        gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
+                    if (trap.getCard() != null)
+                        if (trap.getCard().onSpellActivation != null) {
+                            trap.setCanBeActivated(false);
+                        }
+                }
+                break;
+            case NORMAL:
+                break;
+            case ON_STANDBY:
+                for (SpellAndTrapFieldArea trap :
+                        gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
+                    if (trap.getCard() != null)
+                        if (trap.getCard().inStandbyPhase != null) {
+                            trap.setCanBeActivated(false);
+                        }
+                }
+                break;
         }
     }
 
@@ -733,7 +779,7 @@ public class GameplayController {
         return card;
     }
 
-    public void discardACard() throws InvalidCardSelectionException {
+    public void discardSelectedCard() throws InvalidCardSelectionException {
         if (gameplay.getSelectedField() == null) return;
         if (!gameplay.ownsSelectedCard()) throw new InvalidCardSelectionException();
         moveCardToGraveyard(gameplay.getCurrentPlayer(), gameplay.getSelectedField().getCard());
