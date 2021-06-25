@@ -352,18 +352,9 @@ public class GameplayController {
             if (monster == null) throw new MonsterZoneFullException();
             if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
             if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) {
-                FieldArea ritualSpell = null;
-                for (FieldArea spellAndTrap :
-                        effectSpellAndTraps) {
-                    ritualSpell = spellAndTrap;
-                    if (spellAndTrap.getCard() instanceof Spell)
-                        if (!((Spell) spellAndTrap.getCard()).getIcon().equals(Icon.RITUAL))
-                            throw new InvalidSummonException();
-                }
-                if (ritualSpell == null) throw new InvalidSummonException();
-                ritualSet(GameplayView.getInstance().ritualTribute());
+                checkForRitual(false);
             }
-            if (((Monster) fieldArea.getCard()).getLevel() > 4)
+            else if (((Monster) fieldArea.getCard()).getLevel() > 4)
                 tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
             setMonsterCard(monster, (HandFieldArea) fieldArea);
             deselectCard();
@@ -390,7 +381,7 @@ public class GameplayController {
         MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
         if (monsterFieldArea == null) throw new MonsterZoneFullException();
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
-        if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) checkForRitual();
+        if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) checkForRitual(true);
         else if (fieldArea.getCard().uniqueSummon != null) fieldArea.getCard().uniqueSummon.summon();
         else if (((Monster) fieldArea.getCard()).getLevel() > 4)
             tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
@@ -400,7 +391,7 @@ public class GameplayController {
         if (gameplay.getSelectedField() != null) deselectCard();
     }
 
-    private void checkForRitual() throws Exception {
+    private void checkForRitual(boolean isSummon) throws Exception {
         FieldArea ritualSpell = null;
         for (FieldArea spellAndTrap :
                 effectSpellAndTraps) {
@@ -410,7 +401,7 @@ public class GameplayController {
                     throw new InvalidSummonException();
         }
         if (ritualSpell == null) throw new InvalidSummonException();
-        ritualTribute(GameplayView.getInstance().ritualTribute(), ritualSpell);
+        ritualTribute(GameplayView.getInstance().ritualTribute(), ritualSpell, isSummon);
     }
 
     public void tributeCards(ArrayList<MonsterFieldArea> toTribute) {
@@ -419,7 +410,7 @@ public class GameplayController {
         }
     }
 
-    private void ritualTribute(String[] ids, FieldArea ritualSpell) {
+    private void ritualTribute(String[] ids, FieldArea ritualSpell, boolean isSummon) {
         removeTributesFromHand(ids);
         DeckMenuController.getInstance().shuffleDeck(gameplay.getCurrentPlayer().getPlayingDeck());
         effectSpellAndTraps.remove(ritualSpell);
@@ -429,7 +420,11 @@ public class GameplayController {
             destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) ritualSpell);
         moveCardToGraveyard(gameplay.getCurrentPlayer(), ritualSpell.getCard());
         DeckMenuController.getInstance().shuffleDeck(gameplay.getCurrentPlayer().getPlayingDeck());
-        normalSummon((HandFieldArea) gameplay.getSelectedField(), gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea());
+        if (isSummon)
+            normalSummon((HandFieldArea) gameplay.getSelectedField(), gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea());
+        else
+            setMonsterCard(gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea(), (HandFieldArea) gameplay.getSelectedField());
+
     }
 
     private void ritualSet(String[] ids, FieldArea ritualSpell) {
