@@ -3,6 +3,7 @@ package View;
 import Controller.DuelController.GameplayController;
 import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
+import Database.Cards.Card;
 import Database.Cards.CardType;
 import Database.Cards.Monster;
 import Database.User;
@@ -79,6 +80,24 @@ public class GameplayView {
     }
 
     public void discardACard() {
+        while (true) {
+            try {
+                Matcher matcher;
+                String command = ProgramController.getInstance().getScanner().nextLine();
+                if ((matcher = Regex.getCommandMatcher(command, Regex.selectHandCard)).matches()) {
+                    selectCard(matcher);
+                    GameplayController.getInstance().discardSelectedCard();
+                    break;
+                }
+            } catch (InvalidCardSelectionException e) {
+                System.out.println(e.getMessage());
+                deselectCard();
+            }
+        }
+    }
+
+    public void discardACard(FieldArea toDiscard) throws CardCantDiscardItselfException {
+        if (GameplayController.getInstance().getGameplay().getSelectedField().equals(toDiscard)) throw new CardCantDiscardItselfException();
         while (true) {
             try {
                 Matcher matcher;

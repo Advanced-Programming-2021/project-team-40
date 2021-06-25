@@ -249,8 +249,7 @@ public class DatabaseController {
                                     Effect.gameplay.setSelectedField(cardField);
                                     Effect.gameplay.setOwnsSelectedCard(true);
                                     break;
-                                }
-                                else System.out.println("you should choose an opponent monster to destroy now");
+                                } else System.out.println("you should choose an opponent monster to destroy now");
                             } else System.out.println("you should choose an opponent monster to destroy now");
                         }
                     };
@@ -603,9 +602,20 @@ public class DatabaseController {
                 case "Twin Twisters":
                     spell.spellEffect = objects -> {
                         Matcher matcher;
-                        SpellAndTrapFieldArea thisCard = (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField();
+                        SpellAndTrapFieldArea thisCardSpellAndTrap = null;
+                        HandFieldArea thisCardHand = null;
+                        if (GameplayController.getInstance().getGameplay().getSelectedField() instanceof SpellAndTrapFieldArea)
+                            thisCardSpellAndTrap = (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField();
+                        else
+                            thisCardHand = (HandFieldArea) GameplayController.getInstance().getGameplay().getSelectedField();
                         System.out.println("Discard one card from your own hand");
-                        GameplayView.getInstance().discardACard();
+                        while (true) {
+                            try {
+                                GameplayView.getInstance().discardACard(thisCardHand);
+                                break;
+                            } catch (CardCantDiscardItselfException ignored) {
+                            }
+                        }
                         int counter = 0;
                         GameplayController.getInstance().deselectCard();
                         System.out.println("Select at most 2 spell and trap cards to destroy, or type done");
@@ -617,7 +627,7 @@ public class DatabaseController {
                                     GameplayController.getInstance().selectCard(matcher.group("id"), "--spell", isOpponent);
                                     if (GameplayController.getInstance().getGameplay().getSelectedField().getCard() == null)
                                         continue;
-                                    if (GameplayController.getInstance().getGameplay().getSelectedField() == thisCard){
+                                    if (GameplayController.getInstance().getGameplay().getSelectedField() == thisCardSpellAndTrap) {
                                         System.out.println("You can't discard this card");
                                         continue;
                                     }
@@ -641,6 +651,9 @@ public class DatabaseController {
                 case "Mystical space typhoon":
                     spell.spellEffect = objects -> {
                         Matcher matcher;
+                        SpellAndTrapFieldArea thisCard = null;
+                        if (GameplayController.getInstance().getGameplay().getSelectedField() instanceof SpellAndTrapFieldArea)
+                            thisCard = (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField();
                         GameplayController.getInstance().deselectCard();
                         while (true) {
                             try {
@@ -653,12 +666,16 @@ public class DatabaseController {
                                         player = GameplayController.getInstance().gameplay.getOpponentPlayer();
                                     if (GameplayController.getInstance().getGameplay().getSelectedField().getCard() == null)
                                         continue;
+                                    if (GameplayController.getInstance().getGameplay().getSelectedField() == thisCard) {
+                                        System.out.println("You can't discard this card");
+                                        continue;
+                                    }
                                     GameplayController.getInstance().destroySpellAndTrapCard(player, (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField());
                                     break;
                                 } else if (input.matches(Regex.help))
                                     System.out.println("Select one spell and trap cards to destroy, or type done");
                             } catch (Exception e) {
-                                e.getMessage();
+                                System.out.println(e.getMessage());
                             }
                         }
                     };

@@ -280,7 +280,7 @@ public class GameplayController {
                         throw new ActionNotPossibleException("Nazadim ino");
                     else {
                         ((Spell) fieldArea.getCard()).spellEffect.execute();
-                        destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) fieldArea);
+                        destroyHandFieldCard(gameplay.getCurrentPlayer(), (HandFieldArea) fieldArea);
                     }
                 } else if (fieldArea instanceof SpellAndTrapFieldArea) {
                     if (!((SpellAndTrapFieldArea) fieldArea).isCanBeActivated())
@@ -778,6 +778,17 @@ public class GameplayController {
             moveCardToGraveyard(player, area.getCard());
             area.setVisibility(false);
             area.putCard(null, false);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void destroyHandFieldCard(Player player, HandFieldArea area){
+        try {
+            if ((area.getCard()).onDestruction != null)
+                (area.getCard()).onDestruction.execute(player);
+            moveCardToGraveyard(player, area.getCard());
+            gameplay.getCurrentPlayer().getPlayingHand().remove(area);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
