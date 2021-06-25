@@ -17,7 +17,7 @@ import java.util.Random;
 public class GameplayController {
     private static GameplayController gameplayController = null;
     public Gameplay gameplay;
-    private ArrayList<FieldArea> effectSpellAndTraps = new ArrayList<>();
+    public ArrayList<FieldArea> effectSpellAndTraps = new ArrayList<>();
 
     private GameplayController() {
 

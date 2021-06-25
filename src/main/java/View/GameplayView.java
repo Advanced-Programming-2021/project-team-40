@@ -170,7 +170,7 @@ public class GameplayView {
             if ((matcher = Regex.getCommandMatcher(cardInput, Regex.selectHandCard)).matches() && matcher.group("isOpponent") == null)
                 selectCard(matcher);
             else if (cardInput.matches(Regex.cancelAction)) {
-                //TODO: more stuff here
+                GameplayController.getInstance().effectSpellAndTraps.clear();
                 throw new CommandCancellationException("ritual summon");
             } else if (cardInput.matches(Regex.showSelectedCard)) showCard();
             else System.out.println("you should ritual summon right now");
@@ -190,7 +190,8 @@ public class GameplayView {
         while (true) {
             cardInput = ProgramController.getInstance().getScanner().nextLine();
             if (cardInput.matches(Regex.cancelAction)) {
-                //TODO: more things should be done here
+                GameplayController.getInstance().effectSpellAndTraps.clear();
+                GameplayController.getInstance().deselectCard();
                 throw new CommandCancellationException("Ritual summon");
             }
             if (cardInput.matches(Regex.summon)) {
