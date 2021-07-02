@@ -1,14 +1,17 @@
 package Gameplay;
 
 import Database.Cards.Card;
+import javafx.scene.shape.Rectangle;
 
-public class FieldArea {
+public class FieldArea extends Rectangle {
+    private static final int FIELD_AREA_WIDTH = 20;
+    private static final int FIELD_AREA_HEIGHT = 30;
     private boolean isEffectAvailable = true;
     protected boolean canBePutOnBoard = false;
     protected Card card;
     protected boolean visibility;
     public FieldArea(){
-
+        super(FIELD_AREA_WIDTH,FIELD_AREA_HEIGHT);
     }
 
     public Card getCard() {
@@ -20,7 +23,7 @@ public class FieldArea {
         this.visibility = visibility;
     }
 
-    public boolean isVisible() {
+    public boolean visibility() {
         return visibility;
     }
 

@@ -6,7 +6,7 @@ public class SpellAndTrapFieldArea extends FieldArea {
     private boolean hasJustBeenSet = true;
     private boolean canBeActivated = false;
     public SpellAndTrapFieldArea() {
-        super();
+
     }
 
     public void setHasJustBeenSet(boolean hasJustBeenSet) {

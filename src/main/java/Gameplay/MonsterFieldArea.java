@@ -3,7 +3,7 @@ package Gameplay;
 import Database.Cards.Card;
 import Database.Cards.Monster;
 
-public class MonsterFieldArea extends FieldArea{
+public class MonsterFieldArea extends FieldArea {
     private boolean canAttack = true;
     private boolean canBeAttacked = true;//command knight,
     private boolean canBeDestroyed = true;//marshmallon
@@ -13,35 +13,36 @@ public class MonsterFieldArea extends FieldArea{
     private int attackPoint;
     private int defensePoint;
     private int turnsLeftForEffect;
-    public MonsterFieldArea(){
+
+    public MonsterFieldArea() {
+        super();
     }
 
     @Override
-    public void putCard(Card card, boolean isAttack){
+    public void putCard(Card card, boolean isAttack) {
         this.isAttack = isAttack;
         super.putCard(card, isAttack);
-        if (card !=null) {
+        if (card != null) {
             attackPoint = ((Monster) card).getAttackPoints();
             defensePoint = ((Monster) card).getDefensePoints();
             hasSwitchedMode = true;
-        }
-        else {
+        } else {
             attackPoint = 0;
             defensePoint = 0;
         }
     }
 
-    public void setAttack(boolean attack) {
-        isAttack = attack;
-    }
-
-    public void changePosition(){
+    public void changePosition() {
         isAttack = !isAttack;
         hasSwitchedMode = true;
     }
 
     public boolean isAttack() {
         return isAttack;
+    }
+
+    public void setAttack(boolean attack) {
+        isAttack = attack;
     }
 
     public boolean hasAttacked() {
@@ -60,28 +61,28 @@ public class MonsterFieldArea extends FieldArea{
         this.hasAttacked = hasAttacked;
     }
 
-    public void setAttackPoint(int attackPoint) {
-        this.attackPoint = attackPoint;
-    }
-
-    public void setDefensePoint(int defensePoint) {
-        this.defensePoint = defensePoint;
-    }
-
     public int getAttackPoint() {
         return attackPoint;
+    }
+
+    public void setAttackPoint(int attackPoint) {
+        this.attackPoint = attackPoint;
     }
 
     public int getDefensePoint() {
         return defensePoint;
     }
 
-    public void setTurnsLeftForEffect(int turnsLeftForEffect) {
-        this.turnsLeftForEffect = turnsLeftForEffect;
+    public void setDefensePoint(int defensePoint) {
+        this.defensePoint = defensePoint;
     }
 
     public int getTurnsLeftForEffect() {
         return turnsLeftForEffect;
+    }
+
+    public void setTurnsLeftForEffect(int turnsLeftForEffect) {
+        this.turnsLeftForEffect = turnsLeftForEffect;
     }
 
     public boolean isCanBeDestroyed() {

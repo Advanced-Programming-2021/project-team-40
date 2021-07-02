@@ -219,6 +219,7 @@ public class GameplayController {
                 id = Integer.parseInt(idToCheck);
                 if (isFromOpponent) fieldArea = gameplay.getOpponentPlayer().getField().getMonstersFieldById(id);
                 else fieldArea = gameplay.getCurrentPlayer().getField().getMonstersFieldById(id);
+                System.out.println(id);
                 if (fieldArea.getCard() == null) throw new NoCardFoundException();
                 gameplay.setSelectedField(fieldArea);
                 break;
@@ -264,7 +265,7 @@ public class GameplayController {
 
     public void showCard() throws NoCardIsSelectedException {
         if (gameplay.getSelectedField() == null) throw new NoCardIsSelectedException();
-        if (!gameplay.ownsSelectedCard() && !gameplay.getSelectedField().isVisible()) {
+        if (!gameplay.ownsSelectedCard() && !gameplay.getSelectedField().visibility()) {
             CardView.invisibleCard();
         } else CardView.showCard(gameplay.getSelectedField().getCard());
     }
@@ -275,7 +276,7 @@ public class GameplayController {
         if (fieldArea.getCard() instanceof Monster) throw new InvalidActivateException();
         if (type.equals(SpellAndTrapActivationType.NORMAL) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseForSpellException();
-        if (fieldArea.isVisible()) throw new AlreadyActivatedException();
+        if (fieldArea.visibility()) throw new AlreadyActivatedException();
         if (fieldArea.getCard() instanceof Trap) activateTrapEffect(type);
         else {
             try {
@@ -432,7 +433,7 @@ public class GameplayController {
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseException();
         if (((MonsterFieldArea) fieldArea).hasAttacked()) throw new AlreadySetPositionException();
-        if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.isVisible()) throw new InvalidFlipSummonException();
+        if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.visibility()) throw new InvalidFlipSummonException();
         //TODO add necessary effects
         if (fieldArea.getCard().onFlipSummon != null) fieldArea.getCard().onFlipSummon.execute();
         ((MonsterFieldArea) fieldArea).changePosition();
@@ -589,7 +590,7 @@ public class GameplayController {
 
     private StringBuilder calculateDamage(MonsterFieldArea attackingMonster, MonsterFieldArea beingAttackedMonster) throws Exception {
         StringBuilder message = new StringBuilder();
-        boolean initialVisibility = beingAttackedMonster.isVisible();
+        boolean initialVisibility = beingAttackedMonster.visibility();
         if (beingAttackedMonster.isAttack()) {
             int damage = calculateAttackVsAttackSituation(attackingMonster, beingAttackedMonster);
             if (damage > 0)
@@ -599,7 +600,7 @@ public class GameplayController {
             if (damage == 0)
                 message.append("both you and your opponent monster cards are destroyed and no one receives damage");
         } else {
-            if (!beingAttackedMonster.isVisible()) {
+            if (!beingAttackedMonster.visibility()) {
                 message.append("opponent’s monster card was ").append(beingAttackedMonster.getCard().getName()).append(" and ");
                 makeCardVisible(beingAttackedMonster);
             }

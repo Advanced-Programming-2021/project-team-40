@@ -1,9 +1,15 @@
 package Database.Cards;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+
 import java.util.*;
 
-abstract public class Card {
-
+abstract public class Card extends Rectangle {
+    private static final int CARD_WIDTH = 0;
+    private static final int CARD_HEIGHT = 0;
     public Effect onDestruction;//player
     public Effect onFlipSummon;//null
     public Effect afterDamageCalculation;//player
@@ -21,6 +27,7 @@ abstract public class Card {
     private boolean hasEffect = false;
 
     public Card(String name, String description, int cardPrice) {
+//        super(CARD_WIDTH,CARD_HEIGHT,new ImagePattern(new Image()));
         setName(name);
         setDescription(description);
         setCardPrice(cardPrice);

@@ -49,11 +49,11 @@ public class FieldView {
     private static String getShowcaseString(FieldArea fieldArea) {
         if (fieldArea.getCard() == null) return "E";
         if (fieldArea instanceof SpellAndTrapFieldArea) {
-            if (fieldArea.isVisible()) return "O";
+            if (fieldArea.visibility()) return "O";
             return "H";
         } else if (fieldArea instanceof MonsterFieldArea) {
             if (((MonsterFieldArea) fieldArea).isAttack()) return "OO";
-            if (fieldArea.isVisible()) return "DO";
+            if (fieldArea.visibility()) return "DO";
             return "DH";
         }else{
             if (fieldArea.getCard() == null) return "E";
