@@ -8,11 +8,9 @@ import Database.Deck;
 import Database.EfficientDeck;
 import Database.EfficientUser;
 import Database.User;
-import Gameplay.HandFieldArea;
-import Gameplay.MonsterFieldArea;
-import Gameplay.Player;
-import Gameplay.SpellAndTrapFieldArea;
+import Gameplay.*;
 import View.Exceptions.*;
+import View.GameplayView;
 import View.GraveyardView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,6 +18,7 @@ import com.opencsv.CSVReader;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 
@@ -113,47 +112,55 @@ public class DatabaseController {
                                 if (monster.isAttack())
                                     GameplayController.getInstance().destroyMonsterCard(Effect.gameplay.getOpponentPlayer(), monster);
                         }
-                        throw new ActionNotPossibleException("trap destroyed all your monster cards!");
+                        throw new ActionNotPossibleException("Trap destroyed all your monster cards!");
                     };
                     break;
-                case "Negate Attack"://TODO: fix this shit
+                case "Negate Attack":
                     trap.onBeingAttacked = objects -> {
-                        throw new AttackNotPossibleException();
+                        GameplayController.getInstance().goToNextPhase();
+                        throw new ActionNotPossibleException("Your attack was negated!");
                     };
                     break;
                 case "Magic Cylinder":
                     trap.onBeingAttacked = objects -> {
                         MonsterFieldArea attackingMonster = (MonsterFieldArea) Effect.gameplay.getAttacker();
                         Effect.gameplay.getOpponentPlayer().setLifePoints(Effect.gameplay.getOpponentPlayer().getLifePoints() - attackingMonster.getAttackPoint());
-                        throw new ActionNotPossibleException("Magic Cylinder trap reduced your LP by " + attackingMonster.getAttackPoint());
+                        throw new ActionNotPossibleException("Your attack was negated!");
                     };
                     break;
                 case "Torrential Tribute":
                     trap.onSummon = objects -> {
                         for (MonsterFieldArea monster :
-                                Effect.gameplay.getCurrentPlayer().getField().getMonstersField()) {
+                                Effect.gameplay.getOpponentPlayer().getField().getMonstersField()) {
                             if (monster.getCard() != null)
-                                GameplayController.getInstance().destroyMonsterCard(Effect.gameplay.getCurrentPlayer(), monster);
+                                GameplayController.getInstance().destroyMonsterCard(Effect.gameplay.getOpponentPlayer(), monster);
                         }
+                        throw new ActionNotPossibleException("Trap destroyed all your Monster Cards");
                     };
                     break;
                 case "Trap Hole":
                     trap.onSummon = objects -> {
                         MonsterFieldArea summonedMonster = Effect.gameplay.getRecentlySummonedMonster();
-                        if (summonedMonster.getAttackPoint() > 1000)
+                        if (summonedMonster.getAttackPoint() >= 1000)
                             GameplayController.getInstance().destroyMonsterCard(Effect.gameplay.getOpponentPlayer(), summonedMonster);
                     };
                     break;
                 case "Magic Jammer":
                     trap.onSpellActivation = objects -> {
-                        System.out.print("choose one card to discard for Magic Jammer:");
+                        System.out.println("choose one card to discard for Magic Jammer:");
+                        Matcher matcher;
+
                         while (true) {
                             String input = ProgramController.getInstance().getScanner().nextLine();
-                            if (!GameplayController.getInstance().isHandLocationInvalid(input)) {
-                                int id = Integer.parseInt(input);
-                                GameplayController.getInstance().moveCardToGraveyard(Effect.gameplay.getCurrentPlayer(), Effect.gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard());
-                                Effect.gameplay.getCurrentPlayer().getPlayingHand().remove(id);
-                                break;
+                            if ((matcher = Regex.getCommandMatcher(input,Regex.selectHandCard)).matches()) {
+                                GameplayView.getInstance().selectCard(matcher);
+                                try {
+                                    if (Effect.gameplay.getSelectedField() == null || !(Effect.gameplay.getSelectedField() instanceof HandFieldArea)) throw new InvalidCardSelectionException();
+                                    GameplayController.getInstance().discardSelectedCard();
+                                    break;
+                                } catch (InvalidCardSelectionException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                         throw new ActionNotPossibleException("Opponent's magic jammer destroyed your card!");
@@ -173,11 +180,52 @@ public class DatabaseController {
                         }
                         if (isRight)
                             Effect.gameplay.getOpponentPlayer().getPlayingHand().removeIf(hand -> hand.getCard().getName().equalsIgnoreCase(input));
+                        else {
+                            int random = new Random().nextInt(Effect.gameplay.getCurrentPlayer().getPlayingHand().size());
+                            try {
+                                GameplayController.getInstance().selectCard(Integer.toString(random), "-h", false);
+                                GameplayController.getInstance().discardSelectedCard();
+                            } catch (Exception ignored) {
+                            }
+                        }
                     };
                     break;
                 case "Call of The Haunted":
                     trap.inStandbyPhase = objects -> {
-                        //TODO: easy easy
+                        if (Effect.gameplay.getCurrentPlayer().getField().getGraveyard().size() == 0 && Effect.gameplay.getOpponentPlayer().getField().getGraveyard().size() == 0)
+                            throw new ActionNotPossibleException("you can't use this card effects");
+                        if (Effect.gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea() == null)
+                            throw new MonsterZoneFullException();
+                        System.out.println("Please select a card from you or your opponent's graveyard:");
+                        String input;
+                        Card cardToSpecialSummon;
+                        while (true) {
+                            ArrayList<Card> graveyard = new ArrayList<>();
+                            for (Card card : Effect.gameplay.getCurrentPlayer().getField().getGraveyard()) {
+                                if (card instanceof Monster) graveyard.add(card);
+                            }
+                            for (Card card : Effect.gameplay.getOpponentPlayer().getField().getGraveyard()) {
+                                if (card instanceof Monster) graveyard.add(card);
+                            }
+                            GraveyardView.showGraveyard(graveyard);
+                            input = ProgramController.getInstance().getScanner().nextLine();
+                            if (input.matches("\\d+")) {
+                                if (Integer.parseInt(input) > graveyard.size())
+                                    System.out.println("location invalid in this graveyard");
+                                else {
+                                    cardToSpecialSummon = graveyard.get(Integer.parseInt(input) - 1);
+                                    graveyard.remove(Integer.parseInt(input) - 1);
+                                    if (Effect.gameplay.getCurrentPlayer().getField().getGraveyard().contains(cardToSpecialSummon))
+                                        Effect.gameplay.getCurrentPlayer().getField().getGraveyard().remove(cardToSpecialSummon);
+                                    else
+                                        Effect.gameplay.getOpponentPlayer().getField().getGraveyard().remove(cardToSpecialSummon);
+                                    GameplayController.getInstance().specialSummon(cardToSpecialSummon);
+                                    break;
+                                }
+
+                            }
+                        }
+
                     };
                     break;
             }
@@ -188,63 +236,36 @@ public class DatabaseController {
         for (Card card :
                 Card.getAllCards()) {
             switch (card.getName()) {
-                case "Yomi Ship":
-                    card.setHasEffect(true);
-                    card.onDestruction = new Effect() {
-                        @Override
-                        public void execute(Object... objects) {
-                            Player cardOwner = (Player) objects[0];
-                            if (cardOwner.equals(gameplay.getOpponentPlayer()))
-                                GameplayController.getInstance().destroyMonsterCard(gameplay.getCurrentPlayer(), (MonsterFieldArea) gameplay.getAttacker());
-                        }
-                    };
-                    break;
                 case "Man-Eater Bug":
                     card.setHasEffect(true);
-                    card.onFlipSummon = new Effect() {
-                        @Override
-                        public void execute(Object... objects) {//TODO: implement
-                            System.out.println("please enter a monster id");
-                            Player player = GameplayController.getInstance().getGameplay().getOpponentPlayer();
-                            String idToCheck;
-                            while (true) {
-                                idToCheck = ProgramController.getInstance().getScanner().nextLine();
-                                try {
-                                    if (GameplayController.getInstance().getMonsterFieldCount(player) == 0)
-                                        throw new NoCardFoundException();
-                                    if (GameplayController.getInstance().isLocationNumberInvalid(idToCheck))
-                                        throw new InvalidCardSelectionException();
-                                    int id = Integer.parseInt(idToCheck) - 1;
-                                    MonsterFieldArea monster = player.getField().getMonstersFieldById(id);
-                                    GameplayController.getInstance().destroyMonsterCard(player, monster);
+                    card.onFlipSummon = objects -> {
+                        System.out.println("please select a monster to destroy:");
+                        Player opponentPlayer = GameplayController.getInstance().getGameplay().getOpponentPlayer();
+                        FieldArea cardField = Effect.gameplay.getSelectedField();
+                        Matcher matcher;
+                        String cardInput;
+                        while (true) {
+                            cardInput = ProgramController.getInstance().getScanner().nextLine();
+                            if ((matcher = Regex.getCommandMatcher(cardInput, Regex.selectMonsterCard)).matches()) {
+                                GameplayView.getInstance().selectCard(matcher);
+                                if (Effect.gameplay.getSelectedField() != null && !Effect.gameplay.ownsSelectedCard()) {
+                                    GameplayController.getInstance().destroyMonsterCard(opponentPlayer, (MonsterFieldArea) Effect.gameplay.getSelectedField());
+                                    System.out.println("Monster destroyed!");
+                                    Effect.gameplay.setSelectedField(cardField);
+                                    Effect.gameplay.setOwnsSelectedCard(true);
                                     break;
-                                } catch (Exception e) {
-                                    System.out.println(e.getMessage());
-                                }
-                            }
+                                } else System.out.println("you should choose an opponent monster to destroy now");
+                            } else System.out.println("you should choose an opponent monster to destroy now");
                         }
                     };
                     break;
-                case "Suijin":
+                case "Yomi Ship":
                     card.setHasEffect(true);
-                    card.onBeingAttacked = new Effect() {
-                        @Override
-                        public void execute(Object... objects) {
-                            String command;
-                            while (true) {
-                                System.out.println("do you want to activate Suijin?");
-                                command = ProgramController.getInstance().getScanner().nextLine();
-                                if (command.equalsIgnoreCase("yes")) {
-                                    ((MonsterFieldArea) gameplay.getAttacker()).setAttackPoint(0);
-                                    (gameplay.getBeingAttacked()).setEffectAvailable(false);
-                                    //TODO:
-                                    // return after one turn
-                                    // implement
-                                    break;
-                                } else if (command.equalsIgnoreCase("no")) break;
-                                else System.out.println("invalid command");
-                            }
-                        }
+                    card.onDestruction = objects -> {
+                        Player cardOwner = (Player) objects[0];
+                        if (Effect.gameplay.getAttacker() == null) return;
+                        if (cardOwner.equals(Effect.gameplay.getOpponentPlayer()))
+                            GameplayController.getInstance().destroyMonsterCard(Effect.gameplay.getCurrentPlayer(), (MonsterFieldArea) Effect.gameplay.getAttacker());
                     };
                     break;
                 case "Exploder Dragon":
@@ -259,8 +280,8 @@ public class DatabaseController {
                     };
                     card.onDamageCalculation = new Effect() {
                         @Override
-                        public void execute(Object... objects) {
-
+                        public void execute(Object... objects) throws ActionNotPossibleException {
+                            throw new ActionNotPossibleException("");
                         }
                     };
                     break;
@@ -286,63 +307,87 @@ public class DatabaseController {
                     card.setHasEffect(true);
                     card.afterSummon = new Effect() {
                         @Override
-                        public void execute(Object... objects) throws SpecialSummonNotPossibleException {
+                        public void execute(Object... objects) throws SpecialSummonNotPossibleException, MonsterZoneFullException {
                             boolean hasMonster = false;
                             for (HandFieldArea hand :
                                     gameplay.getCurrentPlayer().getPlayingHand()) {
-                                if (hand.getCard() instanceof Monster) {
+                                if (hand.getCard() instanceof Monster && ((Monster) hand.getCard()).getLevel() <= 4) {
                                     hasMonster = true;
                                     break;
                                 }
                             }
                             if (!hasMonster) throw new SpecialSummonNotPossibleException();
+                            MonsterFieldArea monster = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
+                            if (monster == null) throw new MonsterZoneFullException();
                             System.out.println("now you can choose one level 4 or lower monster from your hand to summon");
-                            System.out.println("please enter a hand field id:");
+                            FieldArea selected = gameplay.getSelectedField();
                             String input;
+                            Matcher matcher;
                             while (true) {
                                 input = ProgramController.getInstance().getScanner().nextLine();
                                 try {
-                                    //TODO check id validity
-                                    int id = Integer.parseInt(input);
-                                    Card temp = gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard();
-                                    if (temp.isHasEffect() || ((Monster) temp).getLevel() > 4)
-                                        throw new InvalidCardSelectionException();
-                                    MonsterFieldArea monster = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
-                                    if (monster == null) throw new MonsterZoneFullException();
-                                    monster.putCard(temp, false);
+                                    if ((matcher = Regex.getCommandMatcher(input, Regex.selectHandCard)).matches()) {
+                                        GameplayView.getInstance().selectCard(matcher);
+                                        if (gameplay.getSelectedField() == null) continue;
+                                        Card toSummon = gameplay.getSelectedField().getCard();
+                                        if (toSummon.isHasEffect() || ((Monster) toSummon).getLevel() > 4 || !gameplay.ownsSelectedCard())
+                                            throw new InvalidCardSelectionException();
+                                        monster.putCard(toSummon, false);
+                                        gameplay.setSelectedField(selected);
+                                        gameplay.setOwnsSelectedCard(true);
+                                        System.out.println("selected card special summoned successfully");
+                                        break;
+                                    }
+                                    else if (input.matches(Regex.help)) System.out.println("you can select one level 4 or lower monster from your hand to summon");
                                 } catch (InvalidCardSelectionException e) {
                                     System.out.println(e.getMessage());
-                                } catch (MonsterZoneFullException e) {
-                                    System.out.println(e.getMessage());
-                                    break;
                                 }
                             }
                         }
                     };
                     break;
                 case "The Tricky":
+                    card.setHasEffect(true);
                     card.uniqueSummon = new UniqueSummon() {
                         @Override
-                        public void summon() throws Exception {
-                            if (gameplay.getCurrentPlayer().getPlayingHand().size() == 0)
+                        public void summon() throws SpecialSummonNotPossibleException, CommandCancellationException {
+                            if (gameplay.getCurrentPlayer().getPlayingHand().size() == 1)
                                 throw new SpecialSummonNotPossibleException();
-                            System.out.println("discard one card from your hand to special summon this card:");
-                            System.out.println("please enter a hand field id:");
+                            System.out.println("select one card from your hand to discard it to special summon this card:");
                             String input;
+                            Matcher matcher;
+                            FieldArea selected = gameplay.getSelectedField();
                             while (true) {
                                 input = ProgramController.getInstance().getScanner().nextLine();
-                                if (input.matches(Regex.cancelAction)) {
-                                    System.out.println("operation cancelled");
+                                if (input.matches(Regex.help))
+                                    System.out.println("select one card from your hand to discard it to special summon this card:");
+                                if (input.matches(Regex.cancelAction))
                                     throw new CommandCancellationException("special summon");
-                                }
-                                if (!GameplayController.getInstance().isHandLocationInvalid(input)) {
-                                    int id = Integer.parseInt(input);
-                                    Card toDiscard = gameplay.getCurrentPlayer().getPlayingHand().get(id).getCard();
-                                    gameplay.getCurrentPlayer().getPlayingHand().remove(id);
-                                    GameplayController.getInstance().moveCardToGraveyard(gameplay.getCurrentPlayer(), toDiscard);
-                                    break;
-                                } else System.out.println("hand location is invalid");
+                                if ((matcher = Regex.getCommandMatcher(input, Regex.selectHandCard)).matches()) {
+                                    GameplayView.getInstance().selectCard(matcher);
+                                    try {
+                                        if (gameplay.getSelectedField() == null) continue;
+                                        if (!gameplay.ownsSelectedCard())
+                                            throw new InvalidCardSelectionException();
+                                        if (selected == gameplay.getSelectedField())
+                                            throw new InvalidCardSelectionException();
+                                        GameplayController.getInstance().discardSelectedCard();
+                                        gameplay.setSelectedField(selected);
+                                        gameplay.setOwnsSelectedCard(true);
+                                        break;
+                                    } catch (InvalidCardSelectionException ignored) {
+                                    }
+                                } else System.out.println("invalid command");
                             }
+                        }
+                    };
+                    break;
+                case "Gate Guardian":
+                    card.setHasEffect(true);
+                    card.uniqueSummon = new UniqueSummon() {
+                        @Override
+                        public void summon() throws NotEnoughCardsException, CommandCancellationException {
+                            GameplayController.getInstance().tributeCards(GameplayView.getInstance().getTributes(3));
                         }
                     };
                     break;
@@ -353,6 +398,106 @@ public class DatabaseController {
     private void initializeSpellEffects() {
         for (Spell spell : Spell.getSpells()) {
             switch (spell.getName()) {
+                case "United We Stand":
+                    spell.equipEffect = new EquipEffect() {
+                        int initialSum;
+
+                        @Override
+                        public void activate(MonsterFieldArea toEquipMonster) {
+                            int count = 0;
+                            for (MonsterFieldArea monster :
+                                    GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersField()) {
+                                if (monster.isVisible()) count++;
+                            }
+                            initialSum = count * 800;
+                            toEquipMonster.setAttackPoint(toEquipMonster.getAttackPoint() + initialSum);
+                            toEquipMonster.setDefensePoint(toEquipMonster.getDefensePoint() + initialSum);
+                        }
+
+                        @Override
+                        public void deactivate(MonsterFieldArea toDeequipMonster) {
+                            toDeequipMonster.setAttackPoint(toDeequipMonster.getAttackPoint() - initialSum);
+                            toDeequipMonster.setDefensePoint(toDeequipMonster.getDefensePoint() - initialSum);
+                            if (toDeequipMonster.getAttackPoint() < 0) toDeequipMonster.setAttackPoint(0);
+                            if (toDeequipMonster.getDefensePoint() < 0) toDeequipMonster.setDefensePoint(0);
+                        }
+
+                        @Override
+                        public boolean isMonsterCorrect(MonsterFieldArea chosenMonster) {
+                            return true;
+                        }
+                    };
+                    break;
+                case "Magnum Shield":
+                    spell.equipEffect = new EquipEffect() {
+                        boolean initialAttack = false;
+
+                        @Override
+                        public void activate(MonsterFieldArea toEquipMonster) {
+                            if (toEquipMonster.isAttack()) {
+                                toEquipMonster.setDefensePoint(toEquipMonster.getDefensePoint() + toEquipMonster.getAttackPoint());
+                                initialAttack = true;
+                            } else
+                                toEquipMonster.setAttackPoint(toEquipMonster.getDefensePoint() + toEquipMonster.getAttackPoint());
+                        }
+
+                        @Override
+                        public void deactivate(MonsterFieldArea toDeequipMonster) {
+                            if (initialAttack)
+                                toDeequipMonster.setDefensePoint(toDeequipMonster.getDefensePoint() - toDeequipMonster.getAttackPoint());
+                            else
+                                toDeequipMonster.setAttackPoint(toDeequipMonster.getAttackPoint() - toDeequipMonster.getDefensePoint());
+                            if (toDeequipMonster.getAttackPoint() < 0) toDeequipMonster.setAttackPoint(0);
+                            if (toDeequipMonster.getDefensePoint() < 0) toDeequipMonster.setDefensePoint(0);
+                        }
+
+                        @Override
+                        public boolean isMonsterCorrect(MonsterFieldArea chosenMonster) {
+                            return ((Monster) chosenMonster.getCard()).getMonsterType().equals(MonsterType.WARRIOR);
+                        }
+                    };
+                    break;
+                case "Black Pendant":
+                    spell.equipEffect = new EquipEffect() {
+                        @Override
+                        public void activate(MonsterFieldArea toEquipMonster) {
+                            toEquipMonster.setAttackPoint(toEquipMonster.getAttackPoint() + 500);
+                        }
+
+                        @Override
+                        public void deactivate(MonsterFieldArea toDeequipMonster) {
+                            toDeequipMonster.setAttackPoint(toDeequipMonster.getAttackPoint() - 500);
+                            if (toDeequipMonster.getAttackPoint() < 0) toDeequipMonster.setAttackPoint(0);
+                        }
+
+                        @Override
+                        public boolean isMonsterCorrect(MonsterFieldArea chosenMonster) {
+                            return true;
+                        }
+                    };
+                    break;
+                case "Sword of dark destruction":
+                    spell.equipEffect = new EquipEffect() {
+                        @Override
+                        public void activate(MonsterFieldArea toEquipMonster) {
+                            toEquipMonster.setAttackPoint(toEquipMonster.getAttackPoint() + 400);
+                            toEquipMonster.setDefensePoint(toEquipMonster.getDefensePoint() - 200);
+                        }
+
+                        @Override
+                        public void deactivate(MonsterFieldArea toDeequipMonster) {
+                            toDeequipMonster.setAttackPoint(toDeequipMonster.getAttackPoint() - 400);
+                            toDeequipMonster.setDefensePoint(toDeequipMonster.getDefensePoint() + 200);
+                            if (toDeequipMonster.getAttackPoint() < 0) toDeequipMonster.setAttackPoint(0);
+                        }
+
+                        @Override
+                        public boolean isMonsterCorrect(MonsterFieldArea chosenMonster) {
+                            if (chosenMonster.getAttackPoint() < 200) return false;
+                            return ((Monster) chosenMonster.getCard()).getMonsterType().equals(MonsterType.FIEND) || ((Monster) chosenMonster.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER);
+                        }
+                    };
+                    break;
                 case "Monster Reborn":
                     spell.spellEffect = objects -> {
                         if (Effect.gameplay.getCurrentPlayer().getField().getGraveyard().size() == 0 && Effect.gameplay.getOpponentPlayer().getField().getGraveyard().size() == 0)
@@ -364,7 +509,6 @@ public class DatabaseController {
                         Card cardToSpecialSummon;
                         while (true) {
                             ArrayList<Card> graveyard = new ArrayList<>();
-                            input = ProgramController.getInstance().getScanner().nextLine();
                             for (Card card : Effect.gameplay.getCurrentPlayer().getField().getGraveyard()) {
                                 if (card instanceof Monster) graveyard.add(card);
                             }
@@ -372,6 +516,7 @@ public class DatabaseController {
                                 if (card instanceof Monster) graveyard.add(card);
                             }
                             GraveyardView.showGraveyard(graveyard);
+                            input = ProgramController.getInstance().getScanner().nextLine();
                             if (input.matches("\\d+")) {
                                 if (Integer.parseInt(input) > graveyard.size())
                                     System.out.println("location invalid in this graveyard");
@@ -397,6 +542,7 @@ public class DatabaseController {
                         boolean foundCard = false;
                         System.out.println("looking for field spell card to add to hand...");
                         for (Card card : Effect.gameplay.getCurrentPlayer().getPlayingDeck().getMainCards()) {
+                            if (!(card instanceof SpellAndTrap)) continue;
                             if (((SpellAndTrap) card).getIcon().equals(Icon.FIELD)) {
                                 HandFieldArea handFieldArea = new HandFieldArea(card);
                                 Effect.gameplay.getCurrentPlayer().getPlayingHand().add(handFieldArea);
@@ -431,10 +577,6 @@ public class DatabaseController {
                     };
                     break;
 
-                case "Change of Heart":
-                    //TODO
-                    break;
-
                 case "Harpie's Feather Duster":
                     spell.spellEffect = objects -> {
                         SpellAndTrapFieldArea[] opponentSpellZone = Effect.gameplay.getOpponentPlayer().getField().getSpellAndTrapField();
@@ -443,10 +585,6 @@ public class DatabaseController {
                                 GameplayController.getInstance().destroySpellAndTrapCard(Effect.gameplay.getOpponentPlayer(), opponentSpellZone[i]);
                         }
                     };
-                    break;
-
-                case "Swords of Revealing Light":
-                    //TODO
                     break;
 
                 case "Dark Hole":
@@ -464,24 +602,26 @@ public class DatabaseController {
                     };
                     break;
 
-                case "Supply Squad":
-                    //TODO
-                    break;
-
-                case "Spell Absorption":
-                    //TODO
-                    break;
-
-                case "Messenger of peace":
-                    //TODO
-                    break;
-
                 case "Twin Twisters":
                     spell.spellEffect = objects -> {
                         Matcher matcher;
-                        GameplayController.getInstance().discardACard();
+                        SpellAndTrapFieldArea thisCardSpellAndTrap = null;
+                        HandFieldArea thisCardHand = null;
+                        if (GameplayController.getInstance().getGameplay().getSelectedField() instanceof SpellAndTrapFieldArea)
+                            thisCardSpellAndTrap = (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField();
+                        else
+                            thisCardHand = (HandFieldArea) GameplayController.getInstance().getGameplay().getSelectedField();
+                        System.out.println("Discard one card from your own hand");
+                        while (true) {
+                            try {
+                                GameplayView.getInstance().discardACard(thisCardHand);
+                                break;
+                            } catch (CardCantDiscardItselfException ignored) {
+                            }
+                        }
                         int counter = 0;
                         GameplayController.getInstance().deselectCard();
+                        System.out.println("Select at most 2 spell and trap cards to destroy, or type done");
                         while (counter < 2) {
                             try {
                                 String input = ProgramController.getInstance().getScanner().nextLine();
@@ -490,6 +630,10 @@ public class DatabaseController {
                                     GameplayController.getInstance().selectCard(matcher.group("id"), "--spell", isOpponent);
                                     if (GameplayController.getInstance().getGameplay().getSelectedField().getCard() == null)
                                         continue;
+                                    if (GameplayController.getInstance().getGameplay().getSelectedField() == thisCardSpellAndTrap) {
+                                        System.out.println("You can't discard this card");
+                                        continue;
+                                    }
                                     counter++;
                                     Player player = GameplayController.getInstance().getGameplay().getCurrentPlayer();
                                     if (isOpponent)
@@ -498,6 +642,7 @@ public class DatabaseController {
                                 } else if (input.matches("done")) break;
                                 else if (input.matches(Regex.help))
                                     System.out.println("Select at most " + (2 - counter) + " spell and trap cards to destroy, or type done");
+                                GameplayView.getInstance().showBoard();
                             } catch (Exception e) {
                                 System.out.println(e.getMessage());
                             }
@@ -509,6 +654,9 @@ public class DatabaseController {
                 case "Mystical space typhoon":
                     spell.spellEffect = objects -> {
                         Matcher matcher;
+                        SpellAndTrapFieldArea thisCard = null;
+                        if (GameplayController.getInstance().getGameplay().getSelectedField() instanceof SpellAndTrapFieldArea)
+                            thisCard = (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField();
                         GameplayController.getInstance().deselectCard();
                         while (true) {
                             try {
@@ -521,12 +669,16 @@ public class DatabaseController {
                                         player = GameplayController.getInstance().gameplay.getOpponentPlayer();
                                     if (GameplayController.getInstance().getGameplay().getSelectedField().getCard() == null)
                                         continue;
+                                    if (GameplayController.getInstance().getGameplay().getSelectedField() == thisCard) {
+                                        System.out.println("You can't discard this card");
+                                        continue;
+                                    }
                                     GameplayController.getInstance().destroySpellAndTrapCard(player, (SpellAndTrapFieldArea) GameplayController.getInstance().getGameplay().getSelectedField());
                                     break;
                                 } else if (input.matches(Regex.help))
                                     System.out.println("Select one spell and trap cards to destroy, or type done");
                             } catch (Exception e) {
-                                e.getMessage();
+                                System.out.println(e.getMessage());
                             }
                         }
                     };
@@ -539,7 +691,7 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.FIEND)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 200);
                                     myField.setAttackPoint(myField.getAttackPoint() + 200);
                                 } else if (myField.getCard() != null && ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.FAIRY)) {
@@ -550,7 +702,7 @@ public class DatabaseController {
                             for (MonsterFieldArea opponentField :
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
                                 if (opponentField.getCard() != null && (((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.FIEND)
-                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
+                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() + 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 200);
                                 } else if (opponentField.getCard() != null && ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.FAIRY)) {
@@ -558,11 +710,6 @@ public class DatabaseController {
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() - 200);
                                 }
                             }
-                        }
-
-                        @Override
-                        public void deactivate() {
-
                         }
                     };
                     break;
@@ -574,8 +721,8 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.INSECT)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 200);
                                     myField.setAttackPoint(myField.getAttackPoint() + 200);
                                 }
@@ -583,18 +730,12 @@ public class DatabaseController {
                             for (MonsterFieldArea opponentField :
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
                                 if (opponentField.getCard() != null && (((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.INSECT)
-                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST)
+                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() + 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 200);
                                 }
                             }
-                        }
-
-
-                        @Override
-                        public void deactivate() {
-
                         }
                     };
                     break;
@@ -610,21 +751,16 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 100 * counter);
                                     myField.setAttackPoint(myField.getAttackPoint() + 100 * counter);
                                 }
                             }
                         }
-
-                        @Override
-                        public void deactivate() {
-
-                        }
                     };
                     break;
 
-                case "Umiruka":
+                case "Umiiruka":
                     spell.fieldZoneEffect = new ContinuousEffect() {
                         @Override
                         public void activate() {
@@ -642,11 +778,6 @@ public class DatabaseController {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() - 400);
                                 }
                             }
-                        }
-
-                        @Override
-                        public void deactivate() {
-
                         }
                     };
                     break;

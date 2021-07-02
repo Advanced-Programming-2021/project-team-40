@@ -36,13 +36,17 @@ public class User {
     public static User getUserByNickname(String nickname) {
         for (User user: users
         ) {
-            if (user.getUsername().equals(nickname)) return user;
+            if (user.getNickname().equals(nickname)) return user;
         }
         return null;
     }
 
     public static ArrayList<User> getUsers() {
         return users;
+    }
+
+    public static void clearUsers() {
+        users.clear();
     }
 
     public Deck getDeckByName(String deckName){
@@ -52,6 +56,7 @@ public class User {
         }
         return null;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -138,4 +143,5 @@ public class User {
     public void addCard(Card card){
         inactiveCards.add(card);
     }
+
 }

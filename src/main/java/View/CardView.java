@@ -1,8 +1,30 @@
 package View;
 
 import Database.Cards.*;
+import Gameplay.FieldArea;
+import Gameplay.HandFieldArea;
+import Gameplay.MonsterFieldArea;
+import Gameplay.SpellAndTrapFieldArea;
 
 public class CardView {
+    public static void showCardInGame(FieldArea field) {
+        Card card = field.getCard();
+        if (field instanceof MonsterFieldArea) {
+            System.out.println("---------------------------");
+            System.out.println("Name: " + card.getName());
+            Monster monster = (Monster) card;
+            MonsterFieldArea monsterFieldArea = (MonsterFieldArea) field;
+            System.out.println("Level: " + monster.getLevel());
+            System.out.println("Type: " + monster.getMonsterType());
+            System.out.println("ATK: " + monsterFieldArea.getAttackPoint());
+            System.out.println("DEF: " + monsterFieldArea.getDefensePoint());
+            System.out.println("Description: " + card.getDescription());
+            System.out.println("Price: " + card.getCardPrice());
+            System.out.println("---------------------------");
+        } else if (field instanceof SpellAndTrapFieldArea) showCard(card);
+        else if (field instanceof HandFieldArea) showCard(card);
+    }
+
     public static void showCard(Card card) {
         System.out.println("---------------------------");
         System.out.println("Name: " + card.getName());

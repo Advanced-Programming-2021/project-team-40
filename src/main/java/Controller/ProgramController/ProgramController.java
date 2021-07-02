@@ -74,7 +74,7 @@ public class ProgramController {
         return scanner;
     }
 
-    public static Menu getCurrentMenu() {
+    public Menu getCurrentMenu() {
         return currentMenu;
     }
 }

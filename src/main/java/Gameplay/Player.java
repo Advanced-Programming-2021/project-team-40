@@ -6,6 +6,7 @@ import Database.Deck;
 import Database.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Player {
     private int maxLP = 0;
@@ -14,6 +15,7 @@ public class Player {
     private int lifePoints = 8000;
     private Field field = new Field();
     private ArrayList<HandFieldArea> playingHand = new ArrayList<>();
+    private HashMap<SpellAndTrapFieldArea,MonsterFieldArea> equippedMonsters = new HashMap<>();
 
     public Player(User user) {
         this.user = user;
@@ -59,5 +61,9 @@ public class Player {
 
     public int getMaxLP() {
         return maxLP;
+    }
+
+    public HashMap<SpellAndTrapFieldArea,MonsterFieldArea> getEquippedMonsters() {
+        return equippedMonsters;
     }
 }

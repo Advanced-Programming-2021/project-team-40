@@ -88,23 +88,6 @@ public class Field extends GridPane {
         return fieldZone;
     }
 
-    //TODO delete useless setters
-    public void setSpellAndTrapField(SpellAndTrapFieldArea[] spellAndTrapField) {
-        this.spellAndTrapField = spellAndTrapField;
-    }
-
-    public void setMonstersField(MonsterFieldArea[] monstersField) {
-        this.monstersField = monstersField;
-    }
-
-    public void setGraveyard(ArrayList<Card> graveyard) {
-        this.graveyard = graveyard;
-    }
-
-    public void setFieldZone(FieldZoneArea fieldZone) {
-        this.fieldZone = fieldZone;
-    }
-
     public void endTurnActions() {
         for (MonsterFieldArea monsterFieldArea : monstersField) {
             monsterFieldArea.setHasAttacked(false);

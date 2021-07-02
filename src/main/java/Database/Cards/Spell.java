@@ -1,6 +1,5 @@
 package Database.Cards;
 
-import Gameplay.Player;
 
 import java.util.ArrayList;
 
