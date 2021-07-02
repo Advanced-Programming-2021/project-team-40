@@ -36,7 +36,7 @@ public class User {
     public static User getUserByNickname(String nickname) {
         for (User user: users
         ) {
-            if (user.getUsername().equals(nickname)) return user;
+            if (user.getNickname().equals(nickname)) return user;
         }
         return null;
     }
@@ -45,10 +45,10 @@ public class User {
         return users;
     }
 
-    //Used in jUnit tests
-    public static void emptyUsers(){
-        users.removeAll(users);
+    public static void clearUsers() {
+        users.clear();
     }
+
     public Deck getDeckByName(String deckName){
         for (Deck deck: decks
         ) {

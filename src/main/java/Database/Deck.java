@@ -54,8 +54,12 @@ public class Deck {
     @Override
     public Object clone() {
         Deck newDeck = new Deck(this.getName());
-        newDeck.setSideCards(this.getSideCards());
-        newDeck.setMainCards(this.getMainCards());
+        for (Card card : mainCards) {
+            newDeck.getMainCards().add(card);
+        }
+        for (Card card : sideCards) {
+            newDeck.getSideCards().add(card);
+        }
         return newDeck;
     }
 

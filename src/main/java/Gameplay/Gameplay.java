@@ -1,5 +1,13 @@
 package Gameplay;
 
+import Database.Cards.Card;
+import View.Exceptions.InvalidSideSwitchException;
+
+import java.util.regex.Matcher;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Gameplay {
     private Player playerOne;
     public int playerOneWins = 0;
@@ -117,5 +125,20 @@ public class Gameplay {
 
     public void setRecentlySummonedMonster(MonsterFieldArea recentlySummonedMonster) {
         this.recentlySummonedMonster = recentlySummonedMonster;
+    }
+
+    public void switchCards(Matcher matcher, Player player) throws InvalidSideSwitchException {
+        int mainDeck = Integer.parseInt(matcher.group("main"));
+        int sideDeck = Integer.parseInt(matcher.group("side"));
+        if (player.getPlayingDeck().getMainCards().size() < mainDeck || player.getPlayingDeck().getSideCards().size() < sideDeck) {
+            throw new InvalidSideSwitchException();
+        }
+        System.out.println("Switching main deck card " + mainDeck + " with side deck card " + sideDeck);
+        Card tempCard = player.getPlayingDeck().getSideCards().get(sideDeck - 1);
+        player.getPlayingDeck().getSideCards().remove(tempCard);
+        player.getPlayingDeck().getMainCards().add(tempCard);
+        tempCard = player.getPlayingDeck().getMainCards().get(mainDeck - 1);
+        player.getPlayingDeck().getMainCards().remove(tempCard);
+        player.getPlayingDeck().getSideCards().add(tempCard);
     }
 }
