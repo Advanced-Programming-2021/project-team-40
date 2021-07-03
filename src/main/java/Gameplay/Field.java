@@ -1,12 +1,15 @@
 package Gameplay;
 
 
-import Controller.DuelController.GameplayController;
 import Database.Cards.Card;
-import View.Exceptions.NoCardFoundException;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 
@@ -15,39 +18,35 @@ public class Field extends GridPane {
     private SpellAndTrapFieldArea[] spellAndTrapField = new SpellAndTrapFieldArea[5];
     private ArrayList<Card> graveyard = new ArrayList<>();
     private FieldZoneArea fieldZone = new FieldZoneArea();
+    private ScrollPane handScrollPane = new ScrollPane();
+    private HBox handFieldArea = new HBox();
+    private Rectangle graveyardField = new Rectangle();
 
     public Field() {
         super();
+        super.setPrefHeight(FieldArea.getFieldAreaHeight() * 4);
+        super.setPrefWidth(FieldArea.getFieldAreaWidth() * 6);
         for (int i = 0; i < 5; i++) {
             monstersField[i] = new MonsterFieldArea();
             spellAndTrapField[i] = new SpellAndTrapFieldArea();
         }
-        this.add(fieldZone,0,0);
-        this.add(monstersField[0],2,1);
-        this.add(monstersField[1],3,1);
-        this.add(monstersField[2],1,1);
-        this.add(monstersField[3],4,1);
-        this.add(monstersField[4],0,1);
-        this.add(spellAndTrapField[0],2,2);
-        this.add(spellAndTrapField[1],3,2);
-        this.add(spellAndTrapField[2],1,2);
-        this.add(spellAndTrapField[3],4,2);
-        this.add(spellAndTrapField[4],0,2);
-        fieldZone.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                try {
-                    if (GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getFieldZone().equals(fieldZone
-                    ))
-                        GameplayController.getInstance().selectCard(null,"-f",false);
-                    else GameplayController.getInstance().selectCard(null,"-f",true);
-                    //TODO: update show card panel
-                } catch (Exception e) {
-                    //TODO: pop-up or sth
-                    System.out.println(e.getMessage());
-                }
-            }
-        });
+        this.add(fieldZone, 0, 0);
+        this.add(graveyardField,4,0);
+        this.add(monstersField[0], 2, 1);
+        this.add(monstersField[1], 3, 1);
+        this.add(monstersField[2], 1, 1);
+        this.add(monstersField[3], 4, 1);
+        this.add(monstersField[4], 0, 1);
+        this.add(spellAndTrapField[0], 2, 2);
+        this.add(spellAndTrapField[1], 3, 2);
+        this.add(spellAndTrapField[2], 1, 2);
+        this.add(spellAndTrapField[3], 4, 2);
+        this.add(spellAndTrapField[4], 0, 2);
+        handScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        handScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        handScrollPane.setContent(handFieldArea);
+        handScrollPane.setPrefSize(FieldArea.getFieldAreaWidth() * 3,FieldArea.getFieldAreaHeight());
+        this.add(handScrollPane,1,3,3,1);
     }
 
     public MonsterFieldArea[] getMonstersField() {
@@ -88,6 +87,10 @@ public class Field extends GridPane {
         return fieldZone;
     }
 
+    public HBox getHandFieldArea() {
+        return handFieldArea;
+    }
+
     public void endTurnActions() {
         for (MonsterFieldArea monsterFieldArea : monstersField) {
             monsterFieldArea.setHasAttacked(false);
@@ -95,7 +98,7 @@ public class Field extends GridPane {
             if (monsterFieldArea.getTurnsLeftForEffect() > 0)
                 monsterFieldArea.setTurnsLeftForEffect(monsterFieldArea.getTurnsLeftForEffect() - 1);
         }
-        for (SpellAndTrapFieldArea spellAndTrapFieldArea : spellAndTrapField){
+        for (SpellAndTrapFieldArea spellAndTrapFieldArea : spellAndTrapField) {
             spellAndTrapFieldArea.setHasJustBeenSet(false);
         }
     }

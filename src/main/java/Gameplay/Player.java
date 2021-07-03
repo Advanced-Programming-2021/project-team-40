@@ -15,7 +15,7 @@ public class Player {
     private int lifePoints = 8000;
     private Field field = new Field();
     private ArrayList<HandFieldArea> playingHand = new ArrayList<>();
-    private HashMap<SpellAndTrapFieldArea,MonsterFieldArea> equippedMonsters = new HashMap<>();
+    private HashMap<SpellAndTrapFieldArea, MonsterFieldArea> equippedMonsters = new HashMap<>();
 
     public Player(User user) {
         this.user = user;
@@ -55,15 +55,15 @@ public class Player {
         return playingHand;
     }
 
-    public void setMaxLP(int maxLP) {
-        if (maxLP > this.maxLP) this.maxLP = maxLP;
-    }
-
     public int getMaxLP() {
         return maxLP;
     }
 
-    public HashMap<SpellAndTrapFieldArea,MonsterFieldArea> getEquippedMonsters() {
+    public void setMaxLP(int maxLP) {
+        if (maxLP > this.maxLP) this.maxLP = maxLP;
+    }
+
+    public HashMap<SpellAndTrapFieldArea, MonsterFieldArea> getEquippedMonsters() {
         return equippedMonsters;
     }
 }

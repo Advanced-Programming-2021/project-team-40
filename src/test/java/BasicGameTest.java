@@ -19,7 +19,7 @@ public class BasicGameTest {
 
     @BeforeAll
     static void clearUsers(){
-        User.emptyUsers();
+        User.clearUsers();
     }
 
     @Test

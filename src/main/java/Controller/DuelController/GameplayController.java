@@ -10,6 +10,9 @@ import Gameplay.*;
 import View.CardView;
 import View.Exceptions.*;
 import View.GameplayView;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -259,7 +262,6 @@ public class GameplayController {
 
     public void activateEffect(SpellAndTrapActivationType type) throws NoCardIsSelectedException, InvalidActivateException, WrongPhaseForSpellException, AlreadyActivatedException, SpecialSummonNotPossibleException, PreparationNotReadyException, ActionNotPossibleException, MonsterZoneFullException, AttackNotPossibleException, RitualSummonNotPossibleException, CommandCancellationException, SpellZoneFullException {
         FieldArea fieldArea = gameplay.getSelectedField();
-        boolean trapThrewException = false;
         if (fieldArea == null) throw new NoCardIsSelectedException();
         if (fieldArea.getCard() instanceof Monster) throw new InvalidActivateException();
         if (type.equals(SpellAndTrapActivationType.NORMAL) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
@@ -833,6 +835,26 @@ public class GameplayController {
         HandFieldArea handFieldArea = new HandFieldArea(card);
         player.getPlayingHand().add(handFieldArea);
         player.getPlayingDeck().getMainCards().remove(card);
+        player.getField().getHandFieldArea().getChildren().add(handFieldArea);
+        handFieldArea.setOnMouseClicked(mouseEvent -> {
+            ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();
+            if (mouseEvent.getButton() != MouseButton.PRIMARY) return;
+            if (hand.contains(handFieldArea)) {
+                int id = -1;
+                for (int i = 0; i < hand.size(); i++) {
+                    if (hand.get(i).equals(handFieldArea)) {
+                        System.out.println(i);
+                        id = i;
+                        break;
+                    }
+                }
+                try {
+                    GameplayController.getInstance().selectCard(String.valueOf(id + 1), "-h", false);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        });
         return card;
     }
 

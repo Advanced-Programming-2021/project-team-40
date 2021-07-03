@@ -2,14 +2,15 @@ package Database.Cards;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 import java.util.*;
 
 abstract public class Card extends Rectangle {
-    private static final int CARD_WIDTH = 0;
-    private static final int CARD_HEIGHT = 0;
+    private static final int CARD_WIDTH = 70;
+    private static final int CARD_HEIGHT = 100;
     public Effect onDestruction;//player
     public Effect onFlipSummon;//null
     public Effect afterDamageCalculation;//player
@@ -28,7 +29,8 @@ abstract public class Card extends Rectangle {
     private boolean hasEffect = false;
 
     public Card(String name, String description, int cardPrice) {
-//        super(CARD_WIDTH,CARD_HEIGHT,new ImagePattern(new Image()));
+        super(CARD_WIDTH,CARD_HEIGHT);
+        setFill(Color.PURPLE);
         setName(name);
         setDescription(description);
         setCardPrice(cardPrice);
@@ -88,5 +90,13 @@ abstract public class Card extends Rectangle {
 
     public void setHasEffect(boolean hasEffect) {
         this.hasEffect = hasEffect;
+    }
+
+    public static int getCardHeight() {
+        return CARD_HEIGHT;
+    }
+
+    public static int getCardWidth() {
+        return CARD_WIDTH;
     }
 }

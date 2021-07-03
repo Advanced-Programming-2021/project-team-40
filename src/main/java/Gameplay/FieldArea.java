@@ -4,8 +4,8 @@ import Database.Cards.Card;
 import javafx.scene.shape.Rectangle;
 
 public class FieldArea extends Rectangle {
-    private static final int FIELD_AREA_WIDTH = 20;
-    private static final int FIELD_AREA_HEIGHT = 30;
+    private static final int FIELD_AREA_WIDTH = 50;
+    private static final int FIELD_AREA_HEIGHT = 70;
     private boolean isEffectAvailable = true;
     protected boolean canBePutOnBoard = false;
     protected Card card;
@@ -41,5 +41,13 @@ public class FieldArea extends Rectangle {
 
     public void setEffectAvailable(boolean effectAvailable) {
         isEffectAvailable = effectAvailable;
+    }
+
+    public static int getFieldAreaWidth() {
+        return FIELD_AREA_WIDTH;
+    }
+
+    public static int getFieldAreaHeight() {
+        return FIELD_AREA_HEIGHT;
     }
 }
