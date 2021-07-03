@@ -836,25 +836,6 @@ public class GameplayController {
         player.getPlayingHand().add(handFieldArea);
         player.getPlayingDeck().getMainCards().remove(card);
         player.getField().getHandFieldArea().getChildren().add(handFieldArea);
-        handFieldArea.setOnMouseClicked(mouseEvent -> {
-            ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();
-            if (mouseEvent.getButton() != MouseButton.PRIMARY) return;
-            if (hand.contains(handFieldArea)) {
-                int id = -1;
-                for (int i = 0; i < hand.size(); i++) {
-                    if (hand.get(i).equals(handFieldArea)) {
-                        System.out.println(i);
-                        id = i;
-                        break;
-                    }
-                }
-                try {
-                    GameplayController.getInstance().selectCard(String.valueOf(id + 1), "-h", false);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-        });
         return card;
     }
 

@@ -6,6 +6,10 @@ import View.Exceptions.InvalidCardForFieldzoneException;
 import View.Exceptions.InvalidCardSelectionException;
 
 public class FieldZoneArea extends SpellAndTrapFieldArea{
+    public FieldZoneArea(int id) {
+        super(id);
+    }
+
     @Override
     public void putCard(Card card, boolean visibility) {
         if (this.card != null)

@@ -17,7 +17,7 @@ public class Field extends GridPane {
     private MonsterFieldArea[] monstersField = new MonsterFieldArea[5];
     private SpellAndTrapFieldArea[] spellAndTrapField = new SpellAndTrapFieldArea[5];
     private ArrayList<Card> graveyard = new ArrayList<>();
-    private FieldZoneArea fieldZone = new FieldZoneArea();
+    private FieldZoneArea fieldZone = new FieldZoneArea(-1);
     private ScrollPane handScrollPane = new ScrollPane();
     private HBox handFieldArea = new HBox();
     private Rectangle graveyardField = new Rectangle();
@@ -27,8 +27,8 @@ public class Field extends GridPane {
         super.setPrefHeight(FieldArea.getFieldAreaHeight() * 4);
         super.setPrefWidth(FieldArea.getFieldAreaWidth() * 6);
         for (int i = 0; i < 5; i++) {
-            monstersField[i] = new MonsterFieldArea();
-            spellAndTrapField[i] = new SpellAndTrapFieldArea();
+            monstersField[i] = new MonsterFieldArea(i + 1);
+            spellAndTrapField[i] = new SpellAndTrapFieldArea(i + 1);
         }
         this.add(fieldZone, 0, 0);
         this.add(graveyardField,4,0);
