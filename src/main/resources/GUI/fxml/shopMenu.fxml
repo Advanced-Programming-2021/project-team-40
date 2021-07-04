@@ -6,14 +6,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.skin.TableHeaderRow?>
+<?import javafx.scene.shape.Rectangle?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="GUI.ScoreboardMenu"
+            fx:controller="GUI.ShopMenu"
             prefHeight="600.0" prefWidth="750.0">
-    <TableView fx:id="table" layoutY="90" layoutX="225" prefHeight="400" prefWidth="300">
 
-    </TableView>
-    <Button layoutX="300" layoutY="510" text="Back" onMouseClicked="#back" prefWidth="150" prefHeight="50"/>
+    <ScrollPane fx:id="scrollPane" layoutY="30" layoutX="30" prefHeight="300" prefWidth="690">
+
+    </ScrollPane>
 
 </AnchorPane>

@@ -7,7 +7,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -29,53 +32,31 @@ public class ScoreboardMenu extends Application {
     }
 
     public void initialize() {
-        HashMap<User, Integer> users = getSortedUsers();
-        for (User user : users.keySet()) {
-            setUserBox(user, users.get(user));
-        }
+        createTable();
 
     }
 
-    private void setUserBox(User user, int rank){
+    private void createTable() {
+        TableColumn nameColumn = new TableColumn("Nickname");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+        nameColumn.setSortable(false);
+        TableColumn scoreColumn = new TableColumn("Score");
+        scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
+        scoreColumn.setSortable(false);
+        TableColumn rankColumn = new TableColumn("Rank");
+        rankColumn.setCellValueFactory(new PropertyValueFactory<>("rank"));
+        rankColumn.setSortable(false);
+        table.getColumns().addAll(rankColumn, nameColumn, scoreColumn);
+        table.getSortOrder().add(rankColumn);
+        table.setEditable(false);
+        for (User user : User.getUsers()) {
+            table.getItems().add(user);
+        }
+        table.sort();
     }
 
-
-    private HashMap<User, Integer> getSortedUsers() {
-        ArrayList<User> users = User.getUsers();
-        sortUsers(users);
-        HashMap<User, Integer> rankedUsers = new HashMap<>();
-        int previousScore = users.get(0).getScore();
-        int rank = 1;
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getScore() < previousScore) {
-                rank = i + 1;
-                previousScore = users.get(i).getScore();
-            }
-            rankedUsers.put(users.get(i), rank);
-        }
-        return rankedUsers;
+    public void back(MouseEvent mouseEvent) throws Exception {
+        new MainMenu().start(WelcomeMenu.stage);
     }
 
-    private void sortUsers(ArrayList<User> users) {
-        users.sort(nicknameComparator);
-        users.sort(scoreComparator);
-    }
-
-    public static Comparator<User> nicknameComparator = new Comparator<>() {
-        @Override
-        public int compare(User firstUser, User secondUser) {
-            String first = firstUser.getUsername().toUpperCase();
-            String second = secondUser.getUsername().toUpperCase();
-            return first.compareTo(second);
-        }
-    };
-
-    public static Comparator<User> scoreComparator = new Comparator<>() {
-        @Override
-        public int compare(User firstUser, User secondUser) {
-            int first = firstUser.getScore();
-            int second = secondUser.getScore();
-            return Integer.compare(second, first);
-        }
-    };
 }
