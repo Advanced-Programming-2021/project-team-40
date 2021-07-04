@@ -2,13 +2,9 @@ package Gameplay;
 
 
 import Database.Cards.Card;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.RowConstraints;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;

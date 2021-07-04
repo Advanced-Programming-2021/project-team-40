@@ -2,14 +2,19 @@ package GUI;
 
 import Controller.DatabaseController.DatabaseController;
 import Controller.DuelController.GameplayController;
+import Database.Cards.Card;
 import Database.User;
 import Gameplay.*;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -62,6 +67,7 @@ public class GameplayView extends Application {
         createHandItems();
         gameplay.getCurrentPlayer().getField().setAlignment(Pos.CENTER);
         gameplay.getOpponentPlayer().getField().setAlignment(Pos.CENTER);
+//        pane.setBackground(new Background(new BackgroundFill(Card.NORMAL_FIELD)));
         pane.setBottom(gameplay.getCurrentPlayer().getField());
         pane.setTop(gameplay.getOpponentPlayer().getField());
     }
@@ -134,7 +140,7 @@ public class GameplayView extends Application {
             try {
                 GameplayController.getInstance().summon();
             } catch (Exception e) {
-                e.printStackTrace();
+                showAlert(e.getMessage());
             }
         });
         effectItem.setOnAction(actionEvent -> {
@@ -147,6 +153,13 @@ public class GameplayView extends Application {
         handItems.add(setItem);
         handItems.add(summonItem);
         handItems.add(effectItem);
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Invalid action");
+        alert.setHeaderText(message);
+        alert.show();
     }
 }
 

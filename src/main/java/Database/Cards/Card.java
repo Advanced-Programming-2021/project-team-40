@@ -1,22 +1,29 @@
 package Database.Cards;
 
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 abstract public class Card extends Rectangle {
-    private static final int CARD_WIDTH = 70;
-    private static final int CARD_HEIGHT = 100;
-    public Effect onDestruction;//player
-    public Effect onFlipSummon;//null
-    public Effect afterDamageCalculation;//player
+    private static final int CARD_WIDTH = 105;
+    private static final int CARD_HEIGHT = 150;
+    public static Image UNKNOWN_CARD = new Image(Card.class.getResourceAsStream("/Database/Cards/Monsters/Unknown.jpg"));
+    public static Comparator<Card> cardNameComparator = new Comparator<>() {
+        @Override
+        public int compare(Card firstCard, Card secondCard) {
+            String first = firstCard.getName().toUpperCase();
+            String second = secondCard.getName().toUpperCase();
+            return first.compareTo(second);
+        }
+    };
+    public Effect onDestruction;
+    public Effect onFlipSummon;
+    public Effect afterDamageCalculation;
     public Effect afterSummon;
-    public Effect onDamageCalculation;//player,damage,attack message,return int
-    public Effect onBeingAttacked;//player
+    public Effect onDamageCalculation;
+    public Effect onBeingAttacked;
     public ContinuousEffect onTurnStart;
     public UniqueSummon uniqueSummon;
     public Effect onSummon;
@@ -29,8 +36,7 @@ abstract public class Card extends Rectangle {
     private boolean hasEffect = false;
 
     public Card(String name, String description, int cardPrice) {
-        super(CARD_WIDTH,CARD_HEIGHT);
-        setFill(Color.PURPLE);
+        super(CARD_WIDTH, CARD_HEIGHT);
         setName(name);
         setDescription(description);
         setCardPrice(cardPrice);
@@ -43,30 +49,6 @@ abstract public class Card extends Rectangle {
         return null;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setCardPrice(int cardPrice) {
-        this.cardPrice = cardPrice;
-    }
-
-    public int getCardPrice() {
-        return cardPrice;
-    }
-
     public static ArrayList<Card> getAllCards() {
         ArrayList<Card> allCards = new ArrayList<>();
         allCards.addAll(Monster.getMonsters());
@@ -75,14 +57,37 @@ abstract public class Card extends Rectangle {
         return allCards;
     }
 
-    public static Comparator<Card> cardNameComparator = new Comparator<>() {
-        @Override
-        public int compare(Card firstCard, Card secondCard) {
-            String first = firstCard.getName().toUpperCase();
-            String second = secondCard.getName().toUpperCase();
-            return first.compareTo(second);
-        }
-    };
+    public static int getCardHeight() {
+        return CARD_HEIGHT;
+    }
+
+    public static int getCardWidth() {
+        return CARD_WIDTH;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getCardPrice() {
+        return cardPrice;
+    }
+
+    public void setCardPrice(int cardPrice) {
+        this.cardPrice = cardPrice;
+    }
 
     public boolean isHasEffect() {
         return hasEffect;
@@ -90,13 +95,5 @@ abstract public class Card extends Rectangle {
 
     public void setHasEffect(boolean hasEffect) {
         this.hasEffect = hasEffect;
-    }
-
-    public static int getCardHeight() {
-        return CARD_HEIGHT;
-    }
-
-    public static int getCardWidth() {
-        return CARD_WIDTH;
     }
 }

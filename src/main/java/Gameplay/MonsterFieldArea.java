@@ -4,16 +4,16 @@ import Controller.DuelController.GameplayController;
 import Database.Cards.Card;
 import Database.Cards.Monster;
 import GUI.GameplayView;
+import javafx.animation.Animation;
 import javafx.animation.PauseTransition;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
 public class MonsterFieldArea extends FieldArea {
-    final private static PauseTransition DOUBLE_CLICK_DETECTOR =  new PauseTransition(Duration.millis(500));
     private boolean canAttack = true;
-    private boolean canBeAttacked = true;//command knight,
-    private boolean canBeDestroyed = true;//marshmallon
+    private boolean canBeAttacked = true;
+    private boolean canBeDestroyed = true;
     private boolean isAttack;
     private boolean hasAttacked;
     private boolean hasSwitchedMode;
@@ -24,16 +24,19 @@ public class MonsterFieldArea extends FieldArea {
     public MonsterFieldArea(int id) {
         super();
         MonsterFieldArea thisField = this;
+        PauseTransition doubleClickDetector =  new PauseTransition(Duration.millis(500));
         this.setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
-            if (GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField))
+            if (!GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField))
                 return;
             ContextMenu contextMenu = new ContextMenu();
+
             contextMenu.getItems().addAll(GameplayView.monsterItems);
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
-        DOUBLE_CLICK_DETECTOR.setOnFinished(actionEvent -> {
+        doubleClickDetector.setOnFinished(actionEvent -> {
             try {
+                doubleClickDetector.pause();
                 GameplayController.getInstance().selectCard(String.valueOf(id), "-m", !GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField));
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -42,11 +45,11 @@ public class MonsterFieldArea extends FieldArea {
         this.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton() != MouseButton.PRIMARY) return;
             if (mouseEvent.getClickCount() == 1) {
-                DOUBLE_CLICK_DETECTOR.play();
+                doubleClickDetector.play();
             }
             if (mouseEvent.getClickCount() == 2){
                 try {
-                    DOUBLE_CLICK_DETECTOR.pause();
+                    doubleClickDetector.pause();
                     GameplayController.getInstance().attack(String.valueOf(id));
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -64,6 +67,7 @@ public class MonsterFieldArea extends FieldArea {
             attackPoint = ((Monster) card).getAttackPoints();
             defensePoint = ((Monster) card).getDefensePoints();
             hasSwitchedMode = true;
+            this.setFill(card.getFill());
         } else {
             attackPoint = 0;
             defensePoint = 0;
