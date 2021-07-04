@@ -1,0 +1,5 @@
+package Gameplay;
+
+public enum GameState {
+    NORMAL_MODE,ATTACK_MODE,RITUAL_SUMMON_MODE,TRIBUTE_MODE,CHAIN_MODE;
+}

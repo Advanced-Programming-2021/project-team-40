@@ -1,5 +1,8 @@
 package Database.Cards;
 
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+
 import java.util.ArrayList;
 
 public class Monster extends Card {
@@ -16,6 +19,8 @@ public class Monster extends Card {
                    int attackPoints, int defensePoints,
                    String description, int cardPrice) {
         super(name, description, cardPrice);
+        String temp = name.replaceAll("\\s","");
+        setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/Database/Cards/Monsters/" + temp + ".jpg"))));
         setAttribute(attribute);
         setMonsterType(monsterType);
         setCardType(cardType);

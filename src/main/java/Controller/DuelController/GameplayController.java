@@ -10,9 +10,6 @@ import Gameplay.*;
 import View.CardView;
 import View.Exceptions.*;
 import View.GameplayView;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,6 +17,7 @@ import java.util.Random;
 public class GameplayController {
     private static GameplayController gameplayController = null;
     public Gameplay gameplay;
+    public GameState gameState = GameState.NORMAL_MODE;
     public ArrayList<FieldArea> effectSpellAndTraps = new ArrayList<>();
 
     private GameplayController() {
@@ -863,6 +861,7 @@ public class GameplayController {
     private void normalSummon(HandFieldArea fieldArea, MonsterFieldArea monsterFieldArea) {
         monsterFieldArea.putCard(fieldArea.getCard(), true);
         gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
+        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(fieldArea);
         gameplay.setHasPlacedMonster(true);
     }
 
@@ -898,7 +897,7 @@ public class GameplayController {
         return true;
     }
 
-    private boolean isOpponentFieldEmpty() {
+    public boolean isOpponentFieldEmpty() {
         MonsterFieldArea[] monsterFieldAreas = gameplay.getOpponentPlayer().getField().getMonstersField();
         for (MonsterFieldArea monster : monsterFieldAreas) {
             if (monster.getCard() != null) return false;
@@ -947,6 +946,7 @@ public class GameplayController {
             }
         }
         gameplay.getCurrentPlayer().getPlayingHand().add(h);
+        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().add(h);
     }
 
     public String setWinnerCheat(String nickname) {

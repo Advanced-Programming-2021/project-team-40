@@ -1,5 +1,8 @@
 package Database.Cards;
 
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
+
 abstract public class SpellAndTrap extends Card {
 
     protected Icon icon;
@@ -7,6 +10,8 @@ abstract public class SpellAndTrap extends Card {
 
     public SpellAndTrap(String name, Icon icon, String description, boolean isLimited, int cardPrice) {
         super(name, description, cardPrice);
+        String temp = name.replaceAll("\\s","");
+        setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/Database/Cards/SpellTrap/" + temp + ".jpg"))));
         setIcon(icon);
         setLimited(isLimited);
     }
