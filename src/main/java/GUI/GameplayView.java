@@ -2,17 +2,21 @@ package GUI;
 
 import Controller.DatabaseController.DatabaseController;
 import Controller.DuelController.GameplayController;
+import Database.Cards.Card;
 import Database.Cards.SpellAndTrap;
 import Database.User;
 import Gameplay.*;
 import javafx.application.Application;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.ImagePattern;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -20,21 +24,28 @@ import java.util.ArrayList;
 public class GameplayView extends Application {
     final private static int GAMEPLAY_WIDTH = 700;
     final private static int GAMEPLAY_HEIGHT = 600;
-    public static ArrayList<MenuItem> monsterItems = new ArrayList<>();
-    public static ArrayList<MenuItem> spellItems = new ArrayList<>();
-    public static ArrayList<MenuItem> handItems = new ArrayList<>();
-    private static MenuItem effectItem = new MenuItem("Activate effect");
-    private static MenuItem summonItem = new MenuItem("Summon");
-    private static MenuItem setItem = new MenuItem("Set");
-    private static MenuItem directAttackItem = new MenuItem("Direct attack");
-    private static MenuItem attackItem = new MenuItem("Attack");
-    private static MenuItem flipItem = new MenuItem("Flip summon");
-    private static MenuItem changePositionItem = new MenuItem("Change position");
-    private static Button nextPhase = new Button("Next phase");
-    private static Button settings = new Button("Settings");
+    public ArrayList<MenuItem> monsterItems = new ArrayList<>();
+    public ArrayList<MenuItem> spellItems = new ArrayList<>();
+    public ArrayList<MenuItem> handItems = new ArrayList<>();
+    private static GameplayView gameplayView;
+    private MenuItem effectItem = new MenuItem("Activate effect");
+    private MenuItem summonItem = new MenuItem("Summon");
+    private MenuItem setItem = new MenuItem("Set");
+    private MenuItem directAttackItem = new MenuItem("Direct attack");
+    private MenuItem attackItem = new MenuItem("Attack");
+    private MenuItem flipItem = new MenuItem("Flip summon");
+    private MenuItem changePositionItem = new MenuItem("Change position");
+    private Button nextPhaseButton = new Button("Next phase");
+    private Button settingsButton = new Button("Settings");
+    private Alert addedCardsAlert = new Alert(Alert.AlertType.INFORMATION);
+    private Alert newPhaseAlert = new Alert(Alert.AlertType.INFORMATION);
     private static BorderPane pane = new BorderPane();
 
-    public static void checkItems() {
+    public static GameplayView getInstance() {
+        if (gameplayView == null) gameplayView = new GameplayView();
+        return gameplayView;
+    }
+    public void checkItems() {
         Phase currentPhase = GameplayController.getInstance().gameplay.getCurrentPhase();
         GameState gameState = GameplayController.getInstance().gameState;
         FieldArea selectedField = GameplayController.getInstance().gameplay.getSelectedField();
@@ -70,7 +81,6 @@ public class GameplayView extends Application {
                 //TODO: flip summon
                 break;
         }
-
     }
 
     public static void showAlert(String message) {
@@ -88,6 +98,10 @@ public class GameplayView extends Application {
         createBoard();
         stage.setScene(scene);
         stage.show();
+        addedCardsAlert.setTitle("New Card!");
+        newPhaseAlert.setTitle("New Phase!");
+        addedCardsAlert.setHeaderText(GameplayController.getInstance().doPhaseAction());
+        addedCardsAlert.show();
     }
 
     public void createBoard() {
@@ -96,7 +110,6 @@ public class GameplayView extends Application {
         GameplayController.getInstance().setGameplay(gameplay);
         GameplayController.getInstance().setStartingPlayer();
         GameplayController.getInstance().dealCardsAtBeginning();
-        GameplayController.getInstance().doPhaseAction();
         gameplay.getOpponentPlayer().getField().setRotate(180);
         changePosition();
         flipSummon();
@@ -104,11 +117,30 @@ public class GameplayView extends Application {
         attack();
         directAttack();
         createHandItems();
+        nextPhase();
         gameplay.getCurrentPlayer().getField().setAlignment(Pos.CENTER);
         gameplay.getOpponentPlayer().getField().setAlignment(Pos.CENTER);
 //        pane.setBackground(new Background(new BackgroundFill(Card.NORMAL_FIELD)));
         pane.setBottom(gameplay.getCurrentPlayer().getField());
         pane.setTop(gameplay.getOpponentPlayer().getField());
+        nextPhaseButton.setAlignment(Pos.BOTTOM_RIGHT);
+        pane.setRight(nextPhaseButton);
+        hideOpponentHands();
+    }
+
+    private void nextPhase() {
+        nextPhaseButton.setOnAction(actionEvent -> {
+            if (GameplayController.getInstance().gameState != GameState.NORMAL_MODE) return;
+            String newPhaseMessage = GameplayController.getInstance().goToNextPhase();
+            String addedCards = GameplayController.getInstance().doPhaseAction();
+            if (addedCards != null) {
+                addedCardsAlert.setHeaderText(newPhaseMessage + "\n" + addedCards);
+                addedCardsAlert.show();
+            } else {
+                newPhaseAlert.setHeaderText(newPhaseMessage);
+                newPhaseAlert.show();
+            }
+        });
     }
 
     private void attack() {
@@ -195,6 +227,23 @@ public class GameplayView extends Application {
         handItems.add(setItem);
         handItems.add(summonItem);
         handItems.add(effectItem);
+    }
+
+    public void hideOpponentHands() {
+        //TODO: implement in switch turn
+        Gameplay gameplay = GameplayController.getInstance().gameplay;
+        for (Node node :
+                gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren()) {
+            HandFieldArea hand = (HandFieldArea) node;
+            hand.setFill(hand.getCard().getFill());
+        }
+        for (Node node :
+                gameplay.getOpponentPlayer().getField().getHandFieldArea().getChildren()) {
+            HandFieldArea hand = (HandFieldArea) node;
+            hand.setFill(new ImagePattern(Card.UNKNOWN_CARD));
+        }
+        gameplay.getCurrentPlayer().getField().getHandScrollPane().setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        gameplay.getOpponentPlayer().getField().getHandScrollPane().setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     }
 }
 

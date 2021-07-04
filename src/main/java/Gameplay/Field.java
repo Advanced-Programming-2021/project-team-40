@@ -2,6 +2,7 @@ package Gameplay;
 
 
 import Database.Cards.Card;
+import GUI.GameplayView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -87,6 +88,10 @@ public class Field extends GridPane {
         return handFieldArea;
     }
 
+    public ScrollPane getHandScrollPane() {
+        return handScrollPane;
+    }
+
     public void endTurnActions() {
         for (MonsterFieldArea monsterFieldArea : monstersField) {
             monsterFieldArea.setHasAttacked(false);
@@ -97,5 +102,6 @@ public class Field extends GridPane {
         for (SpellAndTrapFieldArea spellAndTrapFieldArea : spellAndTrapField) {
             spellAndTrapFieldArea.setHasJustBeenSet(false);
         }
+
     }
 }

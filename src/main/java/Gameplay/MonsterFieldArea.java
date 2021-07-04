@@ -5,6 +5,7 @@ import Database.Cards.Card;
 import Database.Cards.Monster;
 import GUI.GameplayView;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.shape.Rectangle;
 
 public class MonsterFieldArea extends FieldArea {
     private boolean canAttack = true;
@@ -22,16 +23,25 @@ public class MonsterFieldArea extends FieldArea {
         MonsterFieldArea thisField = this;
         this.setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
+            if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) {
+                try {
+                    GameplayController.getInstance().selectCard(String.valueOf(id), "-m", !GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField));
+                } catch (Exception ignored) {
+                }
+
+            }
             if (!GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField))
                 return;
             ContextMenu contextMenu = new ContextMenu();
-            GameplayView.checkItems();
-            contextMenu.getItems().addAll(GameplayView.monsterItems);
+            GameplayView.getInstance().checkItems();
+            contextMenu.getItems().addAll(GameplayView.getInstance().monsterItems);
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
         this.setOnMouseEntered(mouseEvent -> {
             try {
+                if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) return;
                 GameplayController.getInstance().selectCard(String.valueOf(id), "-m", !GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField));
+                GameplayController.getInstance().gameState = GameState.NORMAL_MODE;
             } catch (Exception ignored) {
             }
         });
@@ -39,10 +49,10 @@ public class MonsterFieldArea extends FieldArea {
             try {
                 if (GameplayController.getInstance().gameState != GameState.ATTACK_MODE) return;
                 GameplayController.getInstance().attack(String.valueOf(id));
+
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                GameplayView.showAlert(e.getMessage());
             }
-            //TODO: update show card panel
         });
     }
 
@@ -51,13 +61,12 @@ public class MonsterFieldArea extends FieldArea {
         this.isAttack = isAttack;
         super.putCard(card, isAttack);
         if (card != null) {
-            attackPoint = ((Monster) card).getAttackPoints();
-            defensePoint = ((Monster) card).getDefensePoints();
+            setAttackPoint(((Monster) card).getAttackPoints());
+            setDefensePoint(((Monster) card).getDefensePoints());
             hasSwitchedMode = true;
-            this.setFill(card.getFill());
         } else {
-            attackPoint = 0;
-            defensePoint = 0;
+            setAttackPoint(0);
+            setAttackPoint(0);
         }
     }
 

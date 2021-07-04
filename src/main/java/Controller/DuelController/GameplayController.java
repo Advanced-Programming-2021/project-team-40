@@ -38,26 +38,24 @@ public class GameplayController {
         this.gameplay = gameplay;
     }
 
-    public void doPhaseAction() {
-        if (gameplay == null) return;
+    public String doPhaseAction() {
+        if (gameplay == null) return null;
         switch (gameplay.getCurrentPhase()) {
             case DRAW_PHASE:
                 Card card = drawCard();
-                System.out.println("new card added to the hand : " + card.getName());
-                goToNextPhase();
-                break;
+                return "new card added to the hand : " + card.getName();
             case STANDBY_PHASE:
                 onStandbyTraps();
-                goToNextPhase();
                 break;
             case END_PHASE:
                 switchTurn();
-                goToNextPhase();
                 break;
         }
+        return null;
     }
 
-    public void goToNextPhase() {
+    public String goToNextPhase() {
+        //TODO: console view does not work any more
         if (GameplayController.getInstance().getGameplay().getSelectedField() != null) {
             try {
                 deselectCard();
@@ -67,37 +65,27 @@ public class GameplayController {
         switch (gameplay.getCurrentPhase()) {
             case DRAW_PHASE:
                 gameplay.setCurrentPhase(Phase.STANDBY_PHASE);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
-                break;
+                return gameplay.getCurrentPhase().toString();
             case STANDBY_PHASE:
                 gameplay.setCurrentPhase(Phase.MAIN_PHASE_ONE);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
-                break;
+                return gameplay.getCurrentPhase().toString();
             case MAIN_PHASE_ONE:
                 if (GameplayView.getInstance().isFirstOfGame()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 else if (!hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 else gameplay.setCurrentPhase(Phase.BATTLE_PHASE);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
-                break;
+                return gameplay.getCurrentPhase().toString();
             case BATTLE_PHASE:
                 gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
                 System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
                 break;
             case MAIN_PHASE_TW0:
                 gameplay.setCurrentPhase(Phase.END_PHASE);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
-                break;
+                return gameplay.getCurrentPhase().toString();
             case END_PHASE:
                 gameplay.setCurrentPhase(Phase.DRAW_PHASE);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
-                break;
+                return gameplay.getCurrentPhase().toString();
         }
+        return null;
     }
 
     public void goToEndPhase() {
@@ -138,6 +126,7 @@ public class GameplayController {
         gameplay.setOwnsSelectedCard(null);
         gameplay.setHasPlacedMonster(false);
         GameplayView.getInstance().setFirstOfGame(false);
+        GUI.GameplayView.getInstance().hideOpponentHands();
     }
 
     public void temporarySwitchTurn() {
@@ -147,7 +136,7 @@ public class GameplayController {
         gameplay.setCurrentPlayer(temp);
         gameplay.setSelectedField(null);
         gameplay.setOwnsSelectedCard(null);
-        GameplayView.getInstance().showBoard();
+        GUI.GameplayView.getInstance().hideOpponentHands();
     }
 
     public String endWholeMatch(Player winner, Player loser) {
@@ -855,6 +844,8 @@ public class GameplayController {
             destroySpellAndTrapCard(gameplay.getCurrentPlayer(), spellAndTrapFieldArea);
         spellAndTrapFieldArea.putCard(handFieldArea.getCard(), false);
         gameplay.getCurrentPlayer().getPlayingHand().remove(handFieldArea);
+        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(spellAndTrapFieldArea);
+
     }
 
 
