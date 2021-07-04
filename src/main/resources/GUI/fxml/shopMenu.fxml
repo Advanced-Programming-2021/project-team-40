@@ -7,6 +7,8 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
+<?import java.net.URL?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="GUI.ShopMenu"
@@ -15,5 +17,22 @@
     <ScrollPane fx:id="scrollPane" layoutY="30" layoutX="30" prefHeight="300" prefWidth="690">
 
     </ScrollPane>
+
+    <Pane fx:id="pane" layoutY="360" layoutX="30" prefHeight="220" prefWidth="650">
+        <HBox prefWidth="450" prefHeight="220">
+            <Rectangle width="154" height="220" fx:id="cardLarge" fill="tan"/>
+            <Text fx:id="cardDescription" translateX="20" wrappingWidth="350" styleClass="description"/>
+            <Button fx:id="buyButton" translateX="30" prefHeight="40" minWidth="120" styleClass="buyButton"
+                    onMouseClicked="#buy"
+                    disable="true" text="Buy"/>
+            <Button translateX="-90" translateY="50" prefHeight="40" minWidth="120"
+                    onMouseClicked="#back"
+                    text="Back"/>
+        </HBox>
+    </Pane>
+
+    <stylesheets>
+        <URL value="@menuCSS.css"/>
+    </stylesheets>
 
 </AnchorPane>
