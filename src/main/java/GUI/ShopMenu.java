@@ -55,7 +55,7 @@ public class ShopMenu extends Application {
 
     public VBox getCardVBox(Card card, int i) {
         VBox vBox = new VBox();
-        Rectangle cardView = new Rectangle(70, 100, Color.MINTCREAM);
+        Rectangle cardView = new Rectangle(70, 100, card.getFill());
         Label name = new Label(card.getName());
         name.setMaxWidth(70);
         Label count = new Label(cardsHashMap.get(card.getName()).toString());
