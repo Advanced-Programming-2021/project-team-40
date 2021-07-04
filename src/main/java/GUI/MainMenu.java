@@ -50,7 +50,8 @@ public class MainMenu extends Application {
     public void profileMenu(MouseEvent mouseEvent) {
     }
 
-    public void shop(MouseEvent mouseEvent) {
+    public void shop(MouseEvent mouseEvent) throws Exception {
+        new ShopMenu().start(WelcomeMenu.stage);
     }
 
     public void importExport(MouseEvent mouseEvent) {
