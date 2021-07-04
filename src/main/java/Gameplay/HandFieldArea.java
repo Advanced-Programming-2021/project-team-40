@@ -21,6 +21,7 @@ public class HandFieldArea extends FieldArea {
             ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();
             if (!hand.contains(thisField)) return;
             if (GameplayController.getInstance().gameplay.getSelectedField() != thisField) return;
+            GameplayView.checkItems();
             ContextMenu contextMenu = new ContextMenu();
             contextMenu.getItems().addAll(GameplayView.handItems);
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());

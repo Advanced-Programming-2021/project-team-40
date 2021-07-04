@@ -16,6 +16,7 @@ public class SpellAndTrapFieldArea extends FieldArea {
             if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
             if (GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getSpellAndTrapFieldById(id).equals(thisField))
                 return;
+            GameplayView.checkItems();
             ContextMenu contextMenu = new ContextMenu();
             contextMenu.getItems().addAll(GameplayView.spellItems);
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());

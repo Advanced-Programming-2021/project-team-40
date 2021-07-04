@@ -4,11 +4,7 @@ import Controller.DuelController.GameplayController;
 import Database.Cards.Card;
 import Database.Cards.Monster;
 import GUI.GameplayView;
-import javafx.animation.Animation;
-import javafx.animation.PauseTransition;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.input.MouseButton;
-import javafx.util.Duration;
 
 public class MonsterFieldArea extends FieldArea {
     private boolean canAttack = true;
@@ -24,36 +20,27 @@ public class MonsterFieldArea extends FieldArea {
     public MonsterFieldArea(int id) {
         super();
         MonsterFieldArea thisField = this;
-        PauseTransition doubleClickDetector =  new PauseTransition(Duration.millis(500));
         this.setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
             if (!GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField))
                 return;
             ContextMenu contextMenu = new ContextMenu();
-
+            GameplayView.checkItems();
             contextMenu.getItems().addAll(GameplayView.monsterItems);
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
-        doubleClickDetector.setOnFinished(actionEvent -> {
+        this.setOnMouseEntered(mouseEvent -> {
             try {
-                doubleClickDetector.pause();
                 GameplayController.getInstance().selectCard(String.valueOf(id), "-m", !GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField));
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+            } catch (Exception ignored) {
             }
         });
         this.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton() != MouseButton.PRIMARY) return;
-            if (mouseEvent.getClickCount() == 1) {
-                doubleClickDetector.play();
-            }
-            if (mouseEvent.getClickCount() == 2){
-                try {
-                    doubleClickDetector.pause();
-                    GameplayController.getInstance().attack(String.valueOf(id));
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+            try {
+                if (GameplayController.getInstance().gameState != GameState.ATTACK_MODE) return;
+                GameplayController.getInstance().attack(String.valueOf(id));
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
             //TODO: update show card panel
         });

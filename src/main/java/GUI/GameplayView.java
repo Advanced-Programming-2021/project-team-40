@@ -2,19 +2,17 @@ package GUI;
 
 import Controller.DatabaseController.DatabaseController;
 import Controller.DuelController.GameplayController;
-import Database.Cards.Card;
+import Database.Cards.SpellAndTrap;
 import Database.User;
 import Gameplay.*;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -25,21 +23,61 @@ public class GameplayView extends Application {
     public static ArrayList<MenuItem> monsterItems = new ArrayList<>();
     public static ArrayList<MenuItem> spellItems = new ArrayList<>();
     public static ArrayList<MenuItem> handItems = new ArrayList<>();
-    private MenuItem effectItem = new MenuItem("Activate effect") {
-    };
-    private MenuItem summonItem = new MenuItem("Summon");
-    private MenuItem setItem = new MenuItem("Set");
-    private MenuItem directAttackItem = new MenuItem("Direct attack");
-    private MenuItem flipItem = new MenuItem("Flip summon");
-    private MenuItem changePositionItem = new MenuItem("Change position");
-    private BorderPane pane = new BorderPane();
+    private static MenuItem effectItem = new MenuItem("Activate effect");
+    private static MenuItem summonItem = new MenuItem("Summon");
+    private static MenuItem setItem = new MenuItem("Set");
+    private static MenuItem directAttackItem = new MenuItem("Direct attack");
+    private static MenuItem attackItem = new MenuItem("Attack");
+    private static MenuItem flipItem = new MenuItem("Flip summon");
+    private static MenuItem changePositionItem = new MenuItem("Change position");
+    private static Button nextPhase = new Button("Next phase");
+    private static Button settings = new Button("Settings");
+    private static BorderPane pane = new BorderPane();
 
-    public static int getGameplayHeight() {
-        return GAMEPLAY_HEIGHT;
+    public static void checkItems() {
+        Phase currentPhase = GameplayController.getInstance().gameplay.getCurrentPhase();
+        GameState gameState = GameplayController.getInstance().gameState;
+        FieldArea selectedField = GameplayController.getInstance().gameplay.getSelectedField();
+        summonItem.setDisable(true);
+        setItem.setDisable(true);
+        flipItem.setDisable(true);
+        effectItem.setDisable(true);
+        directAttackItem.setDisable(true);
+        attackItem.setDisable(true);
+        switch (currentPhase) {
+            case BATTLE_PHASE:
+                if (gameState == GameState.CHAIN_MODE)
+                    effectItem.setDisable(false);
+                if (gameState == GameState.ATTACK_MODE &&
+                    selectedField instanceof MonsterFieldArea &&
+                    !((MonsterFieldArea) selectedField).hasAttacked() &&
+                    ((MonsterFieldArea) selectedField).isAttack())
+                    attackItem.setDisable(false);
+                if (GameplayController.getInstance().isOpponentFieldEmpty())
+                    directAttackItem.setDisable(false);
+                break;
+            case MAIN_PHASE_ONE:
+            case MAIN_PHASE_TW0:
+                if (selectedField.getCard() instanceof SpellAndTrap)
+                    effectItem.setDisable(false);
+                if (!GameplayController.getInstance().gameplay.hasPlacedMonster()) {
+                    summonItem.setDisable(false);
+                    setItem.setDisable(false);
+                }
+                if (selectedField instanceof MonsterFieldArea &&
+                    !((MonsterFieldArea) selectedField).hasSwitchedMode())
+                    changePositionItem.setDisable(false);
+                //TODO: flip summon
+                break;
+        }
+
     }
 
-    public static int getGameplayWidth() {
-        return GAMEPLAY_WIDTH;
+    public static void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Invalid action");
+        alert.setHeaderText(message);
+        alert.show();
     }
 
     @Override
@@ -63,6 +101,7 @@ public class GameplayView extends Application {
         changePosition();
         flipSummon();
         activateEffect();
+        attack();
         directAttack();
         createHandItems();
         gameplay.getCurrentPlayer().getField().setAlignment(Pos.CENTER);
@@ -72,13 +111,18 @@ public class GameplayView extends Application {
         pane.setTop(gameplay.getOpponentPlayer().getField());
     }
 
+    private void attack() {
+        attackItem.setOnAction(actionEvent -> GameplayController.getInstance().gameState = GameState.ATTACK_MODE);
+        monsterItems.add(attackItem);
+    }
+
     private void activateEffect() {
         effectItem.setOnAction(actionEvent -> {
             try {
                 GameplayController.getInstance().activateEffect(SpellAndTrapActivationType.NORMAL);
                 //TODO: chain doesn't work
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                showAlert(e.getMessage());
             }
         });
         spellItems.add(effectItem);
@@ -93,8 +137,7 @@ public class GameplayView extends Application {
             try {
                 GameplayController.getInstance().changePosition(selectedMonsterField.isAttack());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
-                //TODO: popup or sth
+                showAlert(e.getMessage());
             }
         });
         monsterItems.add(changePositionItem);
@@ -106,7 +149,7 @@ public class GameplayView extends Application {
                 String message = GameplayController.getInstance().directAttack();
                 System.out.println(message);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                showAlert(e.getMessage());
             }
         });
         monsterItems.add(directAttackItem);
@@ -120,8 +163,7 @@ public class GameplayView extends Application {
             try {
                 GameplayController.getInstance().flipSummon();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
-                //TODO: popup or sth
+                showAlert(e.getMessage());
             }
         });
         monsterItems.add(flipItem);
@@ -133,7 +175,7 @@ public class GameplayView extends Application {
             try {
                 GameplayController.getInstance().set();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                showAlert(e.getMessage());
             }
         });
         summonItem.setOnAction(actionEvent -> {
@@ -147,25 +189,17 @@ public class GameplayView extends Application {
             try {
                 GameplayController.getInstance().activateEffect(SpellAndTrapActivationType.NORMAL);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                showAlert(e.getMessage());
             }
         });
         handItems.add(setItem);
         handItems.add(summonItem);
         handItems.add(effectItem);
     }
-
-    private void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Invalid action");
-        alert.setHeaderText(message);
-        alert.show();
-    }
 }
 
 class CardDisplayPanel extends GridPane {
     public CardDisplayPanel() {
         super();
-
     }
 }
