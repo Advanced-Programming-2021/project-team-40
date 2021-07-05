@@ -13,7 +13,7 @@ public class SpellAndTrapFieldArea extends FieldArea {
         SpellAndTrapFieldArea thisField = this;
         this.setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
-            if (GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getSpellAndTrapFieldById(id).equals(thisField))
+            if (!GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getSpellAndTrapFieldById(id).equals(thisField))
                 return;
             GameplayView.checkItems();
             ContextMenu contextMenu = new ContextMenu();

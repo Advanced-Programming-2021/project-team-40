@@ -3,9 +3,11 @@ package GUI;
 import Controller.DatabaseController.DatabaseController;
 import Controller.DuelController.GameplayController;
 import Database.Cards.Card;
+import Database.Cards.Monster;
 import Database.Cards.SpellAndTrap;
 import Database.User;
 import Gameplay.*;
+import View.Exceptions.InvalidCardNameException;
 import View.Exceptions.NoCardIsSelectedException;
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -79,9 +81,12 @@ public class GameplayView extends Application {
                 break;
             case MAIN_PHASE_ONE:
             case MAIN_PHASE_TW0:
-                if (selectedField.getCard() instanceof SpellAndTrap)
+                if (selectedField.getCard() instanceof SpellAndTrap) {
                     effectItem.setDisable(false);
-                if (!GameplayController.getInstance().gameplay.hasPlacedMonster()) {
+                    setItem.setDisable(false);
+                }
+                if ((selectedField.getCard() instanceof Monster) &&
+                    !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
                     summonItem.setDisable(false);
                     setItem.setDisable(false);
                 }
@@ -159,16 +164,19 @@ public class GameplayView extends Application {
         for (int i = 0; i < deck.size(); i++) {
             Rectangle cardView = new Rectangle(52.5, 75);
             cardView.setFill(deck.get(i).getFill());
-            String finalI = String.valueOf(i);
+            String finalI = String.valueOf(i + 1);
             cardView.setOnMouseClicked(mouseEvent -> {
                 if (!ids.contains(finalI)) ids.add(finalI);
                 else ids.remove(finalI);
-                if (GameplayController.getInstance().isRitualInputsValid((String[]) ids.toArray()))
+                if (GameplayController.getInstance().isRitualInputsValid(ids.toArray(new String[0])))
                     button.setDisable(false);
             });
+            hBox.getChildren().add(cardView);
         }
         button.setOnAction(actionEvent -> {
-            GameplayController.getInstance().ritualTribute((String[]) ids.toArray(), ritualSpell, isSummon);
+            GameplayController.getInstance().ritualTribute(ids.toArray(new String[0]), ritualSpell, isSummon);
+            deckShowStage.hide();
+
         });
         hBox.setAlignment(Pos.CENTER);
         ScrollPane scrollPane = new ScrollPane();
@@ -203,6 +211,11 @@ public class GameplayView extends Application {
         GameplayController.getInstance().setGameplay(gameplay);
         GameplayController.getInstance().setStartingPlayer();
         GameplayController.getInstance().dealCardsAtBeginning();
+        try {
+            GameplayController.getInstance().forceAddCard("Advanced Ritual Art");
+            GameplayController.getInstance().forceAddCard("Crab Turtle");
+        } catch (InvalidCardNameException e) {
+        }
         gameplay.getOpponentPlayer().getField().setRotate(180);
         createCardDisplayPanel();
         changePosition();
@@ -229,6 +242,9 @@ public class GameplayView extends Application {
 
     private void nextPhase() {
         nextPhaseButton.setOnAction(actionEvent -> {
+            if (GameplayController.getInstance().gameState == GameState.RITUAL_SET_MODE) return;
+            if (GameplayController.getInstance().gameState == GameState.RITUAL_SUMMON_MODE) return;
+            if (GameplayController.getInstance().gameState == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
             String newPhaseMessage = GameplayController.getInstance().goToNextPhase();
             String addedCards = GameplayController.getInstance().doPhaseAction();
             if (addedCards != null) {

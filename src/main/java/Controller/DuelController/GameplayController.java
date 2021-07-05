@@ -81,8 +81,7 @@ public class GameplayController {
                 return gameplay.getCurrentPhase().toString();
             case BATTLE_PHASE:
                 gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                break;
+                return gameplay.getCurrentPhase().toString();
             case MAIN_PHASE_TW0:
                 gameplay.setCurrentPhase(Phase.END_PHASE);
                 return gameplay.getCurrentPhase().toString();
@@ -372,6 +371,7 @@ public class GameplayController {
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
         if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) {
             checkForRitual(false);
+            return;
         } else if (((Monster) fieldArea.getCard()).getLevel() > 4 && toTributeCards.isEmpty()) {
             if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) < ((Monster) fieldArea.getCard()).getNumberOfTributes())
                 throw new NotEnoughCardsException();
@@ -395,8 +395,10 @@ public class GameplayController {
         MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
         if (monsterFieldArea == null) throw new MonsterZoneFullException();
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
-        if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) checkForRitual(true);
-        else if (fieldArea.getCard().uniqueSummon != null) fieldArea.getCard().uniqueSummon.summon();
+        if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) {
+            checkForRitual(true);
+            return;
+        } else if (fieldArea.getCard().uniqueSummon != null) fieldArea.getCard().uniqueSummon.summon();
         else if (((Monster) fieldArea.getCard()).getLevel() > 4 && toTributeCards.isEmpty()) {
             if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) < ((Monster) fieldArea.getCard()).getNumberOfTributes())
                 throw new NotEnoughCardsException();
@@ -437,11 +439,13 @@ public class GameplayController {
         removeTributesFromHand(ids);
         DeckMenuController.getInstance().shuffleDeck(gameplay.getCurrentPlayer().getPlayingDeck());
         effectSpellAndTraps.remove(ritualSpell);
-        if (ritualSpell instanceof HandFieldArea)
+        if (ritualSpell instanceof HandFieldArea) {
+            moveCardToGraveyard(gameplay.getCurrentPlayer(), ritualSpell.getCard());
             gameplay.getCurrentPlayer().getPlayingHand().remove(ritualSpell);
+            gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(ritualSpell);
+        }
         if (ritualSpell instanceof SpellAndTrapFieldArea)
             destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) ritualSpell);
-        moveCardToGraveyard(gameplay.getCurrentPlayer(), ritualSpell.getCard());
         DeckMenuController.getInstance().shuffleDeck(gameplay.getCurrentPlayer().getPlayingDeck());
         if (isSummon)
             normalSummon((HandFieldArea) gameplay.getSelectedField(), gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea());
@@ -831,6 +835,7 @@ public class GameplayController {
             if ((area.getCard()).onDestruction != null)
                 (area.getCard()).onDestruction.execute(player);
             moveCardToGraveyard(player, area.getCard());
+            gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(area);
             gameplay.getCurrentPlayer().getPlayingHand().remove(area);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -870,8 +875,7 @@ public class GameplayController {
             destroySpellAndTrapCard(gameplay.getCurrentPlayer(), spellAndTrapFieldArea);
         spellAndTrapFieldArea.putCard(handFieldArea.getCard(), false);
         gameplay.getCurrentPlayer().getPlayingHand().remove(handFieldArea);
-        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(spellAndTrapFieldArea);
-        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(spellAndTrapFieldArea);
+        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(handFieldArea);
 
     }
 

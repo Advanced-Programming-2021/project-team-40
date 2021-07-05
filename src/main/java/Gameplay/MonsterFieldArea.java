@@ -10,7 +10,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 public class MonsterFieldArea extends FieldArea {
     private boolean canAttack = true;
@@ -28,7 +27,6 @@ public class MonsterFieldArea extends FieldArea {
 
     public MonsterFieldArea(int id) {
         super();
-
         MonsterFieldArea thisField = this;
         getCardView().setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) {
@@ -125,9 +123,9 @@ public class MonsterFieldArea extends FieldArea {
     public void changePosition() {
         isAttack = !isAttack;
         hasSwitchedMode = true;
+        if (getCardView().getRotate() == -90.0) getCardView().setRotate(0);
+        else if (getCardView().getRotate() == 0) getCardView().setRotate(-90.0);
         if (isAttack) getCardView().setFill(getCard().getFill());
-        if (getCardView().getRotate() == -90) setRotate(0);
-        if (getCardView().getRotate() == 0) setRotate(-90);
     }
 
     public boolean isAttack() {
