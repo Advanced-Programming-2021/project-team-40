@@ -386,8 +386,8 @@ public class DatabaseController {
                     card.setHasEffect(true);
                     card.uniqueSummon = new UniqueSummon() {
                         @Override
-                        public void summon() throws NotEnoughCardsException, CommandCancellationException {
-                            GameplayController.getInstance().tributeCards(GameplayView.getInstance().getTributes(3));
+                        public void summon() {
+                            GameplayController.getInstance().tributeCards();
                         }
                     };
                     break;

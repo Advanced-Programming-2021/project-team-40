@@ -10,6 +10,10 @@ import Gameplay.*;
 import View.CardView;
 import View.Exceptions.*;
 import View.GameplayView;
+import com.google.gson.internal.GsonBuildConfig;
+import javafx.scene.control.Label;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -17,6 +21,8 @@ import java.util.Random;
 public class GameplayController {
     private static GameplayController gameplayController = null;
     public Gameplay gameplay;
+    public ArrayList<MonsterFieldArea> toTributeCards = new ArrayList<>();
+    public int tributeCount = 0;
     public GameState gameState = GameState.NORMAL_MODE;
     public ArrayList<FieldArea> effectSpellAndTraps = new ArrayList<>();
 
@@ -38,26 +44,24 @@ public class GameplayController {
         this.gameplay = gameplay;
     }
 
-    public void doPhaseAction() {
-        if (gameplay == null) return;
+    public String doPhaseAction() {
+        if (gameplay == null) return null;
         switch (gameplay.getCurrentPhase()) {
             case DRAW_PHASE:
                 Card card = drawCard();
-                System.out.println("new card added to the hand : " + card.getName());
-                goToNextPhase();
-                break;
+                return "new card added to the hand : " + card.getName();
             case STANDBY_PHASE:
                 onStandbyTraps();
-                goToNextPhase();
                 break;
             case END_PHASE:
                 switchTurn();
-                goToNextPhase();
                 break;
         }
+        return null;
     }
 
-    public void goToNextPhase() {
+    public String goToNextPhase() {
+        //TODO: console view does not work any more
         if (GameplayController.getInstance().getGameplay().getSelectedField() != null) {
             try {
                 deselectCard();
@@ -67,37 +71,27 @@ public class GameplayController {
         switch (gameplay.getCurrentPhase()) {
             case DRAW_PHASE:
                 gameplay.setCurrentPhase(Phase.STANDBY_PHASE);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
-                break;
+                return gameplay.getCurrentPhase().toString();
             case STANDBY_PHASE:
                 gameplay.setCurrentPhase(Phase.MAIN_PHASE_ONE);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
-                break;
+                return gameplay.getCurrentPhase().toString();
             case MAIN_PHASE_ONE:
                 if (GameplayView.getInstance().isFirstOfGame()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 else if (!hasAttackMonster()) gameplay.setCurrentPhase(Phase.END_PHASE);
                 else gameplay.setCurrentPhase(Phase.BATTLE_PHASE);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
-                break;
+                return gameplay.getCurrentPhase().toString();
             case BATTLE_PHASE:
                 gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
                 System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
                 break;
             case MAIN_PHASE_TW0:
                 gameplay.setCurrentPhase(Phase.END_PHASE);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
-                break;
+                return gameplay.getCurrentPhase().toString();
             case END_PHASE:
                 gameplay.setCurrentPhase(Phase.DRAW_PHASE);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                doPhaseAction();
-                break;
+                return gameplay.getCurrentPhase().toString();
         }
+        return null;
     }
 
     public void goToEndPhase() {
@@ -138,6 +132,7 @@ public class GameplayController {
         gameplay.setOwnsSelectedCard(null);
         gameplay.setHasPlacedMonster(false);
         GameplayView.getInstance().setFirstOfGame(false);
+        GUI.GameplayView.getInstance().hideOpponentHands();
     }
 
     public void temporarySwitchTurn() {
@@ -147,7 +142,7 @@ public class GameplayController {
         gameplay.setCurrentPlayer(temp);
         gameplay.setSelectedField(null);
         gameplay.setOwnsSelectedCard(null);
-        GameplayView.getInstance().showBoard();
+        GUI.GameplayView.getInstance().hideOpponentHands();
     }
 
     public String endWholeMatch(Player winner, Player loser) {
@@ -250,6 +245,10 @@ public class GameplayController {
         if (gameplay.getSelectedField() == null) throw new NoCardIsSelectedException();
         gameplay.setSelectedField(null);
         gameplay.setOwnsSelectedCard(null);
+        Rectangle cardView = (Rectangle) GUI.GameplayView.cardDisplay.getChildren().get(0);
+        Label description = (Label) GUI.GameplayView.cardDisplay.getChildren().get(1);
+        cardView.setFill(new ImagePattern(Card.UNKNOWN_CARD));
+        description.setText("");
     }
 
     public void showCard() throws NoCardIsSelectedException {
@@ -374,8 +373,14 @@ public class GameplayController {
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
         if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) {
             checkForRitual(false);
-        } else if (((Monster) fieldArea.getCard()).getLevel() > 4)
-            tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
+        } else if (((Monster) fieldArea.getCard()).getLevel() > 4 && toTributeCards.isEmpty()) {
+            if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) < ((Monster) fieldArea.getCard()).getNumberOfTributes())
+                throw new NotEnoughCardsException();
+            gameState = GameState.TRIBUTE_SET_MODE;
+            tributeCount = ((Monster) fieldArea.getCard()).getNumberOfTributes();
+            return;
+        }
+        toTributeCards.clear();
         setMonsterCard(monster, (HandFieldArea) fieldArea);
         deselectCard();
     }
@@ -393,8 +398,14 @@ public class GameplayController {
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
         if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) checkForRitual(true);
         else if (fieldArea.getCard().uniqueSummon != null) fieldArea.getCard().uniqueSummon.summon();
-        else if (((Monster) fieldArea.getCard()).getLevel() > 4)
-            tributeCards(GameplayView.getInstance().getTributes(((Monster) fieldArea.getCard()).getNumberOfTributes()));
+        else if (((Monster) fieldArea.getCard()).getLevel() > 4 && toTributeCards.isEmpty()) {
+            if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) < ((Monster) fieldArea.getCard()).getNumberOfTributes())
+                throw new NotEnoughCardsException();
+            gameState = GameState.TRIBUTE_SUMMON_MODE;
+            tributeCount = ((Monster) fieldArea.getCard()).getNumberOfTributes();
+            return;
+        }
+        toTributeCards.clear();
         normalSummon((HandFieldArea) fieldArea, monsterFieldArea);
         gameplay.setRecentlySummonedMonster(monsterFieldArea);
         onSummonTraps();
@@ -414,10 +425,11 @@ public class GameplayController {
         ritualTribute(GameplayView.getInstance().ritualTribute(), ritualSpell, isSummon);
     }
 
-    public void tributeCards(ArrayList<MonsterFieldArea> toTribute) {
-        for (MonsterFieldArea monsterFieldArea : toTribute) {
+    public void tributeCards() {
+        for (MonsterFieldArea monsterFieldArea : toTributeCards) {
             destroyMonsterCard(gameplay.getCurrentPlayer(), monsterFieldArea);
         }
+        tributeCount = 0;
     }
 
     private void ritualTribute(String[] ids, FieldArea ritualSpell, boolean isSummon) {
@@ -826,6 +838,7 @@ public class GameplayController {
 
     public void moveCardToGraveyard(Player player, Card card) {
         player.getField().getGraveyard().add(card);
+        player.getField().getGraveyardField().getCardView().setFill(card.getFill());
     }
 
     private Card moveTopCardFromDeckToHand(Player player) {
@@ -847,6 +860,7 @@ public class GameplayController {
     private void setMonsterCard(MonsterFieldArea monsterFieldArea, HandFieldArea fieldArea) {
         monsterFieldArea.putCard(fieldArea.getCard(), false);
         gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
+        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(fieldArea);
         gameplay.setHasPlacedMonster(true);
     }
 
@@ -855,6 +869,9 @@ public class GameplayController {
             destroySpellAndTrapCard(gameplay.getCurrentPlayer(), spellAndTrapFieldArea);
         spellAndTrapFieldArea.putCard(handFieldArea.getCard(), false);
         gameplay.getCurrentPlayer().getPlayingHand().remove(handFieldArea);
+        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(spellAndTrapFieldArea);
+        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(spellAndTrapFieldArea);
+
     }
 
 
@@ -1019,5 +1036,14 @@ public class GameplayController {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    private int getNumberOfPlayerMonsters(Player currentPlayer) {
+        int monsters = 0;
+        MonsterFieldArea[] monsterFieldAreas = currentPlayer.getField().getMonstersField();
+        for (MonsterFieldArea area : monsterFieldAreas) {
+            if (area.getCard() != null) monsters++;
+        }
+        return monsters;
     }
 }

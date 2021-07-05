@@ -2,17 +2,22 @@ package GUI;
 
 import Controller.DatabaseController.DatabaseController;
 import Controller.DuelController.GameplayController;
+import Database.Cards.Card;
 import Database.Cards.SpellAndTrap;
 import Database.User;
 import Gameplay.*;
+import View.Exceptions.NoCardIsSelectedException;
 import javafx.application.Application;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -23,6 +28,9 @@ public class GameplayView extends Application {
     public static ArrayList<MenuItem> monsterItems = new ArrayList<>();
     public static ArrayList<MenuItem> spellItems = new ArrayList<>();
     public static ArrayList<MenuItem> handItems = new ArrayList<>();
+    public static VBox cardDisplay = new VBox(10);
+    private static GameplayView gameplayView;
+    private static AnchorPane pane = new AnchorPane();
     private static MenuItem effectItem = new MenuItem("Activate effect");
     private static MenuItem summonItem = new MenuItem("Summon");
     private static MenuItem setItem = new MenuItem("Set");
@@ -30,9 +38,22 @@ public class GameplayView extends Application {
     private static MenuItem attackItem = new MenuItem("Attack");
     private static MenuItem flipItem = new MenuItem("Flip summon");
     private static MenuItem changePositionItem = new MenuItem("Change position");
-    private static Button nextPhase = new Button("Next phase");
-    private static Button settings = new Button("Settings");
-    private static BorderPane pane = new BorderPane();
+    private static Button nextPhaseButton = new Button("Next phase");
+    private static Button settingsButton = new Button("Settings");
+    private static Alert addedCardsAlert = new Alert(Alert.AlertType.INFORMATION);
+    private static Alert newPhaseAlert = new Alert(Alert.AlertType.INFORMATION);
+
+    public static GameplayView getInstance() {
+        if (gameplayView == null) gameplayView = new GameplayView();
+        return gameplayView;
+    }
+
+    public static void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Invalid action");
+        alert.setHeaderText(message);
+        alert.show();
+    }
 
     public static void checkItems() {
         Phase currentPhase = GameplayController.getInstance().gameplay.getCurrentPhase();
@@ -44,12 +65,12 @@ public class GameplayView extends Application {
         effectItem.setDisable(true);
         directAttackItem.setDisable(true);
         attackItem.setDisable(true);
+        changePositionItem.setDisable(true);
         switch (currentPhase) {
             case BATTLE_PHASE:
                 if (gameState == GameState.CHAIN_MODE)
                     effectItem.setDisable(false);
-                if (gameState == GameState.ATTACK_MODE &&
-                    selectedField instanceof MonsterFieldArea &&
+                if (selectedField instanceof MonsterFieldArea &&
                     !((MonsterFieldArea) selectedField).hasAttacked() &&
                     ((MonsterFieldArea) selectedField).isAttack())
                     attackItem.setDisable(false);
@@ -70,24 +91,76 @@ public class GameplayView extends Application {
                 //TODO: flip summon
                 break;
         }
-
     }
 
-    public static void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Invalid action");
-        alert.setHeaderText(message);
-        alert.show();
+    private static void createCardDisplayPanel() {
+        Rectangle cardView = new Rectangle(175, 250);
+        cardView.setFill(new ImagePattern(Card.UNKNOWN_CARD));
+        Label description = new Label();
+        description.setWrapText(true);
+        cardDisplay.setPrefSize(175, GAMEPLAY_HEIGHT);
+        cardDisplay.setAlignment(Pos.CENTER_RIGHT);
+        cardDisplay.getChildren().add(cardView);
+        cardDisplay.getChildren().add(description);
+        cardDisplay.setPrefSize(200, 300);
+    }
+
+    public static void updateCardDisplayPanel(FieldArea fieldArea) {
+        if (fieldArea.getCard() == null) return;
+        boolean ownsCard = false;
+        if (!fieldArea.visibility()) {
+            if (fieldArea instanceof MonsterFieldArea) {
+                for (MonsterFieldArea monsterField :
+                        GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersField()) {
+                    if (monsterField.equals(fieldArea)) {
+                        ownsCard = true;
+                        break;
+                    }
+                }
+                if (!ownsCard) return;
+            }
+            else if (fieldArea instanceof SpellAndTrapFieldArea) {
+                for (SpellAndTrapFieldArea spellField :
+                        GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getSpellAndTrapField()) {
+                    if (spellField.equals(fieldArea)) {
+                        ownsCard = true;
+                        break;
+                    }
+                }
+                if (fieldArea instanceof FieldZoneArea) {
+                    if (GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getFieldZone().equals(fieldArea))
+                        ownsCard = true;
+                }
+                if (!ownsCard) return;
+            }
+            else if (fieldArea instanceof HandFieldArea) {
+                for (HandFieldArea handField :
+                        GameplayController.getInstance().gameplay.getCurrentPlayer().getPlayingHand()) {
+                    if (handField.equals(fieldArea)) {
+                        ownsCard = true;
+                        break;
+                    }
+                }
+                if (!ownsCard) return;
+            }
+        }
+        Rectangle cardView = (Rectangle) cardDisplay.getChildren().get(0);
+        Label description = (Label) cardDisplay.getChildren().get(1);
+        cardView.setFill(fieldArea.getCard().getFill());
+        description.setText(fieldArea.getCard().getDescription());
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(pane);
-        pane.setPrefHeight(GAMEPLAY_HEIGHT);
-        pane.setPrefWidth(GAMEPLAY_WIDTH);
         createBoard();
         stage.setScene(scene);
         stage.show();
+        stage.getWidth();
+        addedCardsAlert.setTitle("New Card!");
+        newPhaseAlert.setTitle("New Phase!");
+        addedCardsAlert.setHeaderText(GameplayController.getInstance().doPhaseAction());
+        addedCardsAlert.show();
     }
 
     public void createBoard() {
@@ -96,19 +169,44 @@ public class GameplayView extends Application {
         GameplayController.getInstance().setGameplay(gameplay);
         GameplayController.getInstance().setStartingPlayer();
         GameplayController.getInstance().dealCardsAtBeginning();
-        GameplayController.getInstance().doPhaseAction();
         gameplay.getOpponentPlayer().getField().setRotate(180);
+        createCardDisplayPanel();
         changePosition();
         flipSummon();
         activateEffect();
         attack();
         directAttack();
         createHandItems();
+        nextPhase();
         gameplay.getCurrentPlayer().getField().setAlignment(Pos.CENTER);
         gameplay.getOpponentPlayer().getField().setAlignment(Pos.CENTER);
-//        pane.setBackground(new Background(new BackgroundFill(Card.NORMAL_FIELD)));
-        pane.setBottom(gameplay.getCurrentPlayer().getField());
-        pane.setTop(gameplay.getOpponentPlayer().getField());
+        gameplay.getCurrentPlayer().getField().setLayoutX(0);
+        gameplay.getCurrentPlayer().getField().setLayoutY(FieldArea.getFieldAreaHeight() * 5);
+        gameplay.getOpponentPlayer().getField().setLayoutX(0);
+        gameplay.getOpponentPlayer().getField().setLayoutY(0);
+        nextPhaseButton.setAlignment(Pos.BOTTOM_RIGHT);
+        cardDisplay.setLayoutX(500);
+        cardDisplay.setLayoutY(0);
+        pane.getChildren().add(gameplay.getCurrentPlayer().getField());
+        pane.getChildren().add(gameplay.getOpponentPlayer().getField());
+        pane.getChildren().add(cardDisplay);
+        hideOpponentHands();
+    }
+
+    private void nextPhase() {
+        nextPhaseButton.setOnAction(actionEvent -> {
+            String newPhaseMessage = GameplayController.getInstance().goToNextPhase();
+            String addedCards = GameplayController.getInstance().doPhaseAction();
+            if (addedCards != null) {
+                addedCardsAlert.setHeaderText(newPhaseMessage + "\n" + addedCards);
+                addedCardsAlert.show();
+            } else {
+                newPhaseAlert.setHeaderText(newPhaseMessage);
+                newPhaseAlert.show();
+            }
+            GameplayController.getInstance().gameState = GameState.NORMAL_MODE;
+        });
+        cardDisplay.getChildren().add(nextPhaseButton);
     }
 
     private void attack() {
@@ -135,7 +233,7 @@ public class GameplayView extends Application {
             if (!(fieldArea instanceof MonsterFieldArea)) return;
             MonsterFieldArea selectedMonsterField = (MonsterFieldArea) fieldArea;
             try {
-                GameplayController.getInstance().changePosition(selectedMonsterField.isAttack());
+                GameplayController.getInstance().changePosition(!selectedMonsterField.isAttack());
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
@@ -196,10 +294,52 @@ public class GameplayView extends Application {
         handItems.add(summonItem);
         handItems.add(effectItem);
     }
-}
 
-class CardDisplayPanel extends GridPane {
-    public CardDisplayPanel() {
-        super();
+    public void hideOpponentHands() {
+        Gameplay gameplay = GameplayController.getInstance().gameplay;
+        for (Node node :
+                gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren()) {
+            HandFieldArea hand = (HandFieldArea) node;
+            hand.getCardView().setFill(hand.getCard().getFill());
+        }
+        for (Node node :
+                gameplay.getOpponentPlayer().getField().getHandFieldArea().getChildren()) {
+            HandFieldArea hand = (HandFieldArea) node;
+            hand.getCardView().setFill(new ImagePattern(Card.UNKNOWN_CARD));
+        }
+        for (MonsterFieldArea monsterFieldArea :
+                gameplay.getOpponentPlayer().getField().getMonstersField()) {
+            if (!monsterFieldArea.visibility()) monsterFieldArea.getStats().setVisible(false);
+        }
+        for (MonsterFieldArea monsterFieldArea :
+                gameplay.getCurrentPlayer().getField().getMonstersField()) {
+            if (!monsterFieldArea.visibility()) monsterFieldArea.getStats().setVisible(true);
+        }
+        try {
+            GameplayController.getInstance().deselectCard();
+        } catch (NoCardIsSelectedException ignored) {
+        }
+        gameplay.getCurrentPlayer().getField().getHandScrollPane().setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        gameplay.getOpponentPlayer().getField().getHandScrollPane().setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    }
+
+    public void showGraveyard(Player player) {
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        ArrayList<Card> graveyardCards = player.getField().getGraveyard();
+        HBox hBox = new HBox();
+        for (Card card :
+                graveyardCards) {
+            hBox.getChildren().add(card);
+        }
+        hBox.setAlignment(Pos.CENTER);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setContent(hBox);
+        Scene scene = new Scene(scrollPane, 400, 200);
+        stage.setTitle(player.getUser().getUsername() + "'s graveyard");
+        stage.setScene(scene);
+        stage.show();
     }
 }
