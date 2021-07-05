@@ -54,7 +54,8 @@ public class MainMenu extends Application {
         new ScoreboardMenu().start(WelcomeMenu.stage);
     }
 
-    public void profileMenu(MouseEvent mouseEvent) {
+    public void profileMenu(MouseEvent mouseEvent) throws Exception {
+        new ProfileMenu().start(WelcomeMenu.stage);
     }
 
     public void shop(MouseEvent mouseEvent) throws Exception {

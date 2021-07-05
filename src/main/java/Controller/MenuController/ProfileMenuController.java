@@ -3,11 +3,9 @@ package Controller.MenuController;
 import Controller.DatabaseController.DatabaseController;
 import Controller.ProgramController.Menu;
 import Controller.ProgramController.ProgramController;
+import Controller.ProgramController.Regex;
 import Database.User;
-import View.Exceptions.InvalidPasswordException;
-import View.Exceptions.MenuNavigationNotPossibleException;
-import View.Exceptions.RepetitiveNicknameException;
-import View.Exceptions.RepetitivePasswordException;
+import View.Exceptions.*;
 
 public class ProfileMenuController implements MenuNavigation {
     private static ProfileMenuController profileMenuController;
@@ -21,11 +19,16 @@ public class ProfileMenuController implements MenuNavigation {
         return profileMenuController;
     }
 
-    public void changePassword(String currentPassword, String newPassword, User currentUser) throws RepetitivePasswordException, InvalidPasswordException {
+    public void changePassword(String currentPassword, String newPassword, User currentUser) throws RepetitivePasswordException, InvalidPasswordException, WeakPasswordException {
         if (!currentUser.getPassword().equals(currentPassword)) throw new InvalidPasswordException();
         if (currentPassword.equals(newPassword)) throw new RepetitivePasswordException();
+        if (passwordIsWeak(newPassword)) throw new WeakPasswordException();
         currentUser.setPassword(newPassword);
         DatabaseController.getInstance().saveUser(currentUser);
+    }
+
+    private boolean passwordIsWeak(String newPassword) {
+        return !newPassword.matches(Regex.strongPassword);
     }
 
     public void changeNickname(String newNickname, User currentUser) throws RepetitiveNicknameException {
