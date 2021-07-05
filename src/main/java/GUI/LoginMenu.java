@@ -37,6 +37,7 @@ public class LoginMenu extends Application implements AlertFunction{
             new MainMenu(User.getUserByName(username)).start(WelcomeMenu.stage);
         } catch (InvalidLoginException e) {
             System.out.println(e.getMessage());
+            showAlert(e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 

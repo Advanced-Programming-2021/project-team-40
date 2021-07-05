@@ -24,3 +24,12 @@
 .cardItems:focused {
     -fx-border-width: 5;
 }
+
+.activeDeck {
+    -fx-background-color: #11d911;
+}
+
+.createDeckButton {
+    -fx-text-fill: WHITE;
+    -fx-font-size: 24;
+}
