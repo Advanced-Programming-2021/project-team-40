@@ -4,10 +4,7 @@ import Controller.DatabaseController.DatabaseController;
 import Controller.MenuController.DeckMenuController;
 import Database.Cards.Card;
 import Database.Deck;
-import View.Exceptions.CardNotInDeckException;
-import View.Exceptions.DeckIsFullException;
-import View.Exceptions.InvalidCardNameException;
-import View.Exceptions.InvalidDeckNameException;
+import View.Exceptions.*;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -17,7 +14,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Glow;
+import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -25,8 +25,10 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import java.util.Optional;
 
-public class DeckMenu extends Application {
+
+public class DeckMenu extends Application implements AlertFunction {
     @FXML
     ScrollPane mainDeck;
     @FXML
@@ -111,9 +113,11 @@ public class DeckMenu extends Application {
         StackPane deckView = new StackPane();
         deckView.setMinSize(70, 100);
         Rectangle cardPicture = new Rectangle(70, 100, unknownCard);
-        cardPicture.setEffect(new Glow(2));
-        deckView.getChildren().add(new Label("+"));
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(0.7);
+        cardPicture.setEffect(colorAdjust);
         deckView.getChildren().add(cardPicture);
+        deckView.getChildren().add(new Label("+"));
         deckView.getStyleClass().add("createDeckButton");
         Label deckName = new Label("Create Deck");
         deckName.setMaxWidth(70);
@@ -134,6 +138,22 @@ public class DeckMenu extends Application {
 
     //TODO complete this!!!
     private void createDeck() {
+        TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.setTitle("Create Deck");
+        inputDialog.setHeaderText("Create Deck");
+        inputDialog.setContentText("Input name of new deck:");
+        Optional<String> deckName = inputDialog.showAndWait();
+        if (deckName.isPresent()) {
+            try {
+                if (deckName.get().isEmpty()) throw new Exception("this is not a valid deck name");
+                DeckMenuController.getInstance().createDeck(deckName.get(), MainMenu.currentUser);
+                updateEverything();
+                showAlert("deck created successfully!", Alert.AlertType.INFORMATION);
+            } catch (Exception e) {
+                showAlert(e.getMessage(), Alert.AlertType.ERROR);
+            }
+        }
+
     }
 
     public void updateInactiveCards() {
@@ -275,7 +295,6 @@ public class DeckMenu extends Application {
             e.printStackTrace();
         }
         DatabaseController.getInstance().saveUser(MainMenu.currentUser);
-        selectedDeck = null;
         selectedCard = null;
         updateEverything();
     }
@@ -300,7 +319,8 @@ public class DeckMenu extends Application {
 
     public void removeCard(MouseEvent mouseEvent) {
         try {
-            if (cardPosition == CardPosition.NONE) throw new CardNotInDeckException(selectedCard.getName(), selectedDeck.getName());
+            if (cardPosition == CardPosition.NONE)
+                throw new CardNotInDeckException(selectedCard.getName(), selectedDeck.getName());
             DeckMenuController.getInstance().removeCard(selectedDeck.getName(), selectedCard.getName(), (cardPosition == CardPosition.SIDE), MainMenu.currentUser);
             updateEverything();
         } catch (DeckIsFullException | InvalidCardNameException | InvalidDeckNameException | CardNotInDeckException e) {
@@ -311,8 +331,17 @@ public class DeckMenu extends Application {
     public void back(MouseEvent mouseEvent) throws Exception {
         new MainMenu().start(WelcomeMenu.stage);
     }
+
+    @Override
+    public void showAlert(String text, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle("Alert");
+        alert.getDialogPane().setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        alert.setContentText(text);
+        alert.show();
+    }
 }
 
 enum CardPosition {
-    SIDE,MAIN,NONE
+    SIDE, MAIN, NONE
 }

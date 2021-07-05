@@ -174,7 +174,7 @@ public class User {
     }
 
     public void setActiveDeck(Deck activeDeck) {
-        inactivateDeck();
+        if (getActiveDeck() != null) inactivateDeck();
         activeDeck.setActive(true);
     }
 
