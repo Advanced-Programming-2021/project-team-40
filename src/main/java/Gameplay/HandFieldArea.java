@@ -11,7 +11,9 @@ public class HandFieldArea extends FieldArea {
 
     public HandFieldArea(Card card) {
         putCard(card, false);
-        setFill(card.getFill());
+        getCardView().setFill(card.getFill());
+        getCardView().setHeight(Card.getCardHeight());
+        getCardView().setWidth(Card.getCardWidth());
         canBePutOnBoard = true;
         HandFieldArea thisField = this;
         this.setOnContextMenuRequested(contextMenuEvent -> {
@@ -20,12 +22,15 @@ public class HandFieldArea extends FieldArea {
             ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();
             if (!hand.contains(thisField)) return;
             if (GameplayController.getInstance().gameplay.getSelectedField() != thisField) return;
-            GameplayView.getInstance().checkItems();
+            GameplayView.checkItems();
             ContextMenu contextMenu = new ContextMenu();
-            contextMenu.getItems().addAll(GameplayView.getInstance().handItems);
+            contextMenu.getItems().addAll(GameplayView.handItems);
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
         this.setOnMouseEntered(mouseEvent -> {
+            GameplayView.updateCardDisplayPanel(thisField);
+            if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SUMMON_MODE) return;
+            if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SET_MODE) return;
             if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) return;
             Gameplay gameplay = GameplayController.getInstance().gameplay;
             ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();

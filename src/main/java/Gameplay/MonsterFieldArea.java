@@ -4,8 +4,13 @@ import Controller.DuelController.GameplayController;
 import Database.Cards.Card;
 import Database.Cards.Monster;
 import GUI.GameplayView;
+import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class MonsterFieldArea extends FieldArea {
     private boolean canAttack = true;
@@ -17,43 +22,82 @@ public class MonsterFieldArea extends FieldArea {
     private int attackPoint;
     private int defensePoint;
     private int turnsLeftForEffect;
+    private HBox stats = new HBox(5);
+    private Label attackLabel = new Label();
+    private Label defenseLabel = new Label();
 
     public MonsterFieldArea(int id) {
         super();
+
         MonsterFieldArea thisField = this;
-        this.setOnContextMenuRequested(contextMenuEvent -> {
-            if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
+        getCardView().setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) {
                 try {
                     GameplayController.getInstance().selectCard(String.valueOf(id), "-m", !GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField));
                 } catch (Exception ignored) {
                 }
-
             }
             if (!GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField))
                 return;
             ContextMenu contextMenu = new ContextMenu();
-            GameplayView.getInstance().checkItems();
-            contextMenu.getItems().addAll(GameplayView.getInstance().monsterItems);
+            GameplayView.checkItems();
+            contextMenu.getItems().addAll(GameplayView.monsterItems);
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
-        this.setOnMouseEntered(mouseEvent -> {
+        getCardView().setOnMouseEntered(mouseEvent -> {
             try {
+                GameplayView.updateCardDisplayPanel(thisField);
+                if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SET_MODE) return;
+                if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SUMMON_MODE) return;
                 if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) return;
                 GameplayController.getInstance().selectCard(String.valueOf(id), "-m", !GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField));
                 GameplayController.getInstance().gameState = GameState.NORMAL_MODE;
             } catch (Exception ignored) {
             }
         });
-        this.setOnMouseClicked(mouseEvent -> {
-            try {
-                if (GameplayController.getInstance().gameState != GameState.ATTACK_MODE) return;
-                GameplayController.getInstance().attack(String.valueOf(id));
-
-            } catch (Exception e) {
-                GameplayView.showAlert(e.getMessage());
+        getCardView().setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton() != MouseButton.PRIMARY) return;
+            if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE)
+                try {
+                    StringBuilder message = GameplayController.getInstance().attack(String.valueOf(id));
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText(String.valueOf(message));
+                    alert.show();
+                    GameplayController.getInstance().gameState = GameState.NORMAL_MODE;
+                } catch (Exception e) {
+                    GameplayView.showAlert(e.getMessage());
+                }
+            if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SUMMON_MODE || GameplayController.getInstance().gameState == GameState.TRIBUTE_SET_MODE) {
+                boolean ownsTributedCard = false;
+                for (MonsterFieldArea monsterField :
+                        GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersField()) {
+                    if (monsterField.equals(thisField)) {
+                        ownsTributedCard = true;
+                        break;
+                    }
+                }
+                if (!ownsTributedCard) return;
+                GameplayController.getInstance().toTributeCards.add(thisField);
+                GameplayController.getInstance().tributeCount--;
+                if (GameplayController.getInstance().tributeCount == 0) {
+                    GameplayController.getInstance().tributeCards();
+                    if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SUMMON_MODE) try {
+                        GameplayController.getInstance().summon();
+                    } catch (Exception ignored) {
+                    }
+                    if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SET_MODE) try {
+                        GameplayController.getInstance().set();
+                    } catch (Exception ignored) {
+                    }
+                    GameplayController.getInstance().gameState = GameState.NORMAL_MODE;
+                }
             }
         });
+        defenseLabel.setAlignment(Pos.CENTER_RIGHT);
+        attackLabel.setAlignment(Pos.CENTER_LEFT);
+        getStats().getChildren().add(attackLabel);
+        getStats().getChildren().add(defenseLabel);
+        getChildren().add(getStats());
     }
 
     @Override
@@ -67,12 +111,16 @@ public class MonsterFieldArea extends FieldArea {
         } else {
             setAttackPoint(0);
             setAttackPoint(0);
+            attackLabel.setText(null);
+            defenseLabel.setText(null);
         }
     }
 
     public void changePosition() {
         isAttack = !isAttack;
         hasSwitchedMode = true;
+        if (getCardView().getRotate() == -90) setRotate(0);
+        if (getCardView().getRotate() == 0) setRotate(0);
     }
 
     public boolean isAttack() {
@@ -105,6 +153,7 @@ public class MonsterFieldArea extends FieldArea {
 
     public void setAttackPoint(int attackPoint) {
         this.attackPoint = attackPoint;
+        attackLabel.setText(String.valueOf(attackPoint));
     }
 
     public int getDefensePoint() {
@@ -113,6 +162,7 @@ public class MonsterFieldArea extends FieldArea {
 
     public void setDefensePoint(int defensePoint) {
         this.defensePoint = defensePoint;
+        defenseLabel.setText(String.valueOf(defensePoint));
     }
 
     public int getTurnsLeftForEffect() {
@@ -145,5 +195,9 @@ public class MonsterFieldArea extends FieldArea {
 
     public void setCanAttack(boolean canAttack) {
         this.canAttack = canAttack;
+    }
+
+    public HBox getStats() {
+        return stats;
     }
 }

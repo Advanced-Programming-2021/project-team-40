@@ -1,12 +1,12 @@
 package Gameplay;
 
 
+import Controller.DuelController.GameplayController;
 import Database.Cards.Card;
 import GUI.GameplayView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ public class Field extends GridPane {
     private FieldZoneArea fieldZone = new FieldZoneArea(-1);
     private ScrollPane handScrollPane = new ScrollPane();
     private HBox handFieldArea = new HBox();
-    private Rectangle graveyardField = new Rectangle();
+    private FieldArea graveyardField = new FieldArea();
 
     public Field() {
         super();
@@ -27,8 +27,8 @@ public class Field extends GridPane {
             monstersField[i] = new MonsterFieldArea(i + 1);
             spellAndTrapField[i] = new SpellAndTrapFieldArea(i + 1);
         }
+        this.add(graveyardField, 4, 0);
         this.add(fieldZone, 0, 0);
-        this.add(graveyardField,4,0);
         this.add(monstersField[0], 2, 1);
         this.add(monstersField[1], 3, 1);
         this.add(monstersField[2], 1, 1);
@@ -41,9 +41,15 @@ public class Field extends GridPane {
         this.add(spellAndTrapField[4], 0, 2);
         handScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         handScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        handScrollPane.setPrefWidth(FieldArea.getFieldAreaWidth() * 5);
         handScrollPane.setContent(handFieldArea);
-        handScrollPane.setPrefSize(FieldArea.getFieldAreaWidth() * 3,FieldArea.getFieldAreaHeight());
-        this.add(handScrollPane,1,3,3,1);
+        this.add(handScrollPane, 0, 3, 5, 1);
+        graveyardField.setOnMouseClicked(mouseEvent -> {
+            if (GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().graveyardField.equals(graveyardField))
+                GameplayView.getInstance().showGraveyard(GameplayController.getInstance().gameplay.getCurrentPlayer());
+            else
+                GameplayView.getInstance().showGraveyard(GameplayController.getInstance().gameplay.getOpponentPlayer());
+        });
     }
 
     public MonsterFieldArea[] getMonstersField() {
@@ -90,6 +96,10 @@ public class Field extends GridPane {
 
     public ScrollPane getHandScrollPane() {
         return handScrollPane;
+    }
+
+    public FieldArea getGraveyardField() {
+        return graveyardField;
     }
 
     public void endTurnActions() {

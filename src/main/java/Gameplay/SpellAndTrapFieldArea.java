@@ -9,18 +9,22 @@ public class SpellAndTrapFieldArea extends FieldArea {
     private boolean canBeActivated = false;
 
     public SpellAndTrapFieldArea(int id) {
+        super();
         SpellAndTrapFieldArea thisField = this;
         this.setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
             if (GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getSpellAndTrapFieldById(id).equals(thisField))
                 return;
-            GameplayView.getInstance().checkItems();
+            GameplayView.checkItems();
             ContextMenu contextMenu = new ContextMenu();
-            contextMenu.getItems().addAll(GameplayView.getInstance().spellItems);
+            contextMenu.getItems().addAll(GameplayView.spellItems);
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
         this.setOnMouseEntered(mouseEvent -> {
             try {
+                GameplayView.updateCardDisplayPanel(thisField);
+                if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SUMMON_MODE) return;
+                if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SET_MODE) return;
                 if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) return;
                 GameplayController.getInstance().selectCard(String.valueOf(id), "-s", !GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getSpellAndTrapFieldById(id).equals(thisField));
             } catch (Exception ignored) {
