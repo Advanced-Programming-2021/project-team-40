@@ -8,6 +8,7 @@ import Database.User;
 import View.Exceptions.InvalidPasswordException;
 import View.Exceptions.RepetitiveNicknameException;
 import View.Exceptions.RepetitivePasswordException;
+import View.Exceptions.WeakPasswordException;
 
 import java.util.regex.Matcher;
 
@@ -58,7 +59,7 @@ public class ProfileMenu implements Help{
         try {
             ProfileMenuController.getInstance().changePassword(currentPassword,newPassword,currentUser);
             System.out.println("password changed successfully!");
-        } catch (RepetitivePasswordException | InvalidPasswordException e) {
+        } catch (RepetitivePasswordException | InvalidPasswordException | WeakPasswordException e) {
             System.out.println(e.getMessage());
         }
     }

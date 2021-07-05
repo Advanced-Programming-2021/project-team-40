@@ -31,5 +31,6 @@
 
 .createDeckButton {
     -fx-text-fill: WHITE;
-    -fx-font-size: 24;
+    -fx-background-color: TRANSPARENT;
+    -fx-font-size: 40;
 }
