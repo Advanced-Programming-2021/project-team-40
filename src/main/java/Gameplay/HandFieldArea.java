@@ -2,6 +2,8 @@ package Gameplay;
 
 import Controller.DuelController.GameplayController;
 import Database.Cards.Card;
+import Database.Cards.CardType;
+import Database.Cards.Monster;
 import GUI.GameplayView;
 import javafx.scene.control.ContextMenu;
 
@@ -19,6 +21,10 @@ public class HandFieldArea extends FieldArea {
         this.setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
             Gameplay gameplay = GameplayController.getInstance().gameplay;
+            if (GameplayController.getInstance().gameState == GameState.RITUAL_SPELL_ACTIVATED_MODE) {
+                if (!(gameplay.getSelectedField().getCard() instanceof Monster)) return;
+                if (!((Monster) gameplay.getSelectedField().getCard()).getCardType().equals(CardType.RITUAL)) return;
+            }
             ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();
             if (!hand.contains(thisField)) return;
             if (GameplayController.getInstance().gameplay.getSelectedField() != thisField) return;

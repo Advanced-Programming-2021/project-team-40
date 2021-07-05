@@ -47,6 +47,9 @@ public class MonsterFieldArea extends FieldArea {
         getCardView().setOnMouseEntered(mouseEvent -> {
             try {
                 GameplayView.updateCardDisplayPanel(thisField);
+                if (GameplayController.getInstance().gameState == GameState.RITUAL_SET_MODE) return;
+                if (GameplayController.getInstance().gameState == GameState.RITUAL_SUMMON_MODE) return;
+                if (GameplayController.getInstance().gameState == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
                 if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SET_MODE) return;
                 if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SUMMON_MODE) return;
                 if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) return;
@@ -57,6 +60,9 @@ public class MonsterFieldArea extends FieldArea {
         });
         getCardView().setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton() != MouseButton.PRIMARY) return;
+            if (GameplayController.getInstance().gameState == GameState.RITUAL_SET_MODE) return;
+            if (GameplayController.getInstance().gameState == GameState.RITUAL_SUMMON_MODE) return;
+            if (GameplayController.getInstance().gameState == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
             if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE)
                 try {
                     StringBuilder message = GameplayController.getInstance().attack(String.valueOf(id));
@@ -119,8 +125,9 @@ public class MonsterFieldArea extends FieldArea {
     public void changePosition() {
         isAttack = !isAttack;
         hasSwitchedMode = true;
+        if (isAttack) getCardView().setFill(getCard().getFill());
         if (getCardView().getRotate() == -90) setRotate(0);
-        if (getCardView().getRotate() == 0) setRotate(0);
+        if (getCardView().getRotate() == 0) setRotate(-90);
     }
 
     public boolean isAttack() {

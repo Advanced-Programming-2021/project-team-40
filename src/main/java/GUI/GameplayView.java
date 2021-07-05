@@ -118,8 +118,7 @@ public class GameplayView extends Application {
                     }
                 }
                 if (!ownsCard) return;
-            }
-            else if (fieldArea instanceof SpellAndTrapFieldArea) {
+            } else if (fieldArea instanceof SpellAndTrapFieldArea) {
                 for (SpellAndTrapFieldArea spellField :
                         GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getSpellAndTrapField()) {
                     if (spellField.equals(fieldArea)) {
@@ -132,8 +131,7 @@ public class GameplayView extends Application {
                         ownsCard = true;
                 }
                 if (!ownsCard) return;
-            }
-            else if (fieldArea instanceof HandFieldArea) {
+            } else if (fieldArea instanceof HandFieldArea) {
                 for (HandFieldArea handField :
                         GameplayController.getInstance().gameplay.getCurrentPlayer().getPlayingHand()) {
                     if (handField.equals(fieldArea)) {
@@ -148,6 +146,42 @@ public class GameplayView extends Application {
         Label description = (Label) cardDisplay.getChildren().get(1);
         cardView.setFill(fieldArea.getCard().getFill());
         description.setText(fieldArea.getCard().getDescription());
+    }
+
+    public static void ritualTribute(Player player, FieldArea ritualSpell, boolean isSummon) {
+        Stage deckShowStage = new Stage();
+        deckShowStage.initModality(Modality.APPLICATION_MODAL);
+        ArrayList<Card> deck = player.getPlayingDeck().getMainCards();
+        ArrayList<String> ids = new ArrayList<>();
+        HBox hBox = new HBox();
+        Button button = new Button("Ritual Tribute");
+        button.setDisable(true);
+        for (int i = 0; i < deck.size(); i++) {
+            Rectangle cardView = new Rectangle(52.5, 75);
+            cardView.setFill(deck.get(i).getFill());
+            String finalI = String.valueOf(i);
+            cardView.setOnMouseClicked(mouseEvent -> {
+                if (!ids.contains(finalI)) ids.add(finalI);
+                else ids.remove(finalI);
+                if (GameplayController.getInstance().isRitualInputsValid((String[]) ids.toArray()))
+                    button.setDisable(false);
+            });
+        }
+        button.setOnAction(actionEvent -> {
+            GameplayController.getInstance().ritualTribute((String[]) ids.toArray(), ritualSpell, isSummon);
+        });
+        hBox.setAlignment(Pos.CENTER);
+        ScrollPane scrollPane = new ScrollPane();
+        VBox contents = new VBox(10);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setContent(hBox);
+        contents.getChildren().add(scrollPane);
+        contents.getChildren().add(button);
+        Scene scene = new Scene(contents, 400, 200);
+        deckShowStage.setTitle(player.getUser().getUsername() + "'s Deck");
+        deckShowStage.setScene(scene);
+        deckShowStage.show();
     }
 
     @Override

@@ -23,6 +23,9 @@ public class SpellAndTrapFieldArea extends FieldArea {
         this.setOnMouseEntered(mouseEvent -> {
             try {
                 GameplayView.updateCardDisplayPanel(thisField);
+                if (GameplayController.getInstance().gameState == GameState.RITUAL_SET_MODE) return;
+                if (GameplayController.getInstance().gameState == GameState.RITUAL_SUMMON_MODE) return;
+                if (GameplayController.getInstance().gameState == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
                 if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SUMMON_MODE) return;
                 if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SET_MODE) return;
                 if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) return;

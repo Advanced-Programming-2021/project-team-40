@@ -10,7 +10,6 @@ import Gameplay.*;
 import View.CardView;
 import View.Exceptions.*;
 import View.GameplayView;
-import com.google.gson.internal.GsonBuildConfig;
 import javafx.scene.control.Label;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -276,7 +275,7 @@ public class GameplayController {
             trapThrewException = onSpellActivationTraps(fieldArea);
             if (trapThrewException) throw new ActionNotPossibleException("");
             effectSpellAndTraps.add(fieldArea);
-            GameplayView.getInstance().selectRitualMonster();
+            gameState = GameState.RITUAL_SPELL_ACTIVATED_MODE;
         } else if (fieldArea.canBePutOnBoard()) {
             SpellAndTrapFieldArea spell = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
             if (spell == null) throw new SpellZoneFullException();
@@ -422,7 +421,9 @@ public class GameplayController {
                     throw new InvalidSummonException();
         }
         if (ritualSpell == null) throw new InvalidSummonException();
-        ritualTribute(GameplayView.getInstance().ritualTribute(), ritualSpell, isSummon);
+        if (isSummon) gameState = GameState.RITUAL_SUMMON_MODE;
+        else gameState = GameState.RITUAL_SET_MODE;
+        GUI.GameplayView.ritualTribute(gameplay.getCurrentPlayer(), ritualSpell, isSummon);
     }
 
     public void tributeCards() {
@@ -432,7 +433,7 @@ public class GameplayController {
         tributeCount = 0;
     }
 
-    private void ritualTribute(String[] ids, FieldArea ritualSpell, boolean isSummon) {
+    public void ritualTribute(String[] ids, FieldArea ritualSpell, boolean isSummon) {
         removeTributesFromHand(ids);
         DeckMenuController.getInstance().shuffleDeck(gameplay.getCurrentPlayer().getPlayingDeck());
         effectSpellAndTraps.remove(ritualSpell);
@@ -446,7 +447,7 @@ public class GameplayController {
             normalSummon((HandFieldArea) gameplay.getSelectedField(), gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea());
         else
             setMonsterCard(gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea(), (HandFieldArea) gameplay.getSelectedField());
-
+        gameState = GameState.NORMAL_MODE;
     }
 
     private void removeTributesFromHand(String[] ids) {
