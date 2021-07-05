@@ -90,7 +90,7 @@ public class ShopMenu extends Application {
 
     private void updateCardDetails() {
         cardLarge.setFill(selectedCard.getFill());
-        cardDescription.setText(selectedCard.getDescription());
+        cardDescription.setText("PRICE: " + selectedCard.getCardPrice() + "\n" + selectedCard.getDescription());
         if (MainMenu.currentUser.getBalance() > selectedCard.getCardPrice()) {
             buyButton.disableProperty().set(false);
         } else {

@@ -1,5 +1,6 @@
 package GUI;
 
+import Controller.DatabaseController.DatabaseController;
 import Controller.MenuController.MainMenuController;
 import Database.User;
 import View.Exceptions.InvalidMenuNameException;
@@ -7,6 +8,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
@@ -15,6 +17,9 @@ public class MainMenu extends Application {
     public static User currentUser = null;
 
     public MainMenu(){
+        //TODO delete this
+        DatabaseController.getInstance();
+        currentUser = User.getUserByName("DanDan");
 
     }
 
@@ -27,6 +32,7 @@ public class MainMenu extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+        WelcomeMenu.stage = stage;
     }
 
     public void logout(MouseEvent mouseEvent) throws Exception {
@@ -40,7 +46,8 @@ public class MainMenu extends Application {
         new DuelMenu().start(WelcomeMenu.stage);
     }
 
-    public void deckMenu(MouseEvent mouseEvent) {
+    public void deckMenu(MouseEvent mouseEvent) throws Exception {
+        new DeckMenu().start(WelcomeMenu.stage);
     }
 
     public void scoreboard(MouseEvent mouseEvent) throws Exception {
