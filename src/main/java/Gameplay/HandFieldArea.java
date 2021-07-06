@@ -34,10 +34,12 @@ public class HandFieldArea extends FieldArea {
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
         this.setOnMouseEntered(mouseEvent -> {
+            GameState gameState = GameplayController.getInstance().gameState;
             GameplayView.updateCardDisplayPanel(thisField);
-            if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SUMMON_MODE) return;
-            if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SET_MODE) return;
-            if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) return;
+            if (gameState == GameState.EQUIP_ACTIVATION_MODE) return;
+            if (gameState == GameState.TRIBUTE_SUMMON_MODE) return;
+            if (gameState == GameState.TRIBUTE_SET_MODE) return;
+            if (gameState == GameState.ATTACK_MODE) return;
             Gameplay gameplay = GameplayController.getInstance().gameplay;
             ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();
             if (!hand.contains(thisField)) return;

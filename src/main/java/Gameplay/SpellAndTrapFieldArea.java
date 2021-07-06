@@ -11,7 +11,7 @@ public class SpellAndTrapFieldArea extends FieldArea {
     public SpellAndTrapFieldArea(int id) {
         super();
         SpellAndTrapFieldArea thisField = this;
-        this.setOnContextMenuRequested(contextMenuEvent -> {
+        getCardView().setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
             if (!GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getSpellAndTrapFieldById(id).equals(thisField))
                 return;
@@ -20,19 +20,26 @@ public class SpellAndTrapFieldArea extends FieldArea {
             contextMenu.getItems().addAll(GameplayView.spellItems);
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
-        this.setOnMouseEntered(mouseEvent -> {
+        getCardView().setOnMouseEntered(mouseEvent -> {
             try {
+                GameState gameState = GameplayController.getInstance().gameState;
                 GameplayView.updateCardDisplayPanel(thisField);
-                if (GameplayController.getInstance().gameState == GameState.RITUAL_SET_MODE) return;
-                if (GameplayController.getInstance().gameState == GameState.RITUAL_SUMMON_MODE) return;
-                if (GameplayController.getInstance().gameState == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
-                if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SUMMON_MODE) return;
-                if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SET_MODE) return;
-                if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) return;
+                if (gameState == GameState.EQUIP_ACTIVATION_MODE) return;
+                if (gameState == GameState.RITUAL_SET_MODE) return;
+                if (gameState == GameState.RITUAL_SUMMON_MODE) return;
+                if (gameState == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
+                if (gameState == GameState.TRIBUTE_SUMMON_MODE) return;
+                if (gameState == GameState.TRIBUTE_SET_MODE) return;
+                if (gameState == GameState.ATTACK_MODE) return;
                 GameplayController.getInstance().selectCard(String.valueOf(id), "-s", !GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getSpellAndTrapFieldById(id).equals(thisField));
             } catch (Exception ignored) {
             }
         });
+    }
+    public void activateChangePosition() {
+        setVisibility(true);
+        getCardView().setRotate(0);
+        getCardView().setFill(getCard().getFill());
     }
 
     public boolean isHasJustBeenSet() {

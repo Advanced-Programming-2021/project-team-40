@@ -57,6 +57,13 @@ public class GameplayView extends Application {
         alert.show();
     }
 
+    public static void showInfo(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("");
+        alert.setHeaderText(message);
+        alert.show();
+    }
+
     public static void checkItems() {
         Phase currentPhase = GameplayController.getInstance().gameplay.getCurrentPhase();
         GameState gameState = GameplayController.getInstance().gameState;
@@ -82,8 +89,10 @@ public class GameplayView extends Application {
             case MAIN_PHASE_ONE:
             case MAIN_PHASE_TW0:
                 if (selectedField.getCard() instanceof SpellAndTrap) {
-                    effectItem.setDisable(false);
-                    setItem.setDisable(false);
+                    if (selectedField instanceof SpellAndTrapFieldArea && !selectedField.visibility())
+                        effectItem.setDisable(false);
+                    else if (selectedField instanceof HandFieldArea) effectItem.setDisable(false);
+                    if (selectedField.canBePutOnBoard()) setItem.setDisable(false);
                 }
                 if ((selectedField.getCard() instanceof Monster) &&
                     !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
@@ -211,11 +220,6 @@ public class GameplayView extends Application {
         GameplayController.getInstance().setGameplay(gameplay);
         GameplayController.getInstance().setStartingPlayer();
         GameplayController.getInstance().dealCardsAtBeginning();
-        try {
-            GameplayController.getInstance().forceAddCard("Advanced Ritual Art");
-            GameplayController.getInstance().forceAddCard("Crab Turtle");
-        } catch (InvalidCardNameException e) {
-        }
         gameplay.getOpponentPlayer().getField().setRotate(180);
         createCardDisplayPanel();
         changePosition();
@@ -272,6 +276,7 @@ public class GameplayView extends Application {
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
+            GameplayController.getInstance().calculateFieldZoneEffects();
         });
         spellItems.add(effectItem);
     }
@@ -287,6 +292,7 @@ public class GameplayView extends Application {
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
+            GameplayController.getInstance().calculateFieldZoneEffects();
         });
         monsterItems.add(changePositionItem);
     }
@@ -299,6 +305,7 @@ public class GameplayView extends Application {
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
+            GameplayController.getInstance().calculateFieldZoneEffects();
         });
         monsterItems.add(directAttackItem);
     }
@@ -313,6 +320,7 @@ public class GameplayView extends Application {
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
+            GameplayController.getInstance().calculateFieldZoneEffects();
         });
         monsterItems.add(flipItem);
     }
@@ -325,6 +333,7 @@ public class GameplayView extends Application {
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
+            GameplayController.getInstance().calculateFieldZoneEffects();
         });
         summonItem.setOnAction(actionEvent -> {
             try {
@@ -332,6 +341,7 @@ public class GameplayView extends Application {
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
+            GameplayController.getInstance().calculateFieldZoneEffects();
         });
         effectItem.setOnAction(actionEvent -> {
             try {
@@ -339,6 +349,7 @@ public class GameplayView extends Application {
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
+            GameplayController.getInstance().calculateFieldZoneEffects();
         });
         handItems.add(setItem);
         handItems.add(summonItem);

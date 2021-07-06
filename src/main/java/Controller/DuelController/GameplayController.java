@@ -280,10 +280,16 @@ public class GameplayController {
             if (spell == null) throw new SpellZoneFullException();
             trapThrewException = onSpellActivationTraps(fieldArea);
             if (trapThrewException) throw new ActionNotPossibleException("");
-            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) activateEquip(fieldArea, spell);
-            else if (((Spell) fieldArea.getCard()).spellEffect == null)
-                throw new ActionNotPossibleException("Nazadim ino");
-            else {
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.FIELD)) {
+                gameplay.getCurrentPlayer().getField().getFieldZone().putCard(fieldArea.getCard(), true);
+                gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(fieldArea);
+                gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
+            }
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) {
+                if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) == 0)
+                    throw new PreparationNotReadyException();
+                gameState = GameState.EQUIP_ACTIVATION_MODE;
+            } else if (((Spell) fieldArea.getCard()).spellEffect != null) {
                 ((Spell) fieldArea.getCard()).spellEffect.execute();
                 destroyHandFieldCard(gameplay.getCurrentPlayer(), (HandFieldArea) fieldArea);
             }
@@ -292,30 +298,34 @@ public class GameplayController {
                 throw new PreparationNotReadyException();
             trapThrewException = onSpellActivationTraps(fieldArea);
             if (trapThrewException) throw new ActionNotPossibleException("");
-            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP))
-                activateEquip(fieldArea, (SpellAndTrapFieldArea) fieldArea);
-            else if (((Spell) fieldArea.getCard()).spellEffect == null)
-                throw new ActionNotPossibleException("Nazadim ino");
-            else {
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.FIELD)) {
+                ((SpellAndTrapFieldArea) fieldArea).activateChangePosition();
+            }
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) {
+                if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) == 0)
+                    throw new PreparationNotReadyException();
+                gameState = GameState.EQUIP_ACTIVATION_MODE;
+            } else if (((Spell) fieldArea.getCard()).spellEffect != null) {
                 ((Spell) fieldArea.getCard()).spellEffect.execute();
                 destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) fieldArea);
             }
         }
     }
 
-    private void activateEquip(FieldArea fieldArea, SpellAndTrapFieldArea spell) throws NoCardIsSelectedException, CommandCancellationException {
-        deselectCard();
-        GameplayView.getInstance().selectMonsterForEquip(fieldArea);
-        MonsterFieldArea toEquipMonster = (MonsterFieldArea) gameplay.getSelectedField();
-        fieldArea.getCard().equipEffect.activate(toEquipMonster);
-        gameplay.getCurrentPlayer().getEquippedMonsters().put(spell, toEquipMonster);
-        if (fieldArea instanceof HandFieldArea) {
-            spell.putCard(fieldArea.getCard(), true);
-            gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
+    public void activateEquip(MonsterFieldArea toEquipMonster) {
+        FieldArea equipSpell = gameplay.getSelectedField();
+        equipSpell.getCard().equipEffect.activate(toEquipMonster);
+        if (equipSpell instanceof HandFieldArea) {
+            SpellAndTrapFieldArea freeSpellFieldArea = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
+            freeSpellFieldArea.putCard(equipSpell.getCard(), true);
+            gameplay.getCurrentPlayer().getPlayingHand().remove(equipSpell);
+            gameplay.getCurrentPlayer().getField().getChildren().remove(equipSpell);
+            gameplay.getCurrentPlayer().getEquippedMonsters().put(freeSpellFieldArea, toEquipMonster);
         }
-        if (fieldArea instanceof SpellAndTrapFieldArea) {
-            ((SpellAndTrapFieldArea) fieldArea).setCanBeActivated(false);
-            fieldArea.setVisibility(true);
+        if (equipSpell instanceof SpellAndTrapFieldArea) {
+            ((SpellAndTrapFieldArea) equipSpell).activateChangePosition();
+            ((SpellAndTrapFieldArea) equipSpell).setCanBeActivated(false);
+            gameplay.getCurrentPlayer().getEquippedMonsters().put((SpellAndTrapFieldArea) equipSpell, toEquipMonster);
         }
     }
 
@@ -1027,9 +1037,11 @@ public class GameplayController {
     public void calculateFieldZoneEffects() {
         if (gameplay == null) return;
         resetFieldZoneEffects();
-        if (gameplay.getCurrentPlayer().getField().getFieldZone().getCard() != null)
+        if (gameplay.getCurrentPlayer().getField().getFieldZone().getCard() != null &&
+            gameplay.getCurrentPlayer().getField().getFieldZone().visibility())
             ((Spell) gameplay.getCurrentPlayer().getField().getFieldZone().getCard()).fieldZoneEffect.activate();
-        if (gameplay.getOpponentPlayer().getField().getFieldZone().getCard() != null)
+        if (gameplay.getOpponentPlayer().getField().getFieldZone().getCard() != null &&
+            gameplay.getOpponentPlayer().getField().getFieldZone().visibility())
             ((Spell) gameplay.getOpponentPlayer().getField().getFieldZone().getCard()).fieldZoneEffect.activate();
     }
 
