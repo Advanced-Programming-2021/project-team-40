@@ -24,8 +24,9 @@ public class DuelMenu extends Application {
     public void AIBattle(MouseEvent mouseEvent) {
     }
 
-    public void playerBattle(MouseEvent mouseEvent) {
+    public void playerBattle(MouseEvent mouseEvent) throws Exception {
         startGameMusic();
+        new GameplayView().start(WelcomeMenu.stage);
     }
 
     private void startGameMusic() {

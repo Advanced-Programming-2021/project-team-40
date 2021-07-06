@@ -2,16 +2,20 @@ package GUI;
 
 import Controller.DatabaseController.DatabaseController;
 import Controller.DuelController.GameplayController;
+import Controller.ProgramController.Regex;
 import Database.Cards.Card;
 import Database.Cards.SpellAndTrap;
 import Database.User;
 import Gameplay.*;
+import View.Exceptions.InvalidCardNameException;
 import View.Exceptions.NoCardIsSelectedException;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -21,6 +25,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Optional;
+import java.util.regex.Matcher;
 
 public class GameplayView extends Application {
     final private static int GAMEPLAY_WIDTH = 700;
@@ -42,6 +48,8 @@ public class GameplayView extends Application {
     private static Button settingsButton = new Button("Settings");
     private static Alert addedCardsAlert = new Alert(Alert.AlertType.INFORMATION);
     private static Alert newPhaseAlert = new Alert(Alert.AlertType.INFORMATION);
+
+    private static Stage thisStage;
 
     public static GameplayView getInstance() {
         if (gameplayView == null) gameplayView = new GameplayView();
@@ -153,8 +161,8 @@ public class GameplayView extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(pane);
-        createBoard();
         stage.setScene(scene);
+        createBoard(stage);
         stage.show();
         stage.getWidth();
         addedCardsAlert.setTitle("New Card!");
@@ -163,7 +171,7 @@ public class GameplayView extends Application {
         addedCardsAlert.show();
     }
 
-    public void createBoard() {
+    public void createBoard(Stage stage) {
         DatabaseController.getInstance();
         Gameplay gameplay = new Gameplay(new Player(User.getUserByName("DanDan")), new Player(User.getUserByName("KiaKia")), 1);
         GameplayController.getInstance().setGameplay(gameplay);
@@ -191,6 +199,39 @@ public class GameplayView extends Application {
         pane.getChildren().add(gameplay.getOpponentPlayer().getField());
         pane.getChildren().add(cardDisplay);
         hideOpponentHands();
+        setCheatConsole(stage);
+    }
+
+    private void setCheatConsole(Stage stage) {
+        stage.getScene().getAccelerators().put(
+                KeyCombination.keyCombination("CTRL+SHIFT+C"),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        TextInputDialog cheatBox = new TextInputDialog();
+                        cheatBox.setTitle("CHEAT");
+                        cheatBox.setHeaderText("");
+                        cheatBox.setContentText("");
+                        Optional<String> cheatCode = cheatBox.showAndWait();
+                        if (cheatCode.isPresent()){
+                            processCheatCode(cheatCode.get());
+                        }
+                    }
+                }
+        );
+    }
+
+    private void processCheatCode(String cheat) {
+        Matcher matcher;
+        if ((matcher = Regex.getCommandMatcher(cheat, Regex.addCardToHandCheatCode)).matches())
+            forceAddCardCheat(matcher);
+        else if ((matcher = Regex.getCommandMatcher(cheat, Regex.increaseLifePointsCheatCode)).matches())
+            increaseLifePointsCheat(matcher);
+        else if ((matcher = Regex.getCommandMatcher(cheat, Regex.forceAddCardCheatCode)).matches())
+            forceAddCardCheat(matcher);
+        else if ((matcher = Regex.getCommandMatcher(cheat, Regex.setWinnerCheatCode)).matches())
+            setWinnerCheat(matcher);
+        else System.out.println("invalid command");
     }
 
     private void nextPhase() {
@@ -342,4 +383,29 @@ public class GameplayView extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
+
+    private void forceAddCardCheat(Matcher matcher) {
+        String cardName = matcher.group("cardName");
+        try {
+            GameplayController.getInstance().forceAddCard(cardName);
+        } catch (InvalidCardNameException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void increaseLifePointsCheat(Matcher matcher) {
+        int amount = Integer.parseInt(matcher.group("amount"));
+        GameplayController.getInstance().increaseLifePointsCheat(amount);
+    }
+
+    private void setWinnerCheat(Matcher matcher) {
+        String nickname = matcher.group("nickname");
+        String message = GameplayController.getInstance().setWinnerCheat(nickname);
+        if (message == null) return;
+        System.out.println(message);
+        GameplayController.getInstance().doPhaseAction();
+    }
+
+
 }
