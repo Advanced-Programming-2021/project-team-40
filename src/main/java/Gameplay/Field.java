@@ -14,7 +14,7 @@ public class Field extends GridPane {
     private MonsterFieldArea[] monstersField = new MonsterFieldArea[5];
     private SpellAndTrapFieldArea[] spellAndTrapField = new SpellAndTrapFieldArea[5];
     private ArrayList<Card> graveyard = new ArrayList<>();
-    private FieldZoneArea fieldZone = new FieldZoneArea(-1);
+    private FieldZoneArea fieldZone = new FieldZoneArea();
     private ScrollPane handScrollPane = new ScrollPane();
     private HBox handFieldArea = new HBox();
     private FieldArea graveyardField = new FieldArea();

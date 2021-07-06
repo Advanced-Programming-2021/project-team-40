@@ -2,6 +2,8 @@ package Gameplay;
 
 import Controller.DuelController.GameplayController;
 import Database.Cards.Card;
+import Database.Cards.CardType;
+import Database.Cards.Monster;
 import GUI.GameplayView;
 import javafx.scene.control.ContextMenu;
 
@@ -19,6 +21,10 @@ public class HandFieldArea extends FieldArea {
         this.setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
             Gameplay gameplay = GameplayController.getInstance().gameplay;
+            if (GameplayController.getGameState() == GameState.RITUAL_SPELL_ACTIVATED_MODE) {
+                if (!(gameplay.getSelectedField().getCard() instanceof Monster)) return;
+                if (!((Monster) gameplay.getSelectedField().getCard()).getCardType().equals(CardType.RITUAL)) return;
+            }
             ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();
             if (!hand.contains(thisField)) return;
             if (GameplayController.getInstance().gameplay.getSelectedField() != thisField) return;
@@ -28,10 +34,13 @@ public class HandFieldArea extends FieldArea {
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
         this.setOnMouseEntered(mouseEvent -> {
+            GameState gameState = GameplayController.getGameState();
             GameplayView.updateCardDisplayPanel(thisField);
-            if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SUMMON_MODE) return;
-            if (GameplayController.getInstance().gameState == GameState.TRIBUTE_SET_MODE) return;
-            if (GameplayController.getInstance().gameState == GameState.ATTACK_MODE) return;
+            if (gameState == GameState.CHAIN_MODE) return;
+            if (gameState == GameState.EQUIP_ACTIVATION_MODE) return;
+            if (gameState == GameState.TRIBUTE_SUMMON_MODE) return;
+            if (gameState == GameState.TRIBUTE_SET_MODE) return;
+            if (gameState == GameState.ATTACK_MODE) return;
             Gameplay gameplay = GameplayController.getInstance().gameplay;
             ArrayList<HandFieldArea> hand = gameplay.getCurrentPlayer().getPlayingHand();
             if (!hand.contains(thisField)) return;

@@ -10,7 +10,6 @@ import Gameplay.*;
 import View.CardView;
 import View.Exceptions.*;
 import View.GameplayView;
-import com.google.gson.internal.GsonBuildConfig;
 import javafx.scene.control.Label;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -19,15 +18,33 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameplayController {
+    private static GameState gameState = GameState.NORMAL_MODE;
+    private static SpellAndTrapActivationType chainType = SpellAndTrapActivationType.NORMAL;
     private static GameplayController gameplayController = null;
     public Gameplay gameplay;
     public ArrayList<MonsterFieldArea> toTributeCards = new ArrayList<>();
     public int tributeCount = 0;
-    public GameState gameState = GameState.NORMAL_MODE;
     public ArrayList<FieldArea> effectSpellAndTraps = new ArrayList<>();
+    private boolean possibleChainChecked = false;
 
     private GameplayController() {
 
+    }
+
+    public static GameState getGameState() {
+        return gameState;
+    }
+
+    public static void setGameState(GameState gameState) {
+        GameplayController.gameState = gameState;
+    }
+
+    public static SpellAndTrapActivationType getChainType() {
+        return chainType;
+    }
+
+    public static void setChainType(SpellAndTrapActivationType chainType) {
+        GameplayController.chainType = chainType;
     }
 
     public static GameplayController getInstance() {
@@ -82,8 +99,7 @@ public class GameplayController {
                 return gameplay.getCurrentPhase().toString();
             case BATTLE_PHASE:
                 gameplay.setCurrentPhase(Phase.MAIN_PHASE_TW0);
-                System.out.println(gameplay.getCurrentPhase().toString());
-                break;
+                return gameplay.getCurrentPhase().toString();
             case MAIN_PHASE_TW0:
                 gameplay.setCurrentPhase(Phase.END_PHASE);
                 return gameplay.getCurrentPhase().toString();
@@ -268,56 +284,99 @@ public class GameplayController {
         else activateSpellEffect(fieldArea);
     }
 
+    public void activateSpellEffect()  throws ActionNotPossibleException, NoCardIsSelectedException, AttackNotPossibleException, SpecialSummonNotPossibleException, MonsterZoneFullException, PreparationNotReadyException {
+        FieldArea fieldArea = gameplay.getSelectedField();
+        if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.RITUAL)) {
+            effectSpellAndTraps.add(fieldArea);
+            gameState = GameState.RITUAL_SPELL_ACTIVATED_MODE;
+        } else if (fieldArea.canBePutOnBoard()) {
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.FIELD)) {
+                gameplay.getCurrentPlayer().getField().getFieldZone().putCard(fieldArea.getCard(), true);
+                gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(fieldArea);
+                gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
+            }
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) {
+                if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) == 0)
+                    throw new PreparationNotReadyException();
+                gameState = GameState.EQUIP_ACTIVATION_MODE;
+            } else if (((Spell) fieldArea.getCard()).spellEffect != null) {
+                ((Spell) fieldArea.getCard()).spellEffect.execute();
+                destroyHandFieldCard(gameplay.getCurrentPlayer(), (HandFieldArea) fieldArea);
+            }
+        } else if (fieldArea instanceof SpellAndTrapFieldArea) {
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.FIELD)) {
+                ((SpellAndTrapFieldArea) fieldArea).activateChangePosition();
+            }
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) {
+                if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) == 0)
+                    throw new PreparationNotReadyException();
+                gameState = GameState.EQUIP_ACTIVATION_MODE;
+            } else if (((Spell) fieldArea.getCard()).spellEffect != null) {
+                ((Spell) fieldArea.getCard()).spellEffect.execute();
+                destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) fieldArea);
+            }
+        }
+    }
     private void activateSpellEffect(FieldArea fieldArea) throws RitualSummonNotPossibleException, ActionNotPossibleException, NoCardIsSelectedException, CommandCancellationException, SpellZoneFullException, AttackNotPossibleException, SpecialSummonNotPossibleException, MonsterZoneFullException, PreparationNotReadyException {
-        boolean trapThrewException;
+        boolean trapExists;
         if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.RITUAL)) {
             if (!hasRitualMonsterInHand()) throw new RitualSummonNotPossibleException();
             if (!sumMeetsRitualMonsterLevel()) throw new RitualSummonNotPossibleException();
-            trapThrewException = onSpellActivationTraps(fieldArea);
-            if (trapThrewException) throw new ActionNotPossibleException("");
+            trapExists = onSpellActivationTraps(fieldArea);
+            if (trapExists) return;
             effectSpellAndTraps.add(fieldArea);
-            GameplayView.getInstance().selectRitualMonster();
+            gameState = GameState.RITUAL_SPELL_ACTIVATED_MODE;
         } else if (fieldArea.canBePutOnBoard()) {
             SpellAndTrapFieldArea spell = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
             if (spell == null) throw new SpellZoneFullException();
-            trapThrewException = onSpellActivationTraps(fieldArea);
-            if (trapThrewException) throw new ActionNotPossibleException("");
-            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) activateEquip(fieldArea, spell);
-            else if (((Spell) fieldArea.getCard()).spellEffect == null)
-                throw new ActionNotPossibleException("Nazadim ino");
-            else {
+            trapExists = onSpellActivationTraps(fieldArea);
+            if (trapExists) return;
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.FIELD)) {
+                gameplay.getCurrentPlayer().getField().getFieldZone().putCard(fieldArea.getCard(), true);
+                gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(fieldArea);
+                gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
+            }
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) {
+                if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) == 0)
+                    throw new PreparationNotReadyException();
+                gameState = GameState.EQUIP_ACTIVATION_MODE;
+            } else if (((Spell) fieldArea.getCard()).spellEffect != null) {
                 ((Spell) fieldArea.getCard()).spellEffect.execute();
                 destroyHandFieldCard(gameplay.getCurrentPlayer(), (HandFieldArea) fieldArea);
             }
         } else if (fieldArea instanceof SpellAndTrapFieldArea) {
             if (!((SpellAndTrapFieldArea) fieldArea).isCanBeActivated())
                 throw new PreparationNotReadyException();
-            trapThrewException = onSpellActivationTraps(fieldArea);
-            if (trapThrewException) throw new ActionNotPossibleException("");
-            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP))
-                activateEquip(fieldArea, (SpellAndTrapFieldArea) fieldArea);
-            else if (((Spell) fieldArea.getCard()).spellEffect == null)
-                throw new ActionNotPossibleException("Nazadim ino");
-            else {
+            trapExists = onSpellActivationTraps(fieldArea);
+            if (trapExists) return;
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.FIELD)) {
+                ((SpellAndTrapFieldArea) fieldArea).activateChangePosition();
+            }
+            if (((Spell) fieldArea.getCard()).getIcon().equals(Icon.EQUIP)) {
+                if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) == 0)
+                    throw new PreparationNotReadyException();
+                gameState = GameState.EQUIP_ACTIVATION_MODE;
+            } else if (((Spell) fieldArea.getCard()).spellEffect != null) {
                 ((Spell) fieldArea.getCard()).spellEffect.execute();
                 destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) fieldArea);
             }
         }
     }
 
-    private void activateEquip(FieldArea fieldArea, SpellAndTrapFieldArea spell) throws NoCardIsSelectedException, CommandCancellationException {
-        deselectCard();
-        GameplayView.getInstance().selectMonsterForEquip(fieldArea);
-        MonsterFieldArea toEquipMonster = (MonsterFieldArea) gameplay.getSelectedField();
-        fieldArea.getCard().equipEffect.activate(toEquipMonster);
-        gameplay.getCurrentPlayer().getEquippedMonsters().put(spell, toEquipMonster);
-        if (fieldArea instanceof HandFieldArea) {
-            spell.putCard(fieldArea.getCard(), true);
-            gameplay.getCurrentPlayer().getPlayingHand().remove(fieldArea);
+    public void activateEquip(MonsterFieldArea toEquipMonster) {
+        FieldArea equipSpell = gameplay.getSelectedField();
+        equipSpell.getCard().equipEffect.activate(toEquipMonster);
+        if (equipSpell instanceof HandFieldArea) {
+            SpellAndTrapFieldArea freeSpellFieldArea = gameplay.getCurrentPlayer().getField().getFreeSpellFieldArea();
+            freeSpellFieldArea.putCard(equipSpell.getCard(), true);
+            gameplay.getCurrentPlayer().getPlayingHand().remove(equipSpell);
+            gameplay.getCurrentPlayer().getField().getChildren().remove(equipSpell);
+            gameplay.getCurrentPlayer().getEquippedMonsters().put(freeSpellFieldArea, toEquipMonster);
         }
-        if (fieldArea instanceof SpellAndTrapFieldArea) {
-            ((SpellAndTrapFieldArea) fieldArea).setCanBeActivated(false);
-            fieldArea.setVisibility(true);
+        if (equipSpell instanceof SpellAndTrapFieldArea) {
+            ((SpellAndTrapFieldArea) equipSpell).activateChangePosition();
+            ((SpellAndTrapFieldArea) equipSpell).setCanBeActivated(false);
+            gameplay.getCurrentPlayer().getEquippedMonsters().put((SpellAndTrapFieldArea) equipSpell, toEquipMonster);
         }
     }
 
@@ -373,6 +432,7 @@ public class GameplayController {
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
         if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) {
             checkForRitual(false);
+            return;
         } else if (((Monster) fieldArea.getCard()).getLevel() > 4 && toTributeCards.isEmpty()) {
             if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) < ((Monster) fieldArea.getCard()).getNumberOfTributes())
                 throw new NotEnoughCardsException();
@@ -396,8 +456,10 @@ public class GameplayController {
         MonsterFieldArea monsterFieldArea = gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea();
         if (monsterFieldArea == null) throw new MonsterZoneFullException();
         if (gameplay.hasPlacedMonster()) throw new AlreadySummonedException();
-        if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) checkForRitual(true);
-        else if (fieldArea.getCard().uniqueSummon != null) fieldArea.getCard().uniqueSummon.summon();
+        if (((Monster) fieldArea.getCard()).getCardType().equals(CardType.RITUAL)) {
+            checkForRitual(true);
+            return;
+        } else if (fieldArea.getCard().uniqueSummon != null) fieldArea.getCard().uniqueSummon.summon();
         else if (((Monster) fieldArea.getCard()).getLevel() > 4 && toTributeCards.isEmpty()) {
             if (getNumberOfPlayerMonsters(gameplay.getCurrentPlayer()) < ((Monster) fieldArea.getCard()).getNumberOfTributes())
                 throw new NotEnoughCardsException();
@@ -422,7 +484,9 @@ public class GameplayController {
                     throw new InvalidSummonException();
         }
         if (ritualSpell == null) throw new InvalidSummonException();
-        ritualTribute(GameplayView.getInstance().ritualTribute(), ritualSpell, isSummon);
+        if (isSummon) gameState = GameState.RITUAL_SUMMON_MODE;
+        else gameState = GameState.RITUAL_SET_MODE;
+        GUI.GameplayView.ritualTribute(gameplay.getCurrentPlayer(), ritualSpell, isSummon);
     }
 
     public void tributeCards() {
@@ -432,21 +496,23 @@ public class GameplayController {
         tributeCount = 0;
     }
 
-    private void ritualTribute(String[] ids, FieldArea ritualSpell, boolean isSummon) {
+    public void ritualTribute(String[] ids, FieldArea ritualSpell, boolean isSummon) {
         removeTributesFromHand(ids);
         DeckMenuController.getInstance().shuffleDeck(gameplay.getCurrentPlayer().getPlayingDeck());
         effectSpellAndTraps.remove(ritualSpell);
-        if (ritualSpell instanceof HandFieldArea)
+        if (ritualSpell instanceof HandFieldArea) {
+            moveCardToGraveyard(gameplay.getCurrentPlayer(), ritualSpell.getCard());
             gameplay.getCurrentPlayer().getPlayingHand().remove(ritualSpell);
+            gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(ritualSpell);
+        }
         if (ritualSpell instanceof SpellAndTrapFieldArea)
             destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) ritualSpell);
-        moveCardToGraveyard(gameplay.getCurrentPlayer(), ritualSpell.getCard());
         DeckMenuController.getInstance().shuffleDeck(gameplay.getCurrentPlayer().getPlayingDeck());
         if (isSummon)
             normalSummon((HandFieldArea) gameplay.getSelectedField(), gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea());
         else
             setMonsterCard(gameplay.getCurrentPlayer().getField().getFreeMonsterFieldArea(), (HandFieldArea) gameplay.getSelectedField());
-
+        gameState = GameState.NORMAL_MODE;
     }
 
     private void removeTributesFromHand(String[] ids) {
@@ -508,8 +574,9 @@ public class GameplayController {
         gameplay.setAttacker(attacker);
         gameplay.setBeingAttacked(attackTarget);
         StringBuilder temp;
-        boolean trapExceptionThrown = onAttackTraps();
-        if (trapExceptionThrown) return null;
+        boolean trapExists = onAttackTraps();
+        possibleChainChecked = true;
+        if (trapExists) return null;
         if (attackTarget.getCard() != null && attackTarget.getCard().onBeingAttacked != null)
             attackTarget.getCard().onBeingAttacked.execute();
         temp = calculateDamage((MonsterFieldArea) attacker, attackTarget);
@@ -518,6 +585,22 @@ public class GameplayController {
         gameplay.setAttacker(null);
         gameplay.setBeingAttacked(null);
         return temp;
+    }
+
+    public StringBuilder attack() throws Exception {
+        FieldArea attacker = gameplay.getAttacker();
+        FieldArea attackTarget = gameplay.getBeingAttacked();
+        if (attackTarget.getCard() != null && attackTarget.getCard().onBeingAttacked != null)
+            attackTarget.getCard().onBeingAttacked.execute();
+        StringBuilder temp = calculateDamage((MonsterFieldArea) attacker, (MonsterFieldArea) attackTarget);
+        ((MonsterFieldArea) attacker).setHasAttacked(true);
+        if (gameplay.getSelectedField() != null) deselectCard();
+        gameplay.setAttacker(null);
+        gameplay.setBeingAttacked(null);
+        return temp;
+    }
+    public void resetChainSituation() {
+        possibleChainChecked = false;
     }
 
     private boolean onSpellActivationTraps(FieldArea toActivateSpell) {
@@ -532,27 +615,10 @@ public class GameplayController {
         if (spellTrapExists) {
             disableOpponentsSpellsForChain();
             temporarySwitchTurn();
-            if (GameplayView.getInstance().spellAndTrapActivationPrompt()) {
-                try {
-                    GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_SPELL);
-                } catch (ActionNotPossibleException | AttackNotPossibleException e) {
-                    temporarySwitchTurn();
-                    resetOpponentTrapsAndSpells(SpellAndTrapActivationType.ON_SPELL);
-                    if (e.getMessage().equals("Opponent's magic jammer destroyed your card!")) {
-                        if (toActivateSpell instanceof SpellAndTrapFieldArea)
-                            destroySpellAndTrapCard(gameplay.getCurrentPlayer(), (SpellAndTrapFieldArea) toActivateSpell);
-                        if (toActivateSpell instanceof HandFieldArea) {
-                            gameplay.getCurrentPlayer().getPlayingHand().remove(toActivateSpell);
-                            moveCardToGraveyard(gameplay.getCurrentPlayer(), toActivateSpell.getCard());
-                        }
-                    }
-                    System.out.println(e.getMessage());
-                    return true;
-                }
-            }
-            temporarySwitchTurn();
+            setChainType(SpellAndTrapActivationType.ON_SPELL);
+            GUI.GameplayView.chainPrompt();
+            return true;
         }
-        resetOpponentTrapsAndSpells(SpellAndTrapActivationType.ON_SPELL);
         return false;
     }
 
@@ -569,19 +635,9 @@ public class GameplayController {
         if (summonTrapExists) {
             disableOpponentsSpellsForChain();
             temporarySwitchTurn();
-            if (GameplayView.getInstance().spellAndTrapActivationPrompt()) {
-                try {
-                    GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_SUMMON);
-                } catch (ActionNotPossibleException | AttackNotPossibleException e) {
-                    temporarySwitchTurn();
-                    resetOpponentTrapsAndSpells(SpellAndTrapActivationType.ON_SUMMON);
-                    System.out.println(e.getMessage());
-                    return;
-                }
+            GameplayController.setChainType(SpellAndTrapActivationType.ON_SUMMON);
+            GUI.GameplayView.chainPrompt();
             }
-            temporarySwitchTurn();
-        }
-        resetOpponentTrapsAndSpells(SpellAndTrapActivationType.ON_SUMMON);
     }
 
     private void onStandbyTraps() {
@@ -597,47 +653,27 @@ public class GameplayController {
         if (opponentStandbyTrapExists) {
             disableOpponentsSpellsForChain();
             temporarySwitchTurn();
-            if (GameplayView.getInstance().spellAndTrapActivationPrompt()) {
-                try {
-                    GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_STANDBY);
-                } catch (ActionNotPossibleException | AttackNotPossibleException e) {
-                    temporarySwitchTurn();
-                    resetOpponentTrapsAndSpells(SpellAndTrapActivationType.ON_STANDBY);
-                    System.out.println(e.getMessage());
-                    return;
-                }
-            }
-            temporarySwitchTurn();
+            setChainType(SpellAndTrapActivationType.ON_STANDBY);
+            GUI.GameplayView.chainPrompt();
         }
-        resetOpponentTrapsAndSpells(SpellAndTrapActivationType.ON_STANDBY);
     }
 
     private boolean onAttackTraps() {
         boolean attackTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard() != null)
-                if (trap.getCard().onBeingAttacked != null) {
-                    attackTrapExists = true;
-                    trap.setCanBeActivated(true);
-                }
+            if (trap.getCard() != null && trap.getCard().onBeingAttacked != null) {
+                attackTrapExists = true;
+                trap.setCanBeActivated(true);
+            }
         }
         if (attackTrapExists) {
             disableOpponentsSpellsForChain();
             temporarySwitchTurn();
-            if (GameplayView.getInstance().spellAndTrapActivationPrompt()) {
-                try {
-                    GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_ATTACKED);
-                } catch (ActionNotPossibleException | AttackNotPossibleException e) {
-                    temporarySwitchTurn();
-                    resetOpponentTrapsAndSpells(SpellAndTrapActivationType.ON_ATTACKED);
-                    System.out.println(e.getMessage());
-                    return true;
-                }
-            }
-            temporarySwitchTurn();
+            GameplayController.setChainType(SpellAndTrapActivationType.ON_ATTACKED);
+            GUI.GameplayView.chainPrompt();
+            return true;
         }
-        resetOpponentTrapsAndSpells(SpellAndTrapActivationType.ON_ATTACKED);
         return false;
     }
 
@@ -648,7 +684,7 @@ public class GameplayController {
         }
     }
 
-    private void resetOpponentTrapsAndSpells(SpellAndTrapActivationType type) {
+    public void resetOpponentTrapsAndSpells(SpellAndTrapActivationType type) {
         switch (type) {
             case ON_ATTACKED:
                 for (SpellAndTrapFieldArea trap :
@@ -830,6 +866,7 @@ public class GameplayController {
             if ((area.getCard()).onDestruction != null)
                 (area.getCard()).onDestruction.execute(player);
             moveCardToGraveyard(player, area.getCard());
+            gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(area);
             gameplay.getCurrentPlayer().getPlayingHand().remove(area);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -869,8 +906,7 @@ public class GameplayController {
             destroySpellAndTrapCard(gameplay.getCurrentPlayer(), spellAndTrapFieldArea);
         spellAndTrapFieldArea.putCard(handFieldArea.getCard(), false);
         gameplay.getCurrentPlayer().getPlayingHand().remove(handFieldArea);
-        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(spellAndTrapFieldArea);
-        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(spellAndTrapFieldArea);
+        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(handFieldArea);
 
     }
 
@@ -1022,9 +1058,11 @@ public class GameplayController {
     public void calculateFieldZoneEffects() {
         if (gameplay == null) return;
         resetFieldZoneEffects();
-        if (gameplay.getCurrentPlayer().getField().getFieldZone().getCard() != null)
+        if (gameplay.getCurrentPlayer().getField().getFieldZone().getCard() != null &&
+            gameplay.getCurrentPlayer().getField().getFieldZone().visibility())
             ((Spell) gameplay.getCurrentPlayer().getField().getFieldZone().getCard()).fieldZoneEffect.activate();
-        if (gameplay.getOpponentPlayer().getField().getFieldZone().getCard() != null)
+        if (gameplay.getOpponentPlayer().getField().getFieldZone().getCard() != null &&
+            gameplay.getOpponentPlayer().getField().getFieldZone().visibility())
             ((Spell) gameplay.getOpponentPlayer().getField().getFieldZone().getCard()).fieldZoneEffect.activate();
     }
 
