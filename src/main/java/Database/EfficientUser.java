@@ -8,6 +8,7 @@ public class EfficientUser {
     private String username;
     private String password;
     private String nickname;
+    private String avatarID;
     private int score;
     private int balance;
     private ArrayList<EfficientDeck> decks = new ArrayList<>();
@@ -21,6 +22,7 @@ public class EfficientUser {
         setBalance(user.getBalance());
         setDecks(user.getDecks());
         setInactiveCards(user.getInactiveCards());
+        setAvatarID(user.getAvatarID());
     }
 
     public String getNickname() {
@@ -45,6 +47,14 @@ public class EfficientUser {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getAvatarID() {
+        return avatarID;
+    }
+
+    public void setAvatarID(String avatarID) {
+        this.avatarID = avatarID;
     }
 
     public int getScore() {

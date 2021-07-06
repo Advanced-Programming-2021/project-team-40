@@ -6,18 +6,27 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.shape.Rectangle?>
 <AnchorPane xmlns="http://javafx.com/javafx"
-          xmlns:fx="http://javafx.com/fxml"
-          fx:controller="GUI.ProfileMenu"
-          prefHeight="600.0" prefWidth="750.0">
-
-    <VBox spacing="10">
-        <Label fx:id="username"/>
-        <Label fx:id="nickname"/>
-        <Label fx:id="score"/>
-    </VBox>
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="GUI.ProfileMenu"
+            prefHeight="600.0" prefWidth="750.0">
+    <HBox>
+        <Rectangle fx:id="avatar" height="146" width="124"/>
+        <VBox spacing="10">
+            <Label fx:id="username"/>
+            <Label fx:id="nickname"/>
+            <Label fx:id="score"/>
+        </VBox>
+    </HBox>
 
     <VBox layoutX="300" layoutY="300" spacing="10">
+
+        <Label prefWidth="150" prefHeight="30" text="Change Avatar" alignment="CENTER"/>
+        <HBox prefHeight="50" prefWidth="150" spacing="10">
+            <Button text="Previous" onMouseClicked="#previousAvatar" prefWidth="70"/>
+            <Button text="Next" onMouseClicked="#nextAvatar" prefWidth="70"/>
+        </HBox>
         <Button text="Change Nickname" onMouseClicked="#changeNickname" prefHeight="50" prefWidth="150"/>
         <Button text="Change Password" onMouseClicked="#changePassword" prefHeight="50" prefWidth="150"/>
         <Button text="Back" onMouseClicked="#back" prefHeight="50" prefWidth="150"/>

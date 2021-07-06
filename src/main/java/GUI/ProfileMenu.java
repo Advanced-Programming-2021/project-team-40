@@ -15,6 +15,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -27,6 +29,8 @@ public class ProfileMenu extends Application implements AlertFunction {
     Label nickname;
     @FXML
     Label score;
+    @FXML
+    Rectangle avatar;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -41,6 +45,7 @@ public class ProfileMenu extends Application implements AlertFunction {
     }
 
     private void updateUser() {
+        avatar.setFill(new ImagePattern(MainMenu.currentUser.getProfilePicture()));
         username.setText(MainMenu.currentUser.getUsername());
         nickname.setText(MainMenu.currentUser.getNickname());
         score.setText(Integer.toString(MainMenu.currentUser.getScore()));
@@ -113,15 +118,14 @@ public class ProfileMenu extends Application implements AlertFunction {
         alert.setContentText(text);
         alert.show();
     }
-}
 
-class PasswordDialog extends TextInputDialog {
-    public PasswordDialog() {
-        DialogPane dialogPane = new DialogPane();
-        PasswordField passwordField = new PasswordField();
-        HBox hBox = new HBox();
-        hBox.getChildren().add(passwordField);
-        hBox.setPadding(new Insets(20));
-        getDialogPane().setContent(hBox);
+    public void previousAvatar(MouseEvent mouseEvent) {
+        MainMenu.currentUser.setAvatarID(String.valueOf(Integer.parseInt(MainMenu.currentUser.getAvatarID()) - 1));
+        updateUser();
+    }
+
+    public void nextAvatar(MouseEvent mouseEvent) {
+        MainMenu.currentUser.setAvatarID(String.valueOf(Integer.parseInt(MainMenu.currentUser.getAvatarID()) + 1));
+        updateUser();
     }
 }

@@ -2,6 +2,8 @@ package Database;
 
 import Database.Cards.Card;
 import View.DeckView;
+import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
 
 import java.util.*;
 
@@ -10,19 +12,23 @@ public class User {
     private String username;
     private String password;
     private String nickname;
+    private Image profilePicture;
+    private String avatarID;
     private int score;
     private int balance;
     private int rank = 0;
     private ArrayList<Deck> decks = new ArrayList<>();
     private ArrayList<Card> inactiveCards = new ArrayList<>();
 
-    public User(String username, String password, String nickname, int score, int balance, ArrayList<Deck> decks, ArrayList<Card> inactiveCards) {
+    public User(String username, String password, String nickname, String avatarID, int score, int balance, ArrayList<Deck> decks, ArrayList<Card> inactiveCards) {
+        if (avatarID == null) avatarID = "1";
         setUsername(username.trim());
         setPassword(password.trim());
         setNickname(nickname.trim());
         setScore(score);
         setBalance(balance);
         setDecks(decks);
+        profilePicture = new Image(getClass().getResource("/Avatars/Chara001.dds" + avatarID + ".png").toExternalForm());
         this.inactiveCards = inactiveCards;
         users.add(this);
     }
@@ -118,6 +124,20 @@ public class User {
         return nickname;
     }
 
+    public String getAvatarID() {
+        if (avatarID == null) setAvatarID("1");
+        return avatarID;
+    }
+
+    public void setAvatarID(String avatarID) {
+        int avatarInt = Integer.parseInt(avatarID);
+        if (avatarInt > 36) avatarInt -= 36;
+        if (avatarInt < 1) avatarInt += 36;
+        avatarID = String.valueOf(avatarInt);
+        this.avatarID = avatarID;
+        profilePicture = new Image(getClass().getResource("/Avatars/Chara001.dds" + avatarID + ".png").toExternalForm());
+    }
+
     public void setScore(int score) {
         this.score = score;
     }
@@ -167,6 +187,10 @@ public class User {
             if (deck.isActive()) return deck;
         }
         return null;
+    }
+
+    public Image getProfilePicture() {
+        return profilePicture;
     }
 
     public void inactivateDeck() {

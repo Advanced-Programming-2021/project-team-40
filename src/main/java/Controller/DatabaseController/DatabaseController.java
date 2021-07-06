@@ -840,7 +840,7 @@ public class DatabaseController {
                 ArrayList<Card> actualInactiveCards = new ArrayList<>();
                 for (String cardName : tempUser.getInactiveCards())
                     actualInactiveCards.add(Card.getCardByName(cardName));
-                new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getScore(),
+                new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getAvatarID(), tempUser.getScore(),
                         tempUser.getBalance(), actualDecks, actualInactiveCards);
             } catch (FileNotFoundException e) {
                 System.out.println(e.getMessage());

@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 public class MainMenu extends Application {
@@ -20,6 +21,10 @@ public class MainMenu extends Application {
         //TODO delete this
         DatabaseController.getInstance();
         currentUser = User.getUserByName("DanDan");
+        if (DuelMenu.mediaPlayer != null && DuelMenu.mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)){
+            DuelMenu.mediaPlayer.stop();
+            WelcomeMenu.gameMusic();
+        }
 
     }
 
