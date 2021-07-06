@@ -5,11 +5,13 @@ import Controller.DuelController.GameplayController;
 import Database.Cards.Card;
 import Database.Cards.Monster;
 import Database.Cards.SpellAndTrap;
+import Database.Cards.Trap;
 import Database.User;
 import Gameplay.*;
-import View.Exceptions.InvalidCardNameException;
-import View.Exceptions.NoCardIsSelectedException;
+import View.Exceptions.*;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -23,6 +25,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class GameplayView extends Application {
     final private static int GAMEPLAY_WIDTH = 700;
@@ -32,18 +35,18 @@ public class GameplayView extends Application {
     public static ArrayList<MenuItem> handItems = new ArrayList<>();
     public static VBox cardDisplay = new VBox(10);
     private static GameplayView gameplayView;
-    private static AnchorPane pane = new AnchorPane();
-    private static MenuItem effectItem = new MenuItem("Activate effect");
-    private static MenuItem summonItem = new MenuItem("Summon");
-    private static MenuItem setItem = new MenuItem("Set");
-    private static MenuItem directAttackItem = new MenuItem("Direct attack");
-    private static MenuItem attackItem = new MenuItem("Attack");
-    private static MenuItem flipItem = new MenuItem("Flip summon");
-    private static MenuItem changePositionItem = new MenuItem("Change position");
-    private static Button nextPhaseButton = new Button("Next phase");
-    private static Button settingsButton = new Button("Settings");
-    private static Alert addedCardsAlert = new Alert(Alert.AlertType.INFORMATION);
-    private static Alert newPhaseAlert = new Alert(Alert.AlertType.INFORMATION);
+    private static final AnchorPane pane = new AnchorPane();
+    private static final MenuItem effectItem = new MenuItem("Activate effect");
+    private static final MenuItem summonItem = new MenuItem("Summon");
+    private static final MenuItem setItem = new MenuItem("Set");
+    private static final MenuItem directAttackItem = new MenuItem("Direct attack");
+    private static final MenuItem attackItem = new MenuItem("Attack");
+    private static final MenuItem flipItem = new MenuItem("Flip summon");
+    private static final MenuItem changePositionItem = new MenuItem("Change position");
+    private static final Button nextPhaseButton = new Button("Next phase");
+    private static final Button settingsButton = new Button("Settings");
+    private static final Alert addedCardsAlert = new Alert(Alert.AlertType.INFORMATION);
+    private static final Alert newPhaseAlert = new Alert(Alert.AlertType.INFORMATION);
 
     public static GameplayView getInstance() {
         if (gameplayView == null) gameplayView = new GameplayView();
@@ -66,7 +69,6 @@ public class GameplayView extends Application {
 
     public static void checkItems() {
         Phase currentPhase = GameplayController.getInstance().gameplay.getCurrentPhase();
-        GameState gameState = GameplayController.getInstance().gameState;
         FieldArea selectedField = GameplayController.getInstance().gameplay.getSelectedField();
         summonItem.setDisable(true);
         setItem.setDisable(true);
@@ -77,7 +79,8 @@ public class GameplayView extends Application {
         changePositionItem.setDisable(true);
         switch (currentPhase) {
             case BATTLE_PHASE:
-                if (gameState == GameState.CHAIN_MODE)
+                System.out.println(GameplayController.getGameState());
+                if (GameplayController.getGameState() == GameState.CHAIN_MODE)
                     effectItem.setDisable(false);
                 if (selectedField instanceof MonsterFieldArea &&
                     !((MonsterFieldArea) selectedField).hasAttacked() &&
@@ -201,6 +204,50 @@ public class GameplayView extends Application {
         deckShowStage.show();
     }
 
+    public static void chainPrompt() {
+        Alert chainPrompt = new Alert(Alert.AlertType.CONFIRMATION);
+        chainPrompt.setTitle("Chain Prompt");
+        chainPrompt.setHeaderText("Do you want to activate your Trap?");
+        Optional<ButtonType> response = chainPrompt.showAndWait();
+        ButtonType buttonPressed;
+        if (response.isEmpty()) buttonPressed = null;
+        else buttonPressed = response.get();
+        if (buttonPressed == null || buttonPressed == ButtonType.CANCEL) { ;
+            GameplayController.getInstance().temporarySwitchTurn();
+            switch (GameplayController.getChainType()) {
+                case ON_ATTACKED:
+                    try {
+                        StringBuilder message = GameplayController.getInstance().attack();
+                        showInfo(String.valueOf(message));
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                    GameplayController.getInstance().resetChainSituation();
+                    break;
+                case ON_SUMMON:
+                    try {
+                        StringBuilder message = GameplayController.getInstance().attack();
+                        showInfo(String.valueOf(message));
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                    GameplayController.getInstance().resetChainSituation();
+                    break;
+                case ON_SPELL:
+                    break;
+                case NORMAL:
+                    break;
+                case ON_STANDBY:
+                    break;
+            }
+        };
+        if (buttonPressed == ButtonType.OK) {
+            GameplayController.setGameState(GameState.CHAIN_MODE);
+            System.out.println(GameplayController.getGameState());
+        }
+
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
         Scene scene = new Scene(pane);
@@ -215,11 +262,15 @@ public class GameplayView extends Application {
     }
 
     public void createBoard() {
-        DatabaseController.getInstance();
+        DatabaseController.getInstance();//TODO: remove deez
         Gameplay gameplay = new Gameplay(new Player(User.getUserByName("DanDan")), new Player(User.getUserByName("KiaKia")), 1);
         GameplayController.getInstance().setGameplay(gameplay);
         GameplayController.getInstance().setStartingPlayer();
         GameplayController.getInstance().dealCardsAtBeginning();
+        try {
+            GameplayController.getInstance().forceAddCard("Mirror Force");
+        } catch (InvalidCardNameException e) {
+        }
         gameplay.getOpponentPlayer().getField().setRotate(180);
         createCardDisplayPanel();
         changePosition();
@@ -246,9 +297,9 @@ public class GameplayView extends Application {
 
     private void nextPhase() {
         nextPhaseButton.setOnAction(actionEvent -> {
-            if (GameplayController.getInstance().gameState == GameState.RITUAL_SET_MODE) return;
-            if (GameplayController.getInstance().gameState == GameState.RITUAL_SUMMON_MODE) return;
-            if (GameplayController.getInstance().gameState == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
+            if (GameplayController.getGameState() == GameState.RITUAL_SET_MODE) return;
+            if (GameplayController.getGameState() == GameState.RITUAL_SUMMON_MODE) return;
+            if (GameplayController.getGameState() == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
             String newPhaseMessage = GameplayController.getInstance().goToNextPhase();
             String addedCards = GameplayController.getInstance().doPhaseAction();
             if (addedCards != null) {
@@ -258,23 +309,35 @@ public class GameplayView extends Application {
                 newPhaseAlert.setHeaderText(newPhaseMessage);
                 newPhaseAlert.show();
             }
-            GameplayController.getInstance().gameState = GameState.NORMAL_MODE;
+            GameplayController.setGameState(GameState.NORMAL_MODE);
         });
         cardDisplay.getChildren().add(nextPhaseButton);
     }
 
     private void attack() {
-        attackItem.setOnAction(actionEvent -> GameplayController.getInstance().gameState = GameState.ATTACK_MODE);
+        attackItem.setOnAction(actionEvent -> GameplayController.setGameState(GameState.ATTACK_MODE));
         monsterItems.add(attackItem);
     }
 
     private void activateEffect() {
         effectItem.setOnAction(actionEvent -> {
-            try {
+            if (GameplayController.getGameState() == GameState.NORMAL_MODE) try {
                 GameplayController.getInstance().activateEffect(SpellAndTrapActivationType.NORMAL);
-                //TODO: chain doesn't work
             } catch (Exception e) {
                 showAlert(e.getMessage());
+            }
+            if (GameplayController.getGameState() == GameState.CHAIN_MODE) {
+                try {
+                    try {
+                        GameplayController.getInstance().activateEffect(GameplayController.getChainType());
+                    } catch (InvalidActivateException | RitualSummonNotPossibleException | AlreadyActivatedException | SpecialSummonNotPossibleException | CommandCancellationException | MonsterZoneFullException | WrongPhaseForSpellException | SpellZoneFullException | PreparationNotReadyException | NoCardIsSelectedException e) {
+                        showAlert(e.getMessage());
+                    }
+                } catch (ActionNotPossibleException | AttackNotPossibleException e) {
+                    GameplayController.getInstance().temporarySwitchTurn();
+                    GameplayController.getInstance().resetOpponentTrapsAndSpells(GameplayController.getChainType());
+                    showAlert(e.getMessage());
+                }
             }
             GameplayController.getInstance().calculateFieldZoneEffects();
         });

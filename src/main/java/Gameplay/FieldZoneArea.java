@@ -19,9 +19,10 @@ public class FieldZoneArea extends SpellAndTrapFieldArea {
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
         getCardView().setOnMouseEntered(mouseEvent -> {
-            GameState gameState = GameplayController.getInstance().gameState;
+            GameState gameState = GameplayController.getGameState();
             try {
                 GameplayView.updateCardDisplayPanel(thisField);
+                if (gameState == GameState.CHAIN_MODE) return;
                 if (gameState == GameState.EQUIP_ACTIVATION_MODE) return;
                 if (gameState == GameState.RITUAL_SET_MODE) return;
                 if (gameState == GameState.RITUAL_SUMMON_MODE) return;

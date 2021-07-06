@@ -22,7 +22,7 @@ public class SpellAndTrapFieldArea extends FieldArea {
         });
         getCardView().setOnMouseEntered(mouseEvent -> {
             try {
-                GameState gameState = GameplayController.getInstance().gameState;
+                GameState gameState = GameplayController.getGameState();
                 GameplayView.updateCardDisplayPanel(thisField);
                 if (gameState == GameState.EQUIP_ACTIVATION_MODE) return;
                 if (gameState == GameState.RITUAL_SET_MODE) return;

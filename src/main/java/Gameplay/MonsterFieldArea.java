@@ -29,7 +29,7 @@ public class MonsterFieldArea extends FieldArea {
         super();
         MonsterFieldArea thisField = this;
         getCardView().setOnContextMenuRequested(contextMenuEvent -> {
-            GameState gameState = GameplayController.getInstance().gameState;
+            GameState gameState = GameplayController.getGameState();
             if (gameState == GameState.ATTACK_MODE) {
                 try {
                     GameplayController.getInstance().selectCard(String.valueOf(id), "-m", !GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField));
@@ -44,9 +44,10 @@ public class MonsterFieldArea extends FieldArea {
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
         getCardView().setOnMouseEntered(mouseEvent -> {
-            GameState gameState = GameplayController.getInstance().gameState;
+            GameState gameState = GameplayController.getGameState();
             try {
                 GameplayView.updateCardDisplayPanel(thisField);
+                if (gameState == GameState.CHAIN_MODE) return;
                 if (gameState == GameState.EQUIP_ACTIVATION_MODE) return;
                 if (gameState == GameState.RITUAL_SET_MODE) return;
                 if (gameState == GameState.RITUAL_SUMMON_MODE) return;
@@ -55,19 +56,21 @@ public class MonsterFieldArea extends FieldArea {
                 if (gameState == GameState.TRIBUTE_SUMMON_MODE) return;
                 if (gameState == GameState.ATTACK_MODE) return;
                 GameplayController.getInstance().selectCard(String.valueOf(id), "-m", !GameplayController.getInstance().gameplay.getCurrentPlayer().getField().getMonstersFieldById(id).equals(thisField));
-                GameplayController.getInstance().gameState = GameState.NORMAL_MODE;
+                GameplayController.setGameState(GameState.NORMAL_MODE);
             } catch (Exception ignored) {
             }
         });
         getCardView().setOnMouseClicked(mouseEvent -> {
-            GameState gameState = GameplayController.getInstance().gameState;
+            GameState gameState = GameplayController.getGameState();
             if (mouseEvent.getButton() != MouseButton.PRIMARY) return;
+            if (gameState == GameState.CHAIN_MODE) return;
             if (gameState == GameState.RITUAL_SET_MODE) return;
             if (gameState == GameState.RITUAL_SUMMON_MODE) return;
             if (gameState == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
             if (gameState == GameState.ATTACK_MODE)
                 try {
                     StringBuilder message = GameplayController.getInstance().attack(String.valueOf(id));
+                    if (message == null) return;
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setHeaderText(String.valueOf(message));
                     alert.show();
@@ -97,7 +100,7 @@ public class MonsterFieldArea extends FieldArea {
                         GameplayController.getInstance().set();
                     } catch (Exception ignored) {
                     }
-                    GameplayController.getInstance().gameState = GameState.NORMAL_MODE;
+                    GameplayController.setGameState(GameState.NORMAL_MODE);
                 }
             }
             if (gameState == GameState.EQUIP_ACTIVATION_MODE) {
@@ -105,7 +108,7 @@ public class MonsterFieldArea extends FieldArea {
                 if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
                 if (equipSpell.getCard().equipEffect.isMonsterCorrect(thisField)) {
                     GameplayController.getInstance().activateEquip(thisField);
-                    GameplayController.getInstance().gameState = GameState.NORMAL_MODE;
+                    GameplayController.setGameState(GameState.NORMAL_MODE);
                 }
             }
             GameplayController.getInstance().calculateFieldZoneEffects();

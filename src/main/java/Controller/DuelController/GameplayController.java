@@ -18,15 +18,29 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameplayController {
+    private static GameState gameState = GameState.NORMAL_MODE;
+    private static SpellAndTrapActivationType chainType = SpellAndTrapActivationType.NORMAL;
     private static GameplayController gameplayController = null;
     public Gameplay gameplay;
     public ArrayList<MonsterFieldArea> toTributeCards = new ArrayList<>();
     public int tributeCount = 0;
-    public GameState gameState = GameState.NORMAL_MODE;
     public ArrayList<FieldArea> effectSpellAndTraps = new ArrayList<>();
+    private boolean possibleChainChecked = false;
 
     private GameplayController() {
 
+    }
+
+    public static GameState getGameState() {
+        return gameState;
+    }
+
+    public static void setGameState(GameState gameState) {
+        GameplayController.gameState = gameState;
+    }
+
+    public static SpellAndTrapActivationType getChainType() {
+        return chainType;
     }
 
     public static GameplayController getInstance() {
@@ -523,8 +537,11 @@ public class GameplayController {
         gameplay.setAttacker(attacker);
         gameplay.setBeingAttacked(attackTarget);
         StringBuilder temp;
-        boolean trapExceptionThrown = onAttackTraps();
-        if (trapExceptionThrown) return null;
+        if (!possibleChainChecked) {
+            boolean trapExists = onAttackTraps();
+            possibleChainChecked = true;
+            if (trapExists) return null;
+        }
         if (attackTarget.getCard() != null && attackTarget.getCard().onBeingAttacked != null)
             attackTarget.getCard().onBeingAttacked.execute();
         temp = calculateDamage((MonsterFieldArea) attacker, attackTarget);
@@ -533,6 +550,22 @@ public class GameplayController {
         gameplay.setAttacker(null);
         gameplay.setBeingAttacked(null);
         return temp;
+    }
+
+    public StringBuilder attack() throws Exception {
+        FieldArea attacker = gameplay.getAttacker();
+        FieldArea attackTarget = gameplay.getBeingAttacked();
+        if (attackTarget.getCard() != null && attackTarget.getCard().onBeingAttacked != null)
+            attackTarget.getCard().onBeingAttacked.execute();
+        StringBuilder temp = calculateDamage((MonsterFieldArea) attacker, (MonsterFieldArea) attackTarget);
+        ((MonsterFieldArea) attacker).setHasAttacked(true);
+        if (gameplay.getSelectedField() != null) deselectCard();
+        gameplay.setAttacker(null);
+        gameplay.setBeingAttacked(null);
+        return temp;
+    }
+    public void resetChainSituation() {
+        possibleChainChecked = false;
     }
 
     private boolean onSpellActivationTraps(FieldArea toActivateSpell) {
@@ -631,28 +664,18 @@ public class GameplayController {
         boolean attackTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
-            if (trap.getCard() != null)
-                if (trap.getCard().onBeingAttacked != null) {
-                    attackTrapExists = true;
-                    trap.setCanBeActivated(true);
-                }
+            if (trap.getCard() != null && trap.getCard().onBeingAttacked != null) {
+                attackTrapExists = true;
+                trap.setCanBeActivated(true);
+            }
         }
         if (attackTrapExists) {
             disableOpponentsSpellsForChain();
             temporarySwitchTurn();
-            if (GameplayView.getInstance().spellAndTrapActivationPrompt()) {
-                try {
-                    GameplayView.getInstance().spellAndTrapToChainPrompt(SpellAndTrapActivationType.ON_ATTACKED);
-                } catch (ActionNotPossibleException | AttackNotPossibleException e) {
-                    temporarySwitchTurn();
-                    resetOpponentTrapsAndSpells(SpellAndTrapActivationType.ON_ATTACKED);
-                    System.out.println(e.getMessage());
-                    return true;
-                }
-            }
-            temporarySwitchTurn();
+            chainType = SpellAndTrapActivationType.ON_ATTACKED;
+            GUI.GameplayView.chainPrompt();
+            return true;
         }
-        resetOpponentTrapsAndSpells(SpellAndTrapActivationType.ON_ATTACKED);
         return false;
     }
 
@@ -663,7 +686,7 @@ public class GameplayController {
         }
     }
 
-    private void resetOpponentTrapsAndSpells(SpellAndTrapActivationType type) {
+    public void resetOpponentTrapsAndSpells(SpellAndTrapActivationType type) {
         switch (type) {
             case ON_ATTACKED:
                 for (SpellAndTrapFieldArea trap :

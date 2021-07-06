@@ -21,7 +21,7 @@ public class HandFieldArea extends FieldArea {
         this.setOnContextMenuRequested(contextMenuEvent -> {
             if (GameplayController.getInstance().gameplay.getSelectedField() == null) return;
             Gameplay gameplay = GameplayController.getInstance().gameplay;
-            if (GameplayController.getInstance().gameState == GameState.RITUAL_SPELL_ACTIVATED_MODE) {
+            if (GameplayController.getGameState() == GameState.RITUAL_SPELL_ACTIVATED_MODE) {
                 if (!(gameplay.getSelectedField().getCard() instanceof Monster)) return;
                 if (!((Monster) gameplay.getSelectedField().getCard()).getCardType().equals(CardType.RITUAL)) return;
             }
@@ -34,8 +34,9 @@ public class HandFieldArea extends FieldArea {
             contextMenu.show(thisField, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
         });
         this.setOnMouseEntered(mouseEvent -> {
-            GameState gameState = GameplayController.getInstance().gameState;
+            GameState gameState = GameplayController.getGameState();
             GameplayView.updateCardDisplayPanel(thisField);
+            if (gameState == GameState.CHAIN_MODE) return;
             if (gameState == GameState.EQUIP_ACTIVATION_MODE) return;
             if (gameState == GameState.TRIBUTE_SUMMON_MODE) return;
             if (gameState == GameState.TRIBUTE_SET_MODE) return;

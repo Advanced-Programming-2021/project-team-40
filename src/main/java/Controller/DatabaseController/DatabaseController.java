@@ -143,13 +143,13 @@ public class DatabaseController {
                         MonsterFieldArea summonedMonster = Effect.gameplay.getRecentlySummonedMonster();
                         if (summonedMonster.getAttackPoint() >= 1000)
                             GameplayController.getInstance().destroyMonsterCard(Effect.gameplay.getOpponentPlayer(), summonedMonster);
+                        throw new ActionNotPossibleException("Trap destroyed all your Monster Cards With Attack points above 1000!");
                     };
                     break;
                 case "Magic Jammer":
                     trap.onSpellActivation = objects -> {
                         System.out.println("choose one card to discard for Magic Jammer:");
                         Matcher matcher;
-
                         while (true) {
                             String input = ProgramController.getInstance().getScanner().nextLine();
                             if ((matcher = Regex.getCommandMatcher(input,Regex.selectHandCard)).matches()) {
