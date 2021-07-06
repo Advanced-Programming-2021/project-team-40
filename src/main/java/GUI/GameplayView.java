@@ -5,13 +5,10 @@ import Controller.DuelController.GameplayController;
 import Database.Cards.Card;
 import Database.Cards.Monster;
 import Database.Cards.SpellAndTrap;
-import Database.Cards.Trap;
 import Database.User;
 import Gameplay.*;
 import View.Exceptions.*;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -30,11 +27,6 @@ import java.util.Optional;
 public class GameplayView extends Application {
     final private static int GAMEPLAY_WIDTH = 700;
     final private static int GAMEPLAY_HEIGHT = 600;
-    public static ArrayList<MenuItem> monsterItems = new ArrayList<>();
-    public static ArrayList<MenuItem> spellItems = new ArrayList<>();
-    public static ArrayList<MenuItem> handItems = new ArrayList<>();
-    public static VBox cardDisplay = new VBox(10);
-    private static GameplayView gameplayView;
     private static final AnchorPane pane = new AnchorPane();
     private static final MenuItem effectItem = new MenuItem("Activate effect");
     private static final MenuItem summonItem = new MenuItem("Summon");
@@ -47,6 +39,11 @@ public class GameplayView extends Application {
     private static final Button settingsButton = new Button("Settings");
     private static final Alert addedCardsAlert = new Alert(Alert.AlertType.INFORMATION);
     private static final Alert newPhaseAlert = new Alert(Alert.AlertType.INFORMATION);
+    public static ArrayList<MenuItem> monsterItems = new ArrayList<>();
+    public static ArrayList<MenuItem> spellItems = new ArrayList<>();
+    public static ArrayList<MenuItem> handItems = new ArrayList<>();
+    public static VBox cardDisplay = new VBox(10);
+    private static GameplayView gameplayView;
 
     public static GameplayView getInstance() {
         if (gameplayView == null) gameplayView = new GameplayView();
@@ -79,7 +76,6 @@ public class GameplayView extends Application {
         changePositionItem.setDisable(true);
         switch (currentPhase) {
             case BATTLE_PHASE:
-                System.out.println(GameplayController.getGameState());
                 if (GameplayController.getGameState() == GameState.CHAIN_MODE)
                     effectItem.setDisable(false);
                 if (selectedField instanceof MonsterFieldArea &&
@@ -212,7 +208,7 @@ public class GameplayView extends Application {
         ButtonType buttonPressed;
         if (response.isEmpty()) buttonPressed = null;
         else buttonPressed = response.get();
-        if (buttonPressed == null || buttonPressed == ButtonType.CANCEL) { ;
+        if (buttonPressed == null || buttonPressed == ButtonType.CANCEL) {
             GameplayController.getInstance().temporarySwitchTurn();
             switch (GameplayController.getChainType()) {
                 case ON_ATTACKED:
@@ -225,22 +221,19 @@ public class GameplayView extends Application {
                     GameplayController.getInstance().resetChainSituation();
                     break;
                 case ON_SUMMON:
-                    try {
-                        StringBuilder message = GameplayController.getInstance().attack();
-                        showInfo(String.valueOf(message));
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    }
+                case ON_STANDBY:
                     GameplayController.getInstance().resetChainSituation();
                     break;
                 case ON_SPELL:
-                    break;
-                case NORMAL:
-                    break;
-                case ON_STANDBY:
+                    try {
+                        GameplayController.getInstance().activateSpellEffect();
+                    } catch (Exception e) {
+                        showAlert(e.getMessage());
+                    }
+                    GameplayController.getInstance().resetChainSituation();
                     break;
             }
-        };
+        }
         if (buttonPressed == ButtonType.OK) {
             GameplayController.setGameState(GameState.CHAIN_MODE);
             System.out.println(GameplayController.getGameState());
@@ -269,6 +262,7 @@ public class GameplayView extends Application {
         GameplayController.getInstance().dealCardsAtBeginning();
         try {
             GameplayController.getInstance().forceAddCard("Mirror Force");
+            GameplayController.getInstance().forceAddCard("Black Pendant");
         } catch (InvalidCardNameException e) {
         }
         gameplay.getOpponentPlayer().getField().setRotate(180);
@@ -297,6 +291,7 @@ public class GameplayView extends Application {
 
     private void nextPhase() {
         nextPhaseButton.setOnAction(actionEvent -> {
+            if (GameplayController.getGameState() == GameState.CHAIN_MODE) return;
             if (GameplayController.getGameState() == GameState.RITUAL_SET_MODE) return;
             if (GameplayController.getGameState() == GameState.RITUAL_SUMMON_MODE) return;
             if (GameplayController.getGameState() == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
@@ -321,6 +316,7 @@ public class GameplayView extends Application {
 
     private void activateEffect() {
         effectItem.setOnAction(actionEvent -> {
+            System.out.println(GameplayController.getGameState());
             if (GameplayController.getGameState() == GameState.NORMAL_MODE) try {
                 GameplayController.getInstance().activateEffect(SpellAndTrapActivationType.NORMAL);
             } catch (Exception e) {
@@ -337,6 +333,8 @@ public class GameplayView extends Application {
                     GameplayController.getInstance().temporarySwitchTurn();
                     GameplayController.getInstance().resetOpponentTrapsAndSpells(GameplayController.getChainType());
                     showAlert(e.getMessage());
+                    GameplayController.setChainType(SpellAndTrapActivationType.NORMAL);
+                    GameplayController.setGameState(GameState.NORMAL_MODE);
                 }
             }
             GameplayController.getInstance().calculateFieldZoneEffects();
@@ -401,14 +399,6 @@ public class GameplayView extends Application {
         summonItem.setOnAction(actionEvent -> {
             try {
                 GameplayController.getInstance().summon();
-            } catch (Exception e) {
-                showAlert(e.getMessage());
-            }
-            GameplayController.getInstance().calculateFieldZoneEffects();
-        });
-        effectItem.setOnAction(actionEvent -> {
-            try {
-                GameplayController.getInstance().activateEffect(SpellAndTrapActivationType.NORMAL);
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
