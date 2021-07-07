@@ -38,7 +38,7 @@ public class FieldZoneArea extends SpellAndTrapFieldArea {
 
     @Override
     public void putCard(Card card, boolean visibility) {
-        if (this.card != null)
+        if (card != null && this.card != null)
             GameplayController.getInstance().destroySpellAndTrapCard(GameplayController.getInstance().gameplay.getCurrentPlayer(), this);
         super.putCard(card, visibility);
     }
