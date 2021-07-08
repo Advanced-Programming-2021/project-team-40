@@ -36,6 +36,7 @@ public class GameplayController {
     }
 
     public static void setGameState(GameState gameState) {
+        System.out.println(gameState);
         GameplayController.gameState = gameState;
     }
 
@@ -67,9 +68,6 @@ public class GameplayController {
             case DRAW_PHASE:
                 Card card = drawCard();
                 return "new card added to the hand : " + card.getName();
-            case STANDBY_PHASE:
-                onStandbyTraps();
-                break;
             case END_PHASE:
                 switchTurn();
                 break;
@@ -538,7 +536,7 @@ public class GameplayController {
         if (!gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_ONE) && !gameplay.getCurrentPhase().equals(Phase.MAIN_PHASE_TW0))
             throw new WrongPhaseException();
         if (((MonsterFieldArea) fieldArea).hasSwitchedMode()) throw new AlreadySetPositionException();
-        if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.isVisible()) throw new InvalidFlipSummonException();
+        if (((MonsterFieldArea) fieldArea).isAttack() || fieldArea.visibility()) throw new InvalidFlipSummonException();
         if (fieldArea.getCard().onFlipSummon != null) fieldArea.getCard().onFlipSummon.execute();
         ((MonsterFieldArea) fieldArea).changePosition();
         deselectCard();
@@ -603,6 +601,7 @@ public class GameplayController {
         possibleChainChecked = false;
     }
 
+    public FieldArea toActivateSpell;
     private boolean onSpellActivationTraps(FieldArea toActivateSpell) {
         boolean spellTrapExists = false;
         for (SpellAndTrapFieldArea trap :
@@ -617,6 +616,7 @@ public class GameplayController {
             temporarySwitchTurn();
             setChainType(SpellAndTrapActivationType.ON_SPELL);
             GUI.GameplayView.chainPrompt();
+            this.toActivateSpell = toActivateSpell;
             return true;
         }
         return false;
@@ -640,7 +640,8 @@ public class GameplayController {
             }
     }
 
-    private void onStandbyTraps() {
+    public void onStandbyTraps() {
+        if (gameplay.getCurrentPhase() != Phase.STANDBY_PHASE) return;
         boolean opponentStandbyTrapExists = false;
         for (SpellAndTrapFieldArea trap :
                 gameplay.getOpponentPlayer().getField().getSpellAndTrapField()) {
@@ -892,6 +893,7 @@ public class GameplayController {
         if (!gameplay.ownsSelectedCard()) throw new InvalidCardSelectionException();
         moveCardToGraveyard(gameplay.getCurrentPlayer(), gameplay.getSelectedField().getCard());
         gameplay.getCurrentPlayer().getPlayingHand().remove(gameplay.getSelectedField());
+        gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren().remove(gameplay.getSelectedField());
     }
 
     private void setMonsterCard(MonsterFieldArea monsterFieldArea, HandFieldArea fieldArea) {

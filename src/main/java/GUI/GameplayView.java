@@ -11,14 +11,14 @@ import Gameplay.*;
 import View.Exceptions.*;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
@@ -49,8 +49,7 @@ public class GameplayView extends Application {
     public static VBox cardDisplay = new VBox(10);
     private static GameplayView gameplayView;
 
-    private VBox lowerInfo = new VBox();
-    private VBox upperInfo = new VBox();
+    private static Stage thisStage;
 
     public static GameplayView getInstance() {
         if (gameplayView == null) gameplayView = new GameplayView();
@@ -86,11 +85,15 @@ public class GameplayView extends Application {
                 if (GameplayController.getGameState() == GameState.CHAIN_MODE)
                     effectItem.setDisable(false);
                 if (selectedField instanceof MonsterFieldArea &&
-                        !((MonsterFieldArea) selectedField).hasAttacked() &&
-                        ((MonsterFieldArea) selectedField).isAttack())
+                    !((MonsterFieldArea) selectedField).hasAttacked() &&
+                    ((MonsterFieldArea) selectedField).isAttack())
                     attackItem.setDisable(false);
                 if (GameplayController.getInstance().isOpponentFieldEmpty())
                     directAttackItem.setDisable(false);
+                break;
+            case STANDBY_PHASE:
+                if (GameplayController.getGameState() == GameState.CHAIN_MODE)
+                    effectItem.setDisable(false);
                 break;
             case MAIN_PHASE_ONE:
             case MAIN_PHASE_TW0:
@@ -101,14 +104,15 @@ public class GameplayView extends Application {
                     if (selectedField.canBePutOnBoard()) setItem.setDisable(false);
                 }
                 if ((selectedField.getCard() instanceof Monster) &&
-                        !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
+                    !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
                     summonItem.setDisable(false);
                     setItem.setDisable(false);
                 }
                 if (selectedField instanceof MonsterFieldArea &&
-                        !((MonsterFieldArea) selectedField).hasSwitchedMode())
+                    !((MonsterFieldArea) selectedField).hasSwitchedMode()) {
                     changePositionItem.setDisable(false);
-                //TODO: flip summon
+                    flipItem.setDisable(false);
+                }
                 break;
         }
     }
@@ -250,18 +254,18 @@ public class GameplayView extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        createBoard();
         Scene scene = new Scene(pane);
         stage.setScene(scene);
-        createBoard(stage);
+        setCheatConsole(stage);
         stage.show();
-        stage.getWidth();
         addedCardsAlert.setTitle("New Card!");
         newPhaseAlert.setTitle("New Phase!");
         addedCardsAlert.setHeaderText(GameplayController.getInstance().doPhaseAction());
         addedCardsAlert.show();
     }
 
-    public void createBoard(Stage stage) {
+    public void createBoard() {
         DatabaseController.getInstance();//TODO: remove deez
         Gameplay gameplay = new Gameplay(new Player(User.getUserByName("DanDan")), new Player(User.getUserByName("KiaKia")), 1);
         GameplayController.getInstance().setGameplay(gameplay);
@@ -270,7 +274,7 @@ public class GameplayView extends Application {
         try {
             GameplayController.getInstance().forceAddCard("Mirror Force");
             GameplayController.getInstance().forceAddCard("Black Pendant");
-        } catch (InvalidCardNameException e) {
+        } catch (InvalidCardNameException ignored) {
         }
         gameplay.getOpponentPlayer().getField().setRotate(180);
         createCardDisplayPanel();
@@ -281,8 +285,6 @@ public class GameplayView extends Application {
         directAttack();
         createHandItems();
         nextPhase();
-        updateLPs();
-        pane.getChildren().addAll(lowerInfo, upperInfo);
         gameplay.getCurrentPlayer().getField().setAlignment(Pos.CENTER);
         gameplay.getOpponentPlayer().getField().setAlignment(Pos.CENTER);
         gameplay.getCurrentPlayer().getField().setLayoutX(0);
@@ -296,7 +298,6 @@ public class GameplayView extends Application {
         pane.getChildren().add(gameplay.getOpponentPlayer().getField());
         pane.getChildren().add(cardDisplay);
         hideOpponentHands();
-        setCheatConsole(stage);
     }
 
     public void updateLPs() {
@@ -362,7 +363,7 @@ public class GameplayView extends Application {
                 newPhaseAlert.show();
             }
             GameplayController.setGameState(GameState.NORMAL_MODE);
-            updateLPs();
+            GameplayController.getInstance().onStandbyTraps();
         });
         cardDisplay.getChildren().add(nextPhaseButton);
     }
@@ -374,7 +375,6 @@ public class GameplayView extends Application {
 
     private void activateEffect() {
         effectItem.setOnAction(actionEvent -> {
-            System.out.println(GameplayController.getGameState());
             if (GameplayController.getGameState() == GameState.NORMAL_MODE) try {
                 GameplayController.getInstance().activateEffect(SpellAndTrapActivationType.NORMAL);
             } catch (Exception e) {
@@ -384,6 +384,10 @@ public class GameplayView extends Application {
                 try {
                     try {
                         GameplayController.getInstance().activateEffect(GameplayController.getChainType());
+                        GameplayController.getInstance().temporarySwitchTurn();
+                        GameplayController.getInstance().resetOpponentTrapsAndSpells(GameplayController.getChainType());
+                        GameplayController.setChainType(SpellAndTrapActivationType.NORMAL);
+                        GameplayController.setGameState(GameState.NORMAL_MODE);
                     } catch (InvalidActivateException | RitualSummonNotPossibleException | AlreadyActivatedException | SpecialSummonNotPossibleException | CommandCancellationException | MonsterZoneFullException | WrongPhaseForSpellException | SpellZoneFullException | PreparationNotReadyException | NoCardIsSelectedException e) {
                         showAlert(e.getMessage());
                     }
@@ -396,7 +400,6 @@ public class GameplayView extends Application {
                 }
             }
             GameplayController.getInstance().calculateFieldZoneEffects();
-            updateLPs();
         });
         spellItems.add(effectItem);
     }
@@ -426,7 +429,6 @@ public class GameplayView extends Application {
                 showAlert(e.getMessage());
             }
             GameplayController.getInstance().calculateFieldZoneEffects();
-            updateLPs();
         });
         monsterItems.add(directAttackItem);
     }
@@ -504,7 +506,8 @@ public class GameplayView extends Application {
         HBox hBox = new HBox();
         for (Card card :
                 graveyardCards) {
-            hBox.getChildren().add(card);
+            Rectangle rectangle = new Rectangle(70,100,card.getFill());
+            hBox.getChildren().add(rectangle);
         }
         hBox.setAlignment(Pos.CENTER);
         ScrollPane scrollPane = new ScrollPane();
