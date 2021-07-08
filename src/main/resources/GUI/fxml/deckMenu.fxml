@@ -18,15 +18,12 @@
     <ScrollPane fx:id="mainDeck" layoutY="30" layoutX="30" prefHeight="150" prefWidth="580"/>
     <ScrollPane fx:id="sideDeck" layoutY="190" layoutX="30" prefHeight="150" prefWidth="580"/>
     <ScrollPane fx:id="inactiveCards" layoutX="620" layoutY="30" prefWidth="125" prefHeight="400"/>
-    <ScrollPane fx:id="decks" layoutX="30" layoutY="400" prefHeight="160" minWidth="350"/>
+    <ScrollPane fx:id="decks" layoutX="30" layoutY="400" prefHeight="160" minWidth="250"/>
+    <AnchorPane fx:id="selectedCardPane" layoutY="400" layoutX="300" prefHeight="160" prefWidth="280"/>
 
-    <VBox layoutY="460" layoutX="500" prefWidth="100" prefHeight="200">
-        <ToggleButton fx:id="mainSwitch" prefHeight="45" prefWidth="90" text="Main"/>
-        <ToggleButton fx:id="sideSwitch" prefHeight="45" prefWidth="90" text="Side"/>
+    <VBox layoutY="580" layoutX="500" prefWidth="100" prefHeight="200">
 
         <Button fx:id="deleteDeckButton" prefWidth="90" prefHeight="45" text="Delete Deck" onMouseClicked="#deleteDeck"
-                disable="true"/>
-        <Button fx:id="addCardButton" prefWidth="90" prefHeight="45" text="Add Card" onMouseClicked="#addCard"
                 disable="true"/>
         <Button fx:id="removeCardButton" prefWidth="90" prefHeight="45" text="Remove Card" onMouseClicked="#removeCard"
                 disable="true"/>

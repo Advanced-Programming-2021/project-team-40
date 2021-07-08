@@ -3,6 +3,7 @@ package GUI;
 import Controller.DatabaseController.DatabaseController;
 import Controller.MenuController.DeckMenuController;
 import Database.Cards.Card;
+import Database.Cards.Monster;
 import Database.Deck;
 import View.Exceptions.*;
 import javafx.application.Application;
@@ -19,10 +20,11 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Glow;
 import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -41,18 +43,13 @@ public class DeckMenu extends Application implements AlertFunction {
     @FXML
     Button deleteDeckButton;
     @FXML
-    Button addCardButton;
-    @FXML
     Button removeCardButton;
     @FXML
-    ToggleButton mainSwitch;
-    @FXML
-    ToggleButton sideSwitch;
-    @FXML
     Button activateDeckButton;
+    @FXML
+    AnchorPane selectedCardPane;
 
     private static ImagePattern unknownCard = new ImagePattern(new Image(DeckMenu.class.getResourceAsStream("/Database/Cards/Monsters/Unknown.jpg")));
-    private static ToggleGroup toggleGroup = new ToggleGroup();
 
 
     private Deck selectedDeck;
@@ -71,10 +68,50 @@ public class DeckMenu extends Application implements AlertFunction {
     }
 
     public void initialize() {
-        mainSwitch.setToggleGroup(toggleGroup);
-        sideSwitch.setToggleGroup(toggleGroup);
+        initializeDragAndDrop();
         updateDecks();
         updateInactiveCards();
+    }
+
+    private void initializeDragAndDrop() {
+        initializeDeckPanes(mainDeck);
+        initializeDeckPanes(sideDeck);
+    }
+
+    private void initializeDeckPanes(ScrollPane deckPane) {
+        deckPane.setOnDragOver(dragEvent -> {
+            if (dragEvent.getGestureSource() != deckPane &&
+                    dragEvent.getDragboard().hasString()) {
+                if (deckPane.equals(mainDeck))
+                    dragEvent.acceptTransferModes(TransferMode.MOVE);
+                else if (deckPane.equals(sideDeck))
+                    dragEvent.acceptTransferModes(TransferMode.COPY);
+            }
+            dragEvent.consume();
+        });
+
+        deckPane.setOnDragEntered(dragEvent -> {
+            isSide = (deckPane.equals(sideDeck));
+            if (isSide) dragEvent.acceptTransferModes(TransferMode.COPY);
+            else dragEvent.acceptTransferModes(TransferMode.MOVE);
+        });
+
+        deckPane.setOnDragExited(dragEvent -> {
+            isSide = null;
+            dragEvent.acceptTransferModes(TransferMode.NONE);
+        });
+
+        deckPane.setOnDragDropped(dragEvent -> {
+            Dragboard db = dragEvent.getDragboard();
+            boolean success = false;
+            if (db.hasString()) {
+                selectedCard = Card.getCardByName(db.getString());
+                success = true;
+            }
+            dragEvent.setDropCompleted(success);
+
+            dragEvent.consume();
+        });
     }
 
     public void updateEverything() {
@@ -84,11 +121,11 @@ public class DeckMenu extends Application implements AlertFunction {
         updateSideDeck();
         updateButtons();
         updateInactiveCards();
+        updateSelectedCard();
     }
 
     public void updateButtons() {
         deleteDeckButton.disableProperty().set(selectedDeck == null);
-        addCardButton.disableProperty().set(selectedCard == null || selectedDeck == null || cardIsInDeck);
         removeCardButton.disableProperty().set(selectedCard == null || !cardIsInDeck);
         activateDeckButton.disableProperty().set(selectedDeck == null || selectedDeck.isActive());
     }
@@ -147,6 +184,7 @@ public class DeckMenu extends Application implements AlertFunction {
             try {
                 if (deckName.get().isEmpty()) throw new Exception("this is not a valid deck name");
                 DeckMenuController.getInstance().createDeck(deckName.get(), MainMenu.currentUser);
+                selectedDeck = MainMenu.currentUser.getDeckByName(deckName.get());
                 updateEverything();
                 showAlert("deck created successfully!", Alert.AlertType.INFORMATION);
             } catch (Exception e) {
@@ -182,6 +220,38 @@ public class DeckMenu extends Application implements AlertFunction {
                 cardPosition = CardPosition.NONE;
             }
         });
+
+
+        //TODO Drag and Drop
+        vBox.setOnDragDetected(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Dragboard db = vBox.startDragAndDrop(TransferMode.ANY);
+                ClipboardContent content = new ClipboardContent();
+                content.putString(card.getName());
+                db.setContent(content);
+
+                selectedCard = card;
+                mouseEvent.consume();
+            }
+        });
+
+        vBox.setOnDragDone(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent dragEvent) {
+                if (dragEvent.getTransferMode() != null) {
+                    if (dragEvent.getTransferMode().equals(TransferMode.MOVE)) {
+                        isSide = false;
+                        addCard();
+                    }
+                    if (dragEvent.getTransferMode().equals(TransferMode.COPY)) {
+                        isSide = true;
+                        addCard();
+                    }
+                }
+                selectedCard = null;
+            }
+        });
         return vBox;
     }
 
@@ -197,7 +267,11 @@ public class DeckMenu extends Application implements AlertFunction {
         vBox.setMinSize(80, 130);
         vBox.setTranslateX(i * 80 + 10);
         vBox.setTranslateY(10);
-        if (deck.isActive()) vBox.getStyleClass().add("activeDeck");
+        if (deck.isActive()) {
+            deckName.getStyleClass().add("activeDeck");
+            deckInfo.getStyleClass().add("activeDeck");
+        }
+        if (selectedDeck!= null && selectedDeck.equals(deck)) vBox.getStyleClass().add("selectedDeck");
         vBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -213,6 +287,7 @@ public class DeckMenu extends Application implements AlertFunction {
         updateButtons();
         updateMainDeck();
         updateSideDeck();
+        updateDecks();
     }
 
     public void updateMainDeck() {
@@ -259,6 +334,7 @@ public class DeckMenu extends Application implements AlertFunction {
         vBox.setTranslateX((i % 7) * 80 + 10);
         vBox.setTranslateY((i / 7) * 130 + 10);
         vBox.setMinSize(80, 130);
+
         vBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -266,6 +342,7 @@ public class DeckMenu extends Application implements AlertFunction {
                 cardPosition = position;
             }
         });
+
         return vBox;
     }
 
@@ -273,7 +350,20 @@ public class DeckMenu extends Application implements AlertFunction {
         selectedCard = card;
         this.cardIsInDeck = cardIsInDeck;
         updateButtons();
-        //TODO card details
+        updateSelectedCard();
+    }
+
+    private void updateSelectedCard() {
+        selectedCardPane.getChildren().clear();
+        if (selectedCard == null) return;
+        HBox hbox = new HBox();
+        Rectangle cardImage = new Rectangle(102, 160, selectedCard.getFill());
+        Text text = new Text(selectedCard.getName() + "\n" + selectedCard.getDescription());
+        if (selectedCard instanceof Monster)
+            text.setText(text.getText() + "\nATK: " + ((Monster) selectedCard).getAttackPoints() + "\tDEF: " + ((Monster) selectedCard).getDefensePoints());
+        text.setWrappingWidth(160);
+        hbox.getChildren().addAll(cardImage, text);
+        selectedCardPane.getChildren().add(hbox);
     }
 
     public void deleteDeck(MouseEvent mouseEvent) {
@@ -299,21 +389,22 @@ public class DeckMenu extends Application implements AlertFunction {
         updateEverything();
     }
 
-    public void addCard(MouseEvent mouseEvent) {
-        if (toggleGroup.getSelectedToggle() == null) try {
+    public void addCard() {
+
+        if (isSide == null) try {
             throw new Exception("please select main deck or side deck to add card to");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            showAlert(e.getMessage(), Alert.AlertType.INFORMATION);
             return;
         }
-        if (toggleGroup.getSelectedToggle().toString().endsWith("'Main'")) isSide = false;
-        else isSide = true;
+
         try {
+            if (selectedDeck == null) throw new Exception("Please select a deck to add card to first");
             DeckMenuController.getInstance().addCard(selectedDeck.getName(), selectedCard.getName(), isSide, MainMenu.currentUser);
             selectedCard = null;
             updateEverything();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            showAlert(e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -322,9 +413,10 @@ public class DeckMenu extends Application implements AlertFunction {
             if (cardPosition == CardPosition.NONE)
                 throw new CardNotInDeckException(selectedCard.getName(), selectedDeck.getName());
             DeckMenuController.getInstance().removeCard(selectedDeck.getName(), selectedCard.getName(), (cardPosition == CardPosition.SIDE), MainMenu.currentUser);
+            selectedCard = null;
             updateEverything();
         } catch (DeckIsFullException | InvalidCardNameException | InvalidDeckNameException | CardNotInDeckException e) {
-            System.out.println(e.getMessage());
+            showAlert(e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 

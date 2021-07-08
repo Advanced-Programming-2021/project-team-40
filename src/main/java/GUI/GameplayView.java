@@ -11,14 +11,14 @@ import Gameplay.*;
 import View.Exceptions.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
@@ -49,7 +49,8 @@ public class GameplayView extends Application {
     public static VBox cardDisplay = new VBox(10);
     private static GameplayView gameplayView;
 
-    private static Stage thisStage;
+    private VBox lowerInfo = new VBox();
+    private VBox upperInfo = new VBox();
 
     public static GameplayView getInstance() {
         if (gameplayView == null) gameplayView = new GameplayView();
@@ -85,8 +86,8 @@ public class GameplayView extends Application {
                 if (GameplayController.getGameState() == GameState.CHAIN_MODE)
                     effectItem.setDisable(false);
                 if (selectedField instanceof MonsterFieldArea &&
-                    !((MonsterFieldArea) selectedField).hasAttacked() &&
-                    ((MonsterFieldArea) selectedField).isAttack())
+                        !((MonsterFieldArea) selectedField).hasAttacked() &&
+                        ((MonsterFieldArea) selectedField).isAttack())
                     attackItem.setDisable(false);
                 if (GameplayController.getInstance().isOpponentFieldEmpty())
                     directAttackItem.setDisable(false);
@@ -100,12 +101,12 @@ public class GameplayView extends Application {
                     if (selectedField.canBePutOnBoard()) setItem.setDisable(false);
                 }
                 if ((selectedField.getCard() instanceof Monster) &&
-                    !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
+                        !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
                     summonItem.setDisable(false);
                     setItem.setDisable(false);
                 }
                 if (selectedField instanceof MonsterFieldArea &&
-                    !((MonsterFieldArea) selectedField).hasSwitchedMode())
+                        !((MonsterFieldArea) selectedField).hasSwitchedMode())
                     changePositionItem.setDisable(false);
                 //TODO: flip summon
                 break;
@@ -280,6 +281,8 @@ public class GameplayView extends Application {
         directAttack();
         createHandItems();
         nextPhase();
+        updateLPs();
+        pane.getChildren().addAll(lowerInfo, upperInfo);
         gameplay.getCurrentPlayer().getField().setAlignment(Pos.CENTER);
         gameplay.getOpponentPlayer().getField().setAlignment(Pos.CENTER);
         gameplay.getCurrentPlayer().getField().setLayoutX(0);
@@ -288,12 +291,27 @@ public class GameplayView extends Application {
         gameplay.getOpponentPlayer().getField().setLayoutY(0);
         nextPhaseButton.setAlignment(Pos.BOTTOM_RIGHT);
         cardDisplay.setLayoutX(500);
-        cardDisplay.setLayoutY(0);
+        cardDisplay.setLayoutY(200);
         pane.getChildren().add(gameplay.getCurrentPlayer().getField());
         pane.getChildren().add(gameplay.getOpponentPlayer().getField());
         pane.getChildren().add(cardDisplay);
         hideOpponentHands();
         setCheatConsole(stage);
+    }
+
+    public void updateLPs() {
+        lowerInfo.getChildren().clear();
+        lowerInfo.setLayoutX(600);
+        lowerInfo.setLayoutY(450);
+        lowerInfo.setPrefSize(150, 150);
+        Player currentPlayer = GameplayController.getInstance().getGameplay().getCurrentPlayer();
+        Label myName = new Label(currentPlayer.getUser().getNickname());
+        Rectangle LPForeground = new Rectangle(150 * ((double) currentPlayer.getLifePoints()) / 8000, 30, Color.RED);
+        AnchorPane healthBar = new AnchorPane();
+        healthBar.setPrefSize(150, 30);
+        healthBar.setBackground(new Background(new BackgroundFill(Color.BLACK,CornerRadii.EMPTY, Insets.EMPTY)));
+        healthBar.getChildren().add(LPForeground);
+        lowerInfo.getChildren().addAll(myName, healthBar);
     }
 
     private void setCheatConsole(Stage stage) {
@@ -307,7 +325,7 @@ public class GameplayView extends Application {
                         cheatBox.setHeaderText("");
                         cheatBox.setContentText("");
                         Optional<String> cheatCode = cheatBox.showAndWait();
-                        if (cheatCode.isPresent()){
+                        if (cheatCode.isPresent()) {
                             processCheatCode(cheatCode.get());
                         }
                     }
@@ -344,6 +362,7 @@ public class GameplayView extends Application {
                 newPhaseAlert.show();
             }
             GameplayController.setGameState(GameState.NORMAL_MODE);
+            updateLPs();
         });
         cardDisplay.getChildren().add(nextPhaseButton);
     }
@@ -377,6 +396,7 @@ public class GameplayView extends Application {
                 }
             }
             GameplayController.getInstance().calculateFieldZoneEffects();
+            updateLPs();
         });
         spellItems.add(effectItem);
     }
@@ -406,6 +426,7 @@ public class GameplayView extends Application {
                 showAlert(e.getMessage());
             }
             GameplayController.getInstance().calculateFieldZoneEffects();
+            updateLPs();
         });
         monsterItems.add(directAttackItem);
     }

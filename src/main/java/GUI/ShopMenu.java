@@ -3,6 +3,7 @@ package GUI;
 import Controller.Main;
 import Controller.MenuController.ShopController;
 import Database.Cards.Card;
+import Database.Cards.Monster;
 import Database.User;
 import View.Exceptions.InvalidCardNameException;
 import View.Exceptions.NotEnoughMoneyException;
@@ -91,6 +92,8 @@ public class ShopMenu extends Application {
     private void updateCardDetails() {
         cardLarge.setFill(selectedCard.getFill());
         cardDescription.setText("PRICE: " + selectedCard.getCardPrice() + "\n" + selectedCard.getDescription());
+        if (selectedCard instanceof Monster)
+            cardDescription.setText(cardDescription.getText() + "\nATK: " + ((Monster) selectedCard).getAttackPoints() + "\tDEF: " + ((Monster) selectedCard).getDefensePoints());
         if (MainMenu.currentUser.getBalance() > selectedCard.getCardPrice()) {
             buyButton.disableProperty().set(false);
         } else {

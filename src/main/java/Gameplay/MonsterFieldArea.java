@@ -112,6 +112,7 @@ public class MonsterFieldArea extends FieldArea {
                 }
             }
             GameplayController.getInstance().calculateFieldZoneEffects();
+            GameplayView.getInstance().updateLPs();
         });
         defenseLabel.setAlignment(Pos.CENTER_RIGHT);
         attackLabel.setAlignment(Pos.CENTER_LEFT);

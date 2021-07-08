@@ -26,11 +26,17 @@
 }
 
 .activeDeck {
-    -fx-background-color: #11d911;
+    -fx-font-weight: BOLD;
+    -fx-text-fill: #11d911;
 }
 
 .createDeckButton {
     -fx-text-fill: WHITE;
     -fx-background-color: TRANSPARENT;
     -fx-font-size: 40;
+}
+
+.selectedDeck {
+    -fx-scale-y: 1.1;
+    -fx-scale-x: 1.1;
 }
