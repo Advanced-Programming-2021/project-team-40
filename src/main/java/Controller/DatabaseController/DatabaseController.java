@@ -866,7 +866,6 @@ public class DatabaseController {
                 ArrayList<Card> actualInactiveCards = new ArrayList<>();
                 for (String cardName : tempUser.getInactiveCards())
                     actualInactiveCards.add(Card.getCardByName(cardName));
-                System.out.println(tempUser.getAvatarID());
                 new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getAvatarID(), tempUser.getScore(),
                         tempUser.getBalance(), actualDecks, actualInactiveCards);
             } catch (FileNotFoundException e) {

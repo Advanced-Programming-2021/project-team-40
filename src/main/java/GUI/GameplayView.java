@@ -364,6 +364,7 @@ public class GameplayView extends Application {
                     showInfo(message);
                     try {
                         DatabaseController.getInstance().saveAllUsers();
+                        pane.getChildren().clear();
                         new MainMenu().start(WelcomeMenu.stage);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -664,12 +665,15 @@ public class GameplayView extends Application {
         if (message.contains("won the whole match")) {
             try {
                 DatabaseController.getInstance().saveAllUsers();
+                pane.getChildren().clear();
                 new MainMenu().start(WelcomeMenu.stage);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (message.contains("won the game")) {
             //TODO DANIAL PLIZ
+            pane.getChildren().clear();
+            createBoard();
             System.out.println("HEEELP");
         }
     }
