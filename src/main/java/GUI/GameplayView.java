@@ -83,6 +83,7 @@ public class GameplayView extends Application {
         flipItem.setDisable(true);
         effectItem.setDisable(true);
         directAttackItem.setDisable(true);
+        directAttackItem.setDisable(true);
         attackItem.setDisable(true);
         changePositionItem.setDisable(true);
         switch (currentPhase) {
@@ -301,7 +302,8 @@ public class GameplayView extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws Exception{
+        thisStage = stage;
         createBoard();
         Scene scene = new Scene(pane);
         stage.setScene(scene);
@@ -314,6 +316,10 @@ public class GameplayView extends Application {
     }
 
     public void createBoard() {
+        pane = new AnchorPane();
+        cardDisplay = new VBox(10);
+        lowerInfo = new VBox();
+        upperInfo = new VBox();
         GameplayController.getInstance().setStartingPlayer();
         GameplayController.getInstance().dealCardsAtBeginning();
         Gameplay gameplay = GameplayController.getInstance().getGameplay();
@@ -344,7 +350,8 @@ public class GameplayView extends Application {
         pane.getChildren().add(cardDisplay);
         pane.getChildren().add(settingsButton);
         updateLPs();
-        hideOpponentHands();
+        System.out.println(gameplay);
+        hideOpponentHands(gameplay);
     }
 
     private void createSettings() {
@@ -360,6 +367,10 @@ public class GameplayView extends Application {
             if (result.isPresent()) {
                 if (result.get() == surrender) {
                     //TODO add a menu here
+                    try {
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     String message = GameplayController.getInstance().surrender();
                     showInfo(message);
                     try {
@@ -579,8 +590,7 @@ public class GameplayView extends Application {
         handItems.add(effectItem);
     }
 
-    public void hideOpponentHands() {
-        Gameplay gameplay = GameplayController.getInstance().gameplay;
+    public void hideOpponentHands(Gameplay gameplay) {
         for (Node node :
                 gameplay.getCurrentPlayer().getField().getHandFieldArea().getChildren()) {
             HandFieldArea hand = (HandFieldArea) node;
@@ -669,7 +679,7 @@ public class GameplayView extends Application {
                 e.printStackTrace();
             }
         } else if (message.contains("won the game")) {
-            //TODO DANIAL PLIZ
+            createBoard();
             System.out.println("HEEELP");
         }
     }
