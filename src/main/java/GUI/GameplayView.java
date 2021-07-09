@@ -11,14 +11,14 @@ import Gameplay.*;
 import View.Exceptions.*;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
@@ -48,6 +48,8 @@ public class GameplayView extends Application {
     public static ArrayList<MenuItem> handItems = new ArrayList<>();
     public static VBox cardDisplay = new VBox(10);
     private static GameplayView gameplayView;
+
+    private static HBox lowerInfo = new HBox();
 
     private static Stage thisStage;
 
@@ -85,8 +87,8 @@ public class GameplayView extends Application {
                 if (GameplayController.getGameState() == GameState.CHAIN_MODE)
                     effectItem.setDisable(false);
                 if (selectedField instanceof MonsterFieldArea &&
-                    !((MonsterFieldArea) selectedField).hasAttacked() &&
-                    ((MonsterFieldArea) selectedField).isAttack())
+                        !((MonsterFieldArea) selectedField).hasAttacked() &&
+                        ((MonsterFieldArea) selectedField).isAttack())
                     attackItem.setDisable(false);
                 if (GameplayController.getInstance().isOpponentFieldEmpty())
                     directAttackItem.setDisable(false);
@@ -104,12 +106,12 @@ public class GameplayView extends Application {
                     if (selectedField.canBePutOnBoard()) setItem.setDisable(false);
                 }
                 if ((selectedField.getCard() instanceof Monster) &&
-                    !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
+                        !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
                     summonItem.setDisable(false);
                     setItem.setDisable(false);
                 }
                 if (selectedField instanceof MonsterFieldArea &&
-                    !((MonsterFieldArea) selectedField).hasSwitchedMode()) {
+                        !((MonsterFieldArea) selectedField).hasSwitchedMode()) {
                     changePositionItem.setDisable(false);
                     flipItem.setDisable(false);
                 }
@@ -127,6 +129,32 @@ public class GameplayView extends Application {
         cardDisplay.getChildren().add(cardView);
         cardDisplay.getChildren().add(description);
         cardDisplay.setPrefSize(200, 300);
+        createLPs();
+    }
+
+    private static void createLPs(){
+        //TODO fix this
+        lowerInfo.setPrefSize(200, 200);
+        lowerInfo.setLayoutX(640);
+        lowerInfo.setLayoutY(30);
+        lowerInfo.getChildren().add(new Label(GameplayController.getInstance().getGameplay().getCurrentPlayer().getUser().getNickname()));
+        String lowerNickname = GameplayController.getInstance().getGameplay().getCurrentPlayer().getUser().getNickname();
+        Player lowerPlayer, upperPlayer;
+        if (GameplayController.getInstance().getGameplay().getPlayerOne().getUser().getNickname().equals(lowerNickname)) {
+            lowerPlayer = GameplayController.getInstance().getGameplay().getPlayerOne();
+            upperPlayer = GameplayController.getInstance().getGameplay().getPlayerTwo();
+        } else {
+            lowerPlayer = GameplayController.getInstance().getGameplay().getPlayerTwo();
+            upperPlayer = GameplayController.getInstance().getGameplay().getPlayerOne();
+        }
+        lowerInfo.setLayoutX(600);
+        lowerInfo.setLayoutY(500);
+        Rectangle LPForeground = new Rectangle(150 * ((double) lowerPlayer.getLifePoints()) / 8000, 30, Color.RED);
+        AnchorPane healthBar = new AnchorPane();
+        healthBar.setMaxSize(150, 30);
+        healthBar.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        healthBar.getChildren().add(LPForeground);
+        lowerInfo.getChildren().add(healthBar);
     }
 
     public static void updateCardDisplayPanel(FieldArea fieldArea) {
@@ -297,22 +325,14 @@ public class GameplayView extends Application {
         pane.getChildren().add(gameplay.getCurrentPlayer().getField());
         pane.getChildren().add(gameplay.getOpponentPlayer().getField());
         pane.getChildren().add(cardDisplay);
+        //TODO: add this
+        updateLPs();
+        pane.getChildren().addAll(lowerInfo);
         hideOpponentHands();
     }
 
     public void updateLPs() {
-        lowerInfo.getChildren().clear();
-        lowerInfo.setLayoutX(600);
-        lowerInfo.setLayoutY(450);
-        lowerInfo.setPrefSize(150, 150);
-        Player currentPlayer = GameplayController.getInstance().getGameplay().getCurrentPlayer();
-        Label myName = new Label(currentPlayer.getUser().getNickname());
-        Rectangle LPForeground = new Rectangle(150 * ((double) currentPlayer.getLifePoints()) / 8000, 30, Color.RED);
-        AnchorPane healthBar = new AnchorPane();
-        healthBar.setPrefSize(150, 30);
-        healthBar.setBackground(new Background(new BackgroundFill(Color.BLACK,CornerRadii.EMPTY, Insets.EMPTY)));
-        healthBar.getChildren().add(LPForeground);
-        lowerInfo.getChildren().addAll(myName, healthBar);
+
     }
 
     private void setCheatConsole(Stage stage) {
@@ -506,7 +526,7 @@ public class GameplayView extends Application {
         HBox hBox = new HBox();
         for (Card card :
                 graveyardCards) {
-            Rectangle rectangle = new Rectangle(70,100,card.getFill());
+            Rectangle rectangle = new Rectangle(70, 100, card.getFill());
             hBox.getChildren().add(rectangle);
         }
         hBox.setAlignment(Pos.CENTER);

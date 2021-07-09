@@ -16,14 +16,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ShopMenu extends Application {
+public class ShopMenu extends Application implements AlertFunction, SoundEffect{
 
     @FXML
     ScrollPane scrollPane;
@@ -106,13 +109,37 @@ public class ShopMenu extends Application {
             ShopController.getInstance().buy(selectedCard.getName(), MainMenu.currentUser);
             addCards();
             updateCardDetails();
-            System.out.println("card bought successfully");
+            playSoundEffect("buySoundEffect.mp3");
+            showAlert("card bought successfully", Alert.AlertType.INFORMATION);
         } catch (InvalidCardNameException | NotEnoughMoneyException e) {
-            System.out.println(e.getMessage());
+            showAlert(e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     public void back(MouseEvent mouseEvent) throws Exception {
         new MainMenu().start(WelcomeMenu.stage);
+    }
+
+    @Override
+    public void showAlert(String text, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle("Alert");
+        alert.getDialogPane().setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        alert.setContentText(text);
+        alert.show();
+    }
+
+    @Override
+    public void playSoundEffect(String effectName) {
+        String mediaAddress = WelcomeMenu.class.getResource("/Audio/" + effectName).toExternalForm();
+        MediaPlayer mediaPlayer = new MediaPlayer(new Media(mediaAddress));
+        mediaPlayer.play();
+        soundEffects.add(mediaPlayer);
+        mediaPlayer.setOnEndOfMedia(new Runnable() {
+            @Override
+            public void run() {
+                soundEffects.remove(mediaPlayer);
+            }
+        });
     }
 }
