@@ -10,7 +10,6 @@ import Database.User;
 import Gameplay.*;
 import View.Exceptions.*;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -47,6 +46,7 @@ public class GameplayView extends Application {
     public static ArrayList<MenuItem> spellItems = new ArrayList<>();
     public static ArrayList<MenuItem> handItems = new ArrayList<>();
     public static VBox cardDisplay = new VBox(10);
+    private static Dialog<ButtonType> settingsDialog = new Dialog<>();
     private static GameplayView gameplayView;
 
     private static HBox lowerInfo = new HBox();
@@ -87,8 +87,8 @@ public class GameplayView extends Application {
                 if (GameplayController.getGameState() == GameState.CHAIN_MODE)
                     effectItem.setDisable(false);
                 if (selectedField instanceof MonsterFieldArea &&
-                        !((MonsterFieldArea) selectedField).hasAttacked() &&
-                        ((MonsterFieldArea) selectedField).isAttack())
+                    !((MonsterFieldArea) selectedField).hasAttacked() &&
+                    ((MonsterFieldArea) selectedField).isAttack())
                     attackItem.setDisable(false);
                 if (GameplayController.getInstance().isOpponentFieldEmpty())
                     directAttackItem.setDisable(false);
@@ -106,12 +106,12 @@ public class GameplayView extends Application {
                     if (selectedField.canBePutOnBoard()) setItem.setDisable(false);
                 }
                 if ((selectedField.getCard() instanceof Monster) &&
-                        !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
+                    !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
                     summonItem.setDisable(false);
                     setItem.setDisable(false);
                 }
                 if (selectedField instanceof MonsterFieldArea &&
-                        !((MonsterFieldArea) selectedField).hasSwitchedMode()) {
+                    !((MonsterFieldArea) selectedField).hasSwitchedMode()) {
                     changePositionItem.setDisable(false);
                     flipItem.setDisable(false);
                 }
@@ -132,7 +132,7 @@ public class GameplayView extends Application {
         createLPs();
     }
 
-    private static void createLPs(){
+    private static void createLPs() {
         //TODO fix this
         lowerInfo.setPrefSize(200, 200);
         lowerInfo.setLayoutX(640);
@@ -305,6 +305,7 @@ public class GameplayView extends Application {
         } catch (InvalidCardNameException ignored) {
         }
         gameplay.getOpponentPlayer().getField().setRotate(180);
+        createSettings();
         createCardDisplayPanel();
         changePosition();
         flipSummon();
@@ -322,13 +323,39 @@ public class GameplayView extends Application {
         nextPhaseButton.setAlignment(Pos.BOTTOM_RIGHT);
         cardDisplay.setLayoutX(500);
         cardDisplay.setLayoutY(200);
+        settingsButton.setLayoutX(0);
+        settingsButton.setLayoutY(600);
         pane.getChildren().add(gameplay.getCurrentPlayer().getField());
         pane.getChildren().add(gameplay.getOpponentPlayer().getField());
         pane.getChildren().add(cardDisplay);
+        pane.getChildren().add(settingsButton);
         //TODO: add this
         updateLPs();
         pane.getChildren().addAll(lowerInfo);
         hideOpponentHands();
+    }
+
+    private void createSettings() {
+        ButtonType surrender = new ButtonType("SURRENDER");
+        ButtonType ok = new ButtonType("OK");
+        settingsDialog.getDialogPane().getButtonTypes().addAll(surrender,ok);
+        settingsDialog.setTitle("Settings");
+        settingsDialog.setHeight(100);
+        settingsDialog.setWidth(200);
+        settingsDialog.getDialogPane().setContent(null);
+        settingsButton.setOnAction(actionEvent -> {
+            Optional<ButtonType> result = settingsDialog.showAndWait();
+            if (result.isPresent()) {
+                if (result.get() == surrender) {
+                    //TODO: doesn't go back to duel menu
+                    String message = GameplayController.getInstance().surrender();
+                    showInfo(message);
+                }
+                if (result.get() == ok) {
+                    settingsDialog.close();
+                }
+            }
+        });
     }
 
     public void updateLPs() {

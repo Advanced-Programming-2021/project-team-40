@@ -338,7 +338,7 @@ public class DatabaseController {
                             Effect.gameplay.getCurrentPlayer().setLifePoints(Effect.gameplay.getCurrentPlayer().getLifePoints() - 1000);
                     };
                     break;
-                case "Terratiger, the Empowered Warrior":
+                case "Terratiger, The Empowered Warrior":
                     card.setHasEffect(true);
                     card.afterSummon = objects -> {
                         boolean hasMonster = false;
