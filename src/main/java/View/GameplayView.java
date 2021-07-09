@@ -56,7 +56,14 @@ public class GameplayView {
         String message = GameplayController.getInstance().checkWinningConditions();
         if (message != null) {
             System.out.println(message);
-            GameplayController.getInstance().doPhaseAction();
+            if (message.contains("won the game and the score is")) {
+                GameplayView.getInstance().utiliseSideDeckPrompt(GameplayController.getInstance().getGameplay().getCurrentPlayer());
+                GameplayView.getInstance().utiliseSideDeckPrompt(GameplayController.getInstance().getGameplay().getOpponentPlayer());
+            }
+            try {
+                GameplayController.getInstance().doPhaseAction();
+            } catch (DeckEmptiedException ignored) {
+            }
         }
         GameplayController.getInstance().calculateFieldZoneEffects();
         gameplayView.showBoard();
@@ -65,7 +72,10 @@ public class GameplayView {
     private void surrender() {
         String message = GameplayController.getInstance().surrender();
         System.out.println(message);
-        GameplayController.getInstance().doPhaseAction();
+        try {
+            GameplayController.getInstance().doPhaseAction();
+        } catch (DeckEmptiedException ignored) {
+        }
     }
 
     private void setWinnerCheat(Matcher matcher) {
@@ -73,7 +83,10 @@ public class GameplayView {
         String message = GameplayController.getInstance().setWinnerCheat(nickname);
         if (message == null) return;
         System.out.println(message);
-        GameplayController.getInstance().doPhaseAction();
+        try {
+            GameplayController.getInstance().doPhaseAction();
+        } catch (DeckEmptiedException ignored) {
+        }
     }
 
     public void discardACard() {

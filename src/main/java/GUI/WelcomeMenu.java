@@ -24,7 +24,7 @@ public class WelcomeMenu extends Application {
     public static void gameMusic() {
         String mediaAddress = WelcomeMenu.class.getResource("/Audio/menumusic.m4a").toExternalForm();
         mediaPlayer = new MediaPlayer(new Media(mediaAddress));
-        mediaPlayer.setVolume(0.7);
+        mediaPlayer.setVolume(0);
         mediaPlayer.play();
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
     }

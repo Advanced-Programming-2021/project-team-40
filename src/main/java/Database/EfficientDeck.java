@@ -10,7 +10,7 @@ public class EfficientDeck {
     private ArrayList<String> mainCards = new ArrayList<>();
     private ArrayList<String> sideCards = new ArrayList<>();
 
-    public EfficientDeck(String name, boolean isActive, ArrayList<Card> actualMainCards, ArrayList<Card> actualSideCards){
+    public EfficientDeck(String name, boolean isActive, ArrayList<Card> actualMainCards, ArrayList<Card> actualSideCards) {
         this.setName(name);
         this.setActive(isActive);
         this.setMainCards(cardArrayToStringArray(actualMainCards));
@@ -18,9 +18,10 @@ public class EfficientDeck {
 
     }
 
-    private ArrayList<String> cardArrayToStringArray(ArrayList<Card> actualCards){
+    private ArrayList<String> cardArrayToStringArray(ArrayList<Card> actualCards) {
         ArrayList<String> cards = new ArrayList<>();
-        for (Card card: actualCards) {
+        if (actualCards.isEmpty()) return cards;
+        for (Card card : actualCards) {
             cards.add(card.getName());
         }
         return cards;

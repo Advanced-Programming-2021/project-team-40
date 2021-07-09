@@ -62,11 +62,12 @@ public class GameplayController {
         this.gameplay = gameplay;
     }
 
-    public String doPhaseAction() {
+    public String doPhaseAction() throws DeckEmptiedException {
         if (gameplay == null) return null;
         switch (gameplay.getCurrentPhase()) {
             case DRAW_PHASE:
                 Card card = drawCard();
+                if (card == null) throw new DeckEmptiedException();
                 return "new card added to the hand : " + card.getName();
             case END_PHASE:
                 switchTurn();
@@ -108,7 +109,7 @@ public class GameplayController {
         return null;
     }
 
-    public void goToEndPhase() {
+    public void goToEndPhase() throws DeckEmptiedException {
         gameplay.setCurrentPhase(Phase.END_PHASE);
         System.out.println(gameplay.getCurrentPhase().toString());
         doPhaseAction();
@@ -182,8 +183,6 @@ public class GameplayController {
             default:
                 gameplay.setCurrentPlayer(winner);
                 gameplay.setOpponentPlayer(loser);
-                GameplayView.getInstance().utiliseSideDeckPrompt(gameplay.getCurrentPlayer());
-                GameplayView.getInstance().utiliseSideDeckPrompt(gameplay.getOpponentPlayer());
                 gameplay.setSelectedField(null);
                 gameplay.setAttacker(null);
                 gameplay.setBeingAttacked(null);
@@ -203,7 +202,7 @@ public class GameplayController {
     }
 
     public String surrender() {
-        return endARound(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
+        return endWholeMatch(gameplay.getOpponentPlayer(), gameplay.getCurrentPlayer());
     }
 
     public void selectCard(String idToCheck, String field, boolean isFromOpponent) throws Exception {
@@ -740,6 +739,7 @@ public class GameplayController {
         if (((MonsterFieldArea) fieldArea).hasAttacked()) throw new AlreadyAttackedException();
         if (!isOpponentFieldEmpty()) throw new DirectAttackNotPossibleException();
         String temp = calculateDirectDamage((MonsterFieldArea) fieldArea);
+        ((MonsterFieldArea) fieldArea).setHasAttacked(true);
         deselectCard();
         return temp;
     }

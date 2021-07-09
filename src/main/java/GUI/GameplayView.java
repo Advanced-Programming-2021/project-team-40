@@ -14,7 +14,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -30,26 +33,26 @@ import java.util.regex.Matcher;
 public class GameplayView extends Application {
     final private static int GAMEPLAY_WIDTH = 700;
     final private static int GAMEPLAY_HEIGHT = 600;
-    private static final AnchorPane pane = new AnchorPane();
-    private static final MenuItem effectItem = new MenuItem("Activate effect");
-    private static final MenuItem summonItem = new MenuItem("Summon");
-    private static final MenuItem setItem = new MenuItem("Set");
-    private static final MenuItem directAttackItem = new MenuItem("Direct attack");
-    private static final MenuItem attackItem = new MenuItem("Attack");
-    private static final MenuItem flipItem = new MenuItem("Flip summon");
-    private static final MenuItem changePositionItem = new MenuItem("Change position");
-    private static final Button nextPhaseButton = new Button("Next phase");
-    private static final Button settingsButton = new Button("Settings");
-    private static final Alert addedCardsAlert = new Alert(Alert.AlertType.INFORMATION);
-    private static final Alert newPhaseAlert = new Alert(Alert.AlertType.INFORMATION);
+    private static AnchorPane pane = new AnchorPane();
+    private static MenuItem effectItem = new MenuItem("Activate effect");
+    private static MenuItem summonItem = new MenuItem("Summon");
+    private static MenuItem setItem = new MenuItem("Set");
+    private static MenuItem directAttackItem = new MenuItem("Direct attack");
+    private static MenuItem attackItem = new MenuItem("Attack");
+    private static MenuItem flipItem = new MenuItem("Flip summon");
+    private static MenuItem changePositionItem = new MenuItem("Change position");
+    private static Button nextPhaseButton = new Button("Next phase");
+    private static Button settingsButton = new Button("Settings");
+    private static Alert addedCardsAlert = new Alert(Alert.AlertType.INFORMATION);
+    private static Alert newPhaseAlert = new Alert(Alert.AlertType.INFORMATION);
     public static ArrayList<MenuItem> monsterItems = new ArrayList<>();
     public static ArrayList<MenuItem> spellItems = new ArrayList<>();
     public static ArrayList<MenuItem> handItems = new ArrayList<>();
     public static VBox cardDisplay = new VBox(10);
+    public static VBox lowerInfo = new VBox();
+    public static VBox upperInfo = new VBox();
     private static Dialog<ButtonType> settingsDialog = new Dialog<>();
     private static GameplayView gameplayView;
-
-    private static HBox lowerInfo = new HBox();
 
     private static Stage thisStage;
 
@@ -87,8 +90,8 @@ public class GameplayView extends Application {
                 if (GameplayController.getGameState() == GameState.CHAIN_MODE)
                     effectItem.setDisable(false);
                 if (selectedField instanceof MonsterFieldArea &&
-                    !((MonsterFieldArea) selectedField).hasAttacked() &&
-                    ((MonsterFieldArea) selectedField).isAttack())
+                        !((MonsterFieldArea) selectedField).hasAttacked() &&
+                        ((MonsterFieldArea) selectedField).isAttack())
                     attackItem.setDisable(false);
                 if (GameplayController.getInstance().isOpponentFieldEmpty())
                     directAttackItem.setDisable(false);
@@ -106,12 +109,12 @@ public class GameplayView extends Application {
                     if (selectedField.canBePutOnBoard()) setItem.setDisable(false);
                 }
                 if ((selectedField.getCard() instanceof Monster) &&
-                    !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
+                        !GameplayController.getInstance().gameplay.hasPlacedMonster()) {
                     summonItem.setDisable(false);
                     setItem.setDisable(false);
                 }
                 if (selectedField instanceof MonsterFieldArea &&
-                    !((MonsterFieldArea) selectedField).hasSwitchedMode()) {
+                        !((MonsterFieldArea) selectedField).hasSwitchedMode()) {
                     changePositionItem.setDisable(false);
                     flipItem.setDisable(false);
                 }
@@ -129,16 +132,15 @@ public class GameplayView extends Application {
         cardDisplay.getChildren().add(cardView);
         cardDisplay.getChildren().add(description);
         cardDisplay.setPrefSize(200, 300);
-        createLPs();
     }
 
     private static void createLPs() {
-        //TODO fix this
-        lowerInfo.setPrefSize(200, 200);
-        lowerInfo.setLayoutX(640);
-        lowerInfo.setLayoutY(30);
-        lowerInfo.getChildren().add(new Label(GameplayController.getInstance().getGameplay().getCurrentPlayer().getUser().getNickname()));
+        lowerInfo.setPrefSize(200, 50);
+        upperInfo.setPrefSize(200, 50);
         String lowerNickname = GameplayController.getInstance().getGameplay().getCurrentPlayer().getUser().getNickname();
+        String upperNickname = GameplayController.getInstance().getGameplay().getOpponentPlayer().getUser().getNickname();
+        lowerInfo.getChildren().add(new Label(lowerNickname));
+        upperInfo.getChildren().add(new Label(upperNickname));
         Player lowerPlayer, upperPlayer;
         if (GameplayController.getInstance().getGameplay().getPlayerOne().getUser().getNickname().equals(lowerNickname)) {
             lowerPlayer = GameplayController.getInstance().getGameplay().getPlayerOne();
@@ -147,14 +149,33 @@ public class GameplayView extends Application {
             lowerPlayer = GameplayController.getInstance().getGameplay().getPlayerTwo();
             upperPlayer = GameplayController.getInstance().getGameplay().getPlayerOne();
         }
-        lowerInfo.setLayoutX(600);
+        Rectangle avatar = new Rectangle(62, 73);
+        avatar.setFill(new ImagePattern(lowerPlayer.getUser().getProfilePicture()));
+        lowerInfo.getChildren().add(avatar);
+        avatar = new Rectangle(62, 73);
+        avatar.setFill(new ImagePattern(upperPlayer.getUser().getProfilePicture()));
+        upperInfo.getChildren().add(avatar);
+        lowerInfo.setLayoutX(500);
         lowerInfo.setLayoutY(500);
+        upperInfo.setLayoutX(500);
+        upperInfo.setLayoutY(50);
+
         Rectangle LPForeground = new Rectangle(150 * ((double) lowerPlayer.getLifePoints()) / 8000, 30, Color.RED);
         AnchorPane healthBar = new AnchorPane();
         healthBar.setMaxSize(150, 30);
         healthBar.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
         healthBar.getChildren().add(LPForeground);
         lowerInfo.getChildren().add(healthBar);
+
+        LPForeground = new Rectangle(150 * ((double) upperPlayer.getLifePoints()) / 8000, 30, Color.RED);
+        healthBar = new AnchorPane();
+        healthBar.setMaxSize(150, 30);
+        healthBar.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        healthBar.getChildren().add(LPForeground);
+        upperInfo.getChildren().add(healthBar);
+
+
+        pane.getChildren().addAll(upperInfo, lowerInfo);
     }
 
     public static void updateCardDisplayPanel(FieldArea fieldArea) {
@@ -275,7 +296,6 @@ public class GameplayView extends Application {
         }
         if (buttonPressed == ButtonType.OK) {
             GameplayController.setGameState(GameState.CHAIN_MODE);
-            System.out.println(GameplayController.getGameState());
         }
 
     }
@@ -294,19 +314,13 @@ public class GameplayView extends Application {
     }
 
     public void createBoard() {
-        DatabaseController.getInstance();//TODO: remove deez
-        Gameplay gameplay = new Gameplay(new Player(User.getUserByName("DanDan")), new Player(User.getUserByName("KiaKia")), 1);
-        GameplayController.getInstance().setGameplay(gameplay);
         GameplayController.getInstance().setStartingPlayer();
         GameplayController.getInstance().dealCardsAtBeginning();
-        try {
-            GameplayController.getInstance().forceAddCard("Mirror Force");
-            GameplayController.getInstance().forceAddCard("Black Pendant");
-        } catch (InvalidCardNameException ignored) {
-        }
+        Gameplay gameplay = GameplayController.getInstance().getGameplay();
         gameplay.getOpponentPlayer().getField().setRotate(180);
         createSettings();
         createCardDisplayPanel();
+        createLPs();
         changePosition();
         flipSummon();
         activateEffect();
@@ -329,16 +343,14 @@ public class GameplayView extends Application {
         pane.getChildren().add(gameplay.getOpponentPlayer().getField());
         pane.getChildren().add(cardDisplay);
         pane.getChildren().add(settingsButton);
-        //TODO: add this
         updateLPs();
-        pane.getChildren().addAll(lowerInfo);
         hideOpponentHands();
     }
 
     private void createSettings() {
         ButtonType surrender = new ButtonType("SURRENDER");
         ButtonType ok = new ButtonType("OK");
-        settingsDialog.getDialogPane().getButtonTypes().addAll(surrender,ok);
+        settingsDialog.getDialogPane().getButtonTypes().addAll(surrender, ok);
         settingsDialog.setTitle("Settings");
         settingsDialog.setHeight(100);
         settingsDialog.setWidth(200);
@@ -347,9 +359,15 @@ public class GameplayView extends Application {
             Optional<ButtonType> result = settingsDialog.showAndWait();
             if (result.isPresent()) {
                 if (result.get() == surrender) {
-                    //TODO: doesn't go back to duel menu
+                    //TODO add a menu here
                     String message = GameplayController.getInstance().surrender();
                     showInfo(message);
+                    try {
+                        DatabaseController.getInstance().saveAllUsers();
+                        new MainMenu().start(WelcomeMenu.stage);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 if (result.get() == ok) {
                     settingsDialog.close();
@@ -359,6 +377,41 @@ public class GameplayView extends Application {
     }
 
     public void updateLPs() {
+        lowerInfo.getChildren().remove(lowerInfo.getChildren().size() - 1);
+        upperInfo.getChildren().remove(upperInfo.getChildren().size() - 1);
+        String lowerNickname = ((Label) lowerInfo.getChildren().get(0)).getText();
+        Player lowerPlayer, upperPlayer;
+        if (GameplayController.getInstance().getGameplay().getPlayerOne().getUser().getNickname().equals(lowerNickname)) {
+            lowerPlayer = GameplayController.getInstance().getGameplay().getPlayerOne();
+            upperPlayer = GameplayController.getInstance().getGameplay().getPlayerTwo();
+        } else {
+            lowerPlayer = GameplayController.getInstance().getGameplay().getPlayerTwo();
+            upperPlayer = GameplayController.getInstance().getGameplay().getPlayerOne();
+        }
+        Rectangle LPForeground = new Rectangle(150 * ((double) lowerPlayer.getLifePoints()) / 8000, 30, Color.RED);
+        AnchorPane healthBar = new AnchorPane();
+        healthBar.setMaxSize(150, 30);
+        healthBar.setMinSize(150, 30);
+        Label healthLabel = new Label(String.valueOf(lowerPlayer.getLifePoints()) + "/8000");
+        healthBar.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        healthBar.getChildren().addAll(LPForeground, healthLabel);
+        lowerInfo.getChildren().add(healthBar);
+
+        LPForeground = new Rectangle(150 * ((double) upperPlayer.getLifePoints()) / 8000, 30, Color.RED);
+        healthBar = new AnchorPane();
+        healthBar.setMaxSize(150, 30);
+        healthBar.setMinSize(150, 30);
+        healthLabel = new Label(String.valueOf(upperPlayer.getLifePoints()) + "/8000");
+        healthBar.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        healthBar.getChildren().addAll(LPForeground, healthLabel);
+        upperInfo.getChildren().add(healthBar);
+        if (lowerPlayer.getLifePoints() <= 0)
+            endGame(GameplayController.getInstance().endARound(upperPlayer, lowerPlayer));
+        else if (upperPlayer.getLifePoints() <= 0)
+            endGame(GameplayController.getInstance().endARound(upperPlayer, lowerPlayer));
+    }
+
+    private void checkIfGameShouldEnd() {
 
     }
 
@@ -391,6 +444,7 @@ public class GameplayView extends Application {
             forceAddCardCheat(matcher);
         else if ((matcher = Regex.getCommandMatcher(cheat, Regex.setWinnerCheatCode)).matches())
             setWinnerCheat(matcher);
+            //TODO delete print
         else System.out.println("invalid command");
     }
 
@@ -401,14 +455,20 @@ public class GameplayView extends Application {
             if (GameplayController.getGameState() == GameState.RITUAL_SUMMON_MODE) return;
             if (GameplayController.getGameState() == GameState.RITUAL_SPELL_ACTIVATED_MODE) return;
             String newPhaseMessage = GameplayController.getInstance().goToNextPhase();
-            String addedCards = GameplayController.getInstance().doPhaseAction();
-            if (addedCards != null) {
-                addedCardsAlert.setHeaderText(newPhaseMessage + "\n" + addedCards);
-                addedCardsAlert.show();
-            } else {
-                newPhaseAlert.setHeaderText(newPhaseMessage);
-                newPhaseAlert.show();
+            String addedCards = null;
+            try {
+                addedCards = GameplayController.getInstance().doPhaseAction();
+                if (addedCards != null) {
+                    addedCardsAlert.setHeaderText(newPhaseMessage + "\n" + addedCards);
+                    addedCardsAlert.show();
+                } else {
+                    newPhaseAlert.setHeaderText(newPhaseMessage);
+                    newPhaseAlert.show();
+                }
+            } catch (DeckEmptiedException e) {
+                showAlert(e.getMessage());
             }
+
             GameplayController.setGameState(GameState.NORMAL_MODE);
             GameplayController.getInstance().onStandbyTraps();
         });
@@ -471,11 +531,12 @@ public class GameplayView extends Application {
         directAttackItem.setOnAction(actionEvent -> {
             try {
                 String message = GameplayController.getInstance().directAttack();
-                System.out.println(message);
+                showInfo(message);
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
             GameplayController.getInstance().calculateFieldZoneEffects();
+            updateLPs();
         });
         monsterItems.add(directAttackItem);
     }
@@ -580,14 +641,37 @@ public class GameplayView extends Application {
     private void increaseLifePointsCheat(Matcher matcher) {
         int amount = Integer.parseInt(matcher.group("amount"));
         GameplayController.getInstance().increaseLifePointsCheat(amount);
+        updateLPs();
     }
 
     private void setWinnerCheat(Matcher matcher) {
         String nickname = matcher.group("nickname");
         String message = GameplayController.getInstance().setWinnerCheat(nickname);
         if (message == null) return;
-        System.out.println(message);
-        GameplayController.getInstance().doPhaseAction();
+        endGame(message);
+        try {
+            checkIfGameShouldEnd();
+            GameplayController.getInstance().doPhaseAction();
+        } catch (DeckEmptiedException e) {
+            //TODO fix
+            e.printStackTrace();
+            System.out.println("NOW WHAT?");
+        }
+    }
+
+    public void endGame(String message) {
+        showInfo(message);
+        if (message.contains("won the whole match")) {
+            try {
+                DatabaseController.getInstance().saveAllUsers();
+                new MainMenu().start(WelcomeMenu.stage);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (message.contains("won the game")) {
+            //TODO DANIAL PLIZ
+            System.out.println("HEEELP");
+        }
     }
 
 

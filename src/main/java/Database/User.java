@@ -125,7 +125,7 @@ public class User {
     }
 
     public String getAvatarID() {
-        if (avatarID == null) setAvatarID("1");
+        if (avatarID == null) setAvatarID("3");
         return avatarID;
     }
 

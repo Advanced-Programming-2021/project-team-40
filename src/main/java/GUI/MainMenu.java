@@ -18,9 +18,7 @@ public class MainMenu extends Application {
     public static User currentUser = null;
 
     public MainMenu(){
-        //TODO delete this
         DatabaseController.getInstance();
-        currentUser = User.getUserByName("DanDan");
         if (DuelMenu.mediaPlayer != null && DuelMenu.mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING)){
             DuelMenu.mediaPlayer.stop();
             WelcomeMenu.gameMusic();
