@@ -6,6 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import java.net.URL?>
 <GridPane xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
           fx:controller="GUI.SignupMenu"
@@ -28,5 +29,9 @@
         <Button text="Signup" onMouseClicked="#signup" prefHeight="50" prefWidth="150"/>
         <Button text="Back" onMouseClicked="#back" prefHeight="50" prefWidth="150"/>
     </VBox>
+
+    <stylesheets>
+        <URL value="@menuCSS.css"/>
+    </stylesheets>
 
 </GridPane>

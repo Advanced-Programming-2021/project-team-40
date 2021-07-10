@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.control.skin.TableHeaderRow?>
+<?import java.net.URL?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="GUI.ScoreboardMenu"
@@ -15,5 +16,9 @@
 
     </TableView>
     <Button layoutX="300" layoutY="510" text="Back" onMouseClicked="#back" prefWidth="150" prefHeight="50"/>
+
+    <stylesheets>
+        <URL value="@menuCSS.css"/>
+    </stylesheets>
 
 </AnchorPane>

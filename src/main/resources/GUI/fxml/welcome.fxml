@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Button?>
+<?import java.net.URL?>
 <GridPane xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml"
           fx:controller="GUI.WelcomeMenu"
@@ -18,5 +19,9 @@
         <Button text="Login" onMouseClicked="#login" prefHeight="50" prefWidth="150"/>
         <Button text="Exit" onMouseClicked="#exit" prefHeight="50" prefWidth="150"/>
     </VBox>
+
+    <stylesheets>
+        <URL value="@menuCSS.css"/>
+    </stylesheets>
 
 </GridPane>

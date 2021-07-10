@@ -6,13 +6,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -38,13 +37,13 @@ public class ScoreboardMenu extends Application {
 
     private void createTable() {
         TableColumn nameColumn = new TableColumn("Nickname");
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<User, String>("nickname"));
         nameColumn.setSortable(false);
         TableColumn scoreColumn = new TableColumn("Score");
-        scoreColumn.setCellValueFactory(new PropertyValueFactory<>("score"));
+        scoreColumn.setCellValueFactory(new PropertyValueFactory<User, String>("score"));
         scoreColumn.setSortable(false);
         TableColumn rankColumn = new TableColumn("Rank");
-        rankColumn.setCellValueFactory(new PropertyValueFactory<>("rank"));
+        rankColumn.setCellValueFactory(new PropertyValueFactory<User, String>("rank"));
         rankColumn.setSortable(false);
         table.getColumns().addAll(rankColumn, nameColumn, scoreColumn);
         table.getSortOrder().add(rankColumn);

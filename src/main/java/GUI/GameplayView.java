@@ -20,6 +20,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
@@ -30,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
-public class GameplayView extends Application {
+public class GameplayView extends Application implements SoundEffect {
     final private static int GAMEPLAY_WIDTH = 700;
     final private static int GAMEPLAY_HEIGHT = 600;
     private static AnchorPane pane = new AnchorPane();
@@ -302,7 +304,7 @@ public class GameplayView extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception{
+    public void start(Stage stage) throws Exception {
         thisStage = stage;
         createBoard();
         Scene scene = new Scene(pane);
@@ -317,9 +319,32 @@ public class GameplayView extends Application {
 
     public void createBoard() {
         pane = new AnchorPane();
+        //TODO
+        /*
+        pane.setBackground(new Background(new BackgroundImage(new Image(GameplayView.class.getResourceAsStream("/Database/Cards/normalField.bmp"),
+                400, 700, false, true),
+                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT)));
+
+         */
+        effectItem = new MenuItem("Activate effect");
+        summonItem = new MenuItem("Summon");
+        setItem = new MenuItem("Set");
+        directAttackItem = new MenuItem("Direct attack");
+        attackItem = new MenuItem("Attack");
+        flipItem = new MenuItem("Flip summon");
+        changePositionItem = new MenuItem("Change position");
+        nextPhaseButton = new Button("Next phase");
+        settingsButton = new Button("Settings");
+        addedCardsAlert = new Alert(Alert.AlertType.INFORMATION);
+        newPhaseAlert = new Alert(Alert.AlertType.INFORMATION);
+        monsterItems = new ArrayList<>();
+        spellItems = new ArrayList<>();
+        handItems = new ArrayList<>();
         cardDisplay = new VBox(10);
         lowerInfo = new VBox();
         upperInfo = new VBox();
+        settingsDialog = new Dialog<>();
         GameplayController.getInstance().setStartingPlayer();
         GameplayController.getInstance().dealCardsAtBeginning();
         Gameplay gameplay = GameplayController.getInstance().getGameplay();
@@ -356,7 +381,7 @@ public class GameplayView extends Application {
 
     private void createSettings() {
         ButtonType surrender = new ButtonType("SURRENDER");
-        ButtonType ok = new ButtonType("OK");
+        ButtonType ok = new ButtonType("CANCEL");
         settingsDialog.getDialogPane().getButtonTypes().addAll(surrender, ok);
         settingsDialog.setTitle("Settings");
         settingsDialog.setHeight(100);
@@ -420,10 +445,6 @@ public class GameplayView extends Application {
             endGame(GameplayController.getInstance().endARound(upperPlayer, lowerPlayer));
         else if (upperPlayer.getLifePoints() <= 0)
             endGame(GameplayController.getInstance().endARound(upperPlayer, lowerPlayer));
-    }
-
-    private void checkIfGameShouldEnd() {
-
     }
 
     private void setCheatConsole(Stage stage) {
@@ -542,6 +563,7 @@ public class GameplayView extends Application {
         directAttackItem.setOnAction(actionEvent -> {
             try {
                 String message = GameplayController.getInstance().directAttack();
+                playSoundEffect("swordSwoosh.wav");
                 showInfo(message);
             } catch (Exception e) {
                 showAlert(e.getMessage());
@@ -572,6 +594,7 @@ public class GameplayView extends Application {
         setItem.setOnAction(actionEvent -> {
             try {
                 GameplayController.getInstance().set();
+                playSoundEffect("cardFlip.mp3");
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
@@ -580,6 +603,7 @@ public class GameplayView extends Application {
         summonItem.setOnAction(actionEvent -> {
             try {
                 GameplayController.getInstance().summon();
+                playSoundEffect("monsterGrowl.mp3");
             } catch (Exception e) {
                 showAlert(e.getMessage());
             }
@@ -660,7 +684,6 @@ public class GameplayView extends Application {
         if (message == null) return;
         endGame(message);
         try {
-            checkIfGameShouldEnd();
             GameplayController.getInstance().doPhaseAction();
         } catch (DeckEmptiedException e) {
             //TODO fix
@@ -680,9 +703,21 @@ public class GameplayView extends Application {
             }
         } else if (message.contains("won the game")) {
             createBoard();
-            System.out.println("HEEELP");
         }
     }
 
+    @Override
+    public void playSoundEffect(String effectName) {
+        String mediaAddress = WelcomeMenu.class.getResource("/Audio/" + effectName).toExternalForm();
+        MediaPlayer mediaPlayer = new MediaPlayer(new Media(mediaAddress));
+        mediaPlayer.play();
+        soundEffects.add(mediaPlayer);
+        mediaPlayer.setOnEndOfMedia(new Runnable() {
+            @Override
+            public void run() {
+                soundEffects.remove(mediaPlayer);
+            }
+        });
+    }
 
 }

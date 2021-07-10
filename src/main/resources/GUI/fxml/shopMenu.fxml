@@ -14,7 +14,7 @@
             fx:controller="GUI.ShopMenu"
             prefHeight="600.0" prefWidth="750.0">
 
-    <ScrollPane fx:id="scrollPane" layoutY="30" layoutX="30" prefHeight="300" prefWidth="690">
+    <ScrollPane fx:id="scrollPane" layoutY="30" layoutX="30" prefHeight="300" prefWidth="690" styleClass="cardScrollPane">
 
     </ScrollPane>
 

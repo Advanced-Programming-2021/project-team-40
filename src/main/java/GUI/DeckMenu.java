@@ -53,6 +53,7 @@ public class DeckMenu extends Application implements AlertFunction {
 
 
     private Deck selectedDeck;
+    private Deck tempDeck;
     private VBox selectedVBox;
     private Card selectedCard;
     private Boolean cardIsInDeck;
@@ -142,6 +143,7 @@ public class DeckMenu extends Application implements AlertFunction {
         pane.getChildren().add(getCreateDeckButton(i));
         decks.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         decks.setPannable(true);
+        pane.getStyleClass().add("lightBackground");
         decks.setContent(pane);
     }
 
@@ -173,7 +175,6 @@ public class DeckMenu extends Application implements AlertFunction {
         return vBox;
     }
 
-    //TODO complete this!!!
     private void createDeck() {
         TextInputDialog inputDialog = new TextInputDialog();
         inputDialog.setTitle("Create Deck");
@@ -201,6 +202,7 @@ public class DeckMenu extends Application implements AlertFunction {
         for (Card card : MainMenu.currentUser.getInactiveCards()) {
             outer.getChildren().add(getInactiveCardVBox(card));
         }
+        outer.getStyleClass().add("lightBackground");
         inactiveCards.setContent(outer);
     }
 
@@ -221,8 +223,6 @@ public class DeckMenu extends Application implements AlertFunction {
             }
         });
 
-
-        //TODO Drag and Drop
         vBox.setOnDragDetected(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -271,11 +271,29 @@ public class DeckMenu extends Application implements AlertFunction {
             deckName.getStyleClass().add("activeDeck");
             deckInfo.getStyleClass().add("activeDeck");
         }
-        if (selectedDeck!= null && selectedDeck.equals(deck)) vBox.getStyleClass().add("selectedDeck");
+        if (selectedDeck != null && selectedDeck.equals(deck)) vBox.getStyleClass().add("selectedDeck");
         vBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 selectDeck(deck);
+            }
+        });
+
+        vBox.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                tempDeck = deck;
+                updateMainDeck();
+                updateSideDeck();
+            }
+        });
+
+        vBox.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                tempDeck = null;
+                updateMainDeck();
+                updateSideDeck();
             }
         });
 
@@ -296,12 +314,15 @@ public class DeckMenu extends Application implements AlertFunction {
         pane.setHgap(10);
         pane.setMaxWidth(580);
         int i = 0;
-        if (selectedDeck != null)
-            for (Card card : selectedDeck.getMainCards()) {
+        Deck curDeck = selectedDeck;
+        if (tempDeck != null) curDeck = tempDeck;
+        if (curDeck != null) {
+            for (Card card : curDeck.getMainCards()) {
                 pane.getChildren().add(getCardVBox(card, i++, CardPosition.MAIN));
             }
-        //TODO fix minHeight
+        }
         pane.setMinHeight(7 * 150);
+        pane.getStyleClass().add("lightBackground");
         mainDeck.setContent(pane);
         mainDeck.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         mainDeck.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -313,12 +334,15 @@ public class DeckMenu extends Application implements AlertFunction {
         pane.setHgap(10);
         pane.setMaxWidth(580);
         int i = 0;
-        if (selectedDeck != null)
-            for (Card card : selectedDeck.getSideCards()) {
+        Deck curDeck = selectedDeck;
+        if (tempDeck != null) curDeck = tempDeck;
+        if (curDeck != null) {
+            for (Card card : curDeck.getSideCards()) {
                 pane.getChildren().add(getCardVBox(card, i++, cardPosition.SIDE));
             }
-        //TODO fix minHeight
+        }
         pane.setMinHeight(7 * 150);
+        pane.getStyleClass().add("lightBackground");
         sideDeck.setContent(pane);
         sideDeck.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         sideDeck.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);

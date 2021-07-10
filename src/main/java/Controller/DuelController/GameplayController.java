@@ -147,7 +147,7 @@ public class GameplayController {
         gameplay.setOwnsSelectedCard(null);
         gameplay.setHasPlacedMonster(false);
         GameplayView.getInstance().setFirstOfGame(false);
-        GUI.GameplayView.getInstance().hideOpponentHands();
+        GUI.GameplayView.getInstance().hideOpponentHands(getGameplay());
     }
 
     public void temporarySwitchTurn() {
@@ -157,7 +157,7 @@ public class GameplayController {
         gameplay.setCurrentPlayer(temp);
         gameplay.setSelectedField(null);
         gameplay.setOwnsSelectedCard(null);
-        GUI.GameplayView.getInstance().hideOpponentHands();
+        GUI.GameplayView.getInstance().hideOpponentHands(getGameplay());
     }
 
     public String endWholeMatch(Player winner, Player loser) {
@@ -255,6 +255,7 @@ public class GameplayController {
     }
 
     public void deselectCard() throws NoCardIsSelectedException {
+        if (gameplay == null) return;
         if (gameplay.getSelectedField() == null) throw new NoCardIsSelectedException();
         gameplay.setSelectedField(null);
         gameplay.setOwnsSelectedCard(null);

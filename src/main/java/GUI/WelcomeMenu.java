@@ -17,14 +17,13 @@ public class WelcomeMenu extends Application {
     public static MediaPlayer mediaPlayer;
 
     public static void main(String[] args) {
-        gameMusic();
         launch(args);
     }
 
     public static void gameMusic() {
         String mediaAddress = WelcomeMenu.class.getResource("/Audio/menumusic.m4a").toExternalForm();
         mediaPlayer = new MediaPlayer(new Media(mediaAddress));
-        mediaPlayer.setVolume(0);
+        mediaPlayer.setVolume(0.4);
         mediaPlayer.play();
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
     }
@@ -41,6 +40,7 @@ public class WelcomeMenu extends Application {
     }
 
     public void initialize() {
+        gameMusic();
         DatabaseController.getInstance();
     }
 

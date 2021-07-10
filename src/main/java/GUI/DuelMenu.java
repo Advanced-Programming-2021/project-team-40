@@ -65,7 +65,7 @@ public class DuelMenu extends Application implements AlertFunction {
         mediaPlayer = new MediaPlayer(new Media(DuelMenu.class.getResource("/Audio/gamemusic.mp3").toExternalForm()));
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaPlayer.play();
-        mediaPlayer.setVolume(0);
+        mediaPlayer.setVolume(0.4);
     }
 
     public void back(MouseEvent mouseEvent) throws Exception {

@@ -14,14 +14,15 @@
             fx:controller="GUI.DeckMenu"
             prefHeight="600.0" prefWidth="750.0">
 
-
-    <ScrollPane fx:id="mainDeck" layoutY="30" layoutX="30" prefHeight="150" prefWidth="580"/>
-    <ScrollPane fx:id="sideDeck" layoutY="190" layoutX="30" prefHeight="150" prefWidth="580"/>
-    <ScrollPane fx:id="inactiveCards" layoutX="620" layoutY="30" prefWidth="125" prefHeight="400"/>
-    <ScrollPane fx:id="decks" layoutX="30" layoutY="400" prefHeight="160" minWidth="250"/>
+    <Label layoutX="30" layoutY="20" text="MAIN DECK:"/>
+    <ScrollPane fx:id="mainDeck" layoutY="40" layoutX="30" prefHeight="150" prefWidth="580" styleClass="cardScrollPane"/>
+    <Label layoutX="30" layoutY="200" text="SIDE DECK:"/>
+    <ScrollPane fx:id="sideDeck" layoutY="220" layoutX="30" prefHeight="150" prefWidth="580" styleClass="cardScrollPane"/>
+    <ScrollPane fx:id="inactiveCards" layoutX="620" layoutY="30" prefWidth="125" prefHeight="400" styleClass="cardScrollPane"/>
+    <ScrollPane fx:id="decks" layoutX="30" layoutY="400" prefHeight="180" minWidth="250" styleClass="cardScrollPane"/>
     <AnchorPane fx:id="selectedCardPane" layoutY="400" layoutX="300" prefHeight="160" prefWidth="280"/>
 
-    <VBox layoutY="580" layoutX="500" prefWidth="100" prefHeight="200">
+    <VBox layoutY="490" layoutX="500" prefWidth="100" prefHeight="150">
 
         <Button fx:id="deleteDeckButton" prefWidth="90" prefHeight="45" text="Delete Deck" onMouseClicked="#deleteDeck"
                 disable="true"/>
