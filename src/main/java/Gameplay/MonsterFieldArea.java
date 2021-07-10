@@ -28,6 +28,7 @@ public class MonsterFieldArea extends FieldArea {
     public MonsterFieldArea(int id) {
         super();
         MonsterFieldArea thisField = this;
+        this.
         getCardView().setOnContextMenuRequested(contextMenuEvent -> {
             GameplayController.getInstance().calculateFieldZoneEffects();
             GameState gameState = GameplayController.getGameState();

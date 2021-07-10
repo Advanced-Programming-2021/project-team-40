@@ -11,7 +11,8 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="GUI.ScoreboardMenu"
-            prefHeight="600.0" prefWidth="750.0">
+            prefHeight="600.0" prefWidth="750.0"
+            styleClass="greenBackground">
     <TableView fx:id="table" layoutY="90" layoutX="225" prefHeight="400" prefWidth="300">
 
     </TableView>

@@ -1,3 +1,16 @@
+.greenBackground {
+    -fx-background-color: #2da02d;
+}
+
+.label {
+    -fx-font-size: 13;
+}
+
+#cardDescription {
+    -fx-text-fill: WHITE;
+    -fx-font-size: 14;
+}
+
 #buyButton {
     -fx-cursor: HAND;
     -fx-background-color: #008000;
@@ -81,7 +94,6 @@
 .cardScrollPane {
     -fx-border-width: 4;
     -fx-border-color: #ae7105;
-    -fx-fill: linear-gradient(to right, RED, BLUE);
 }
 
 .lightBackground {

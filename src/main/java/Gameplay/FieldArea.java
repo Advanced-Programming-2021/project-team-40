@@ -1,6 +1,10 @@
 package Gameplay;
 
 import Database.Cards.Card;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -19,6 +23,7 @@ public class FieldArea extends VBox {
         super();
         super.setPrefSize(FIELD_AREA_WIDTH, FIELD_AREA_HEIGHT);
         getCardView().setFill(Color.TRANSPARENT);
+        this.setBackground(new Background(new BackgroundFill(Color.web("#dbc99e", 1.0), new CornerRadii(3), Insets.EMPTY)));
         getChildren().add(getCardView());
     }
 

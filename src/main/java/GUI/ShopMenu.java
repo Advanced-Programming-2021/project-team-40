@@ -57,7 +57,7 @@ public class ShopMenu extends Application implements AlertFunction, SoundEffect{
         GridPane pane = new GridPane();
         pane.setHgap(10);
         pane.setVgap(10);
-        pane.setMinHeight(1080);
+        pane.setMinHeight(1200);
         int i = 0;
         for (Card card : Card.getAllCards()) {
             pane.getChildren().add(getCardVBox(card, i++));
@@ -76,8 +76,8 @@ public class ShopMenu extends Application implements AlertFunction, SoundEffect{
         Label count = new Label(cardsHashMap.get(card.getName()).toString());
         vBox.getChildren().addAll(cardView, name, count);
         vBox.setTranslateX((i % 8) * 80 + 20);
-        vBox.setTranslateY((i / 8) * 130 + 20);
-        vBox.setMinSize(80, 130);
+        vBox.setTranslateY((i / 8) * 150 + 20);
+        vBox.setMinSize(80, 150);
         vBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {

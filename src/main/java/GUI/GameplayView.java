@@ -10,6 +10,7 @@ import Database.User;
 import Gameplay.*;
 import View.Exceptions.*;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,7 +19,9 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -55,6 +58,7 @@ public class GameplayView extends Application implements SoundEffect {
     public static VBox upperInfo = new VBox();
     private static Dialog<ButtonType> settingsDialog = new Dialog<>();
     private static GameplayView gameplayView;
+
 
     private static Stage thisStage;
 
@@ -319,14 +323,7 @@ public class GameplayView extends Application implements SoundEffect {
 
     public void createBoard() {
         pane = new AnchorPane();
-        //TODO
-        /*
-        pane.setBackground(new Background(new BackgroundImage(new Image(GameplayView.class.getResourceAsStream("/Database/Cards/normalField.bmp"),
-                400, 700, false, true),
-                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT)));
-
-         */
+        pane.setBackground(new Background(new BackgroundFill(Color.web("#825030", 1.0), CornerRadii.EMPTY, Insets.EMPTY)));
         effectItem = new MenuItem("Activate effect");
         summonItem = new MenuItem("Summon");
         setItem = new MenuItem("Set");
@@ -349,7 +346,6 @@ public class GameplayView extends Application implements SoundEffect {
         GameplayController.getInstance().dealCardsAtBeginning();
         Gameplay gameplay = GameplayController.getInstance().getGameplay();
         gameplay.getOpponentPlayer().getField().setRotate(180);
-        createSettings();
         createCardDisplayPanel();
         createLPs();
         changePosition();
@@ -359,21 +355,18 @@ public class GameplayView extends Application implements SoundEffect {
         directAttack();
         createHandItems();
         nextPhase();
+        createSettings();
         gameplay.getCurrentPlayer().getField().setAlignment(Pos.CENTER);
         gameplay.getOpponentPlayer().getField().setAlignment(Pos.CENTER);
         gameplay.getCurrentPlayer().getField().setLayoutX(0);
         gameplay.getCurrentPlayer().getField().setLayoutY(FieldArea.getFieldAreaHeight() * 5);
         gameplay.getOpponentPlayer().getField().setLayoutX(0);
         gameplay.getOpponentPlayer().getField().setLayoutY(0);
-        nextPhaseButton.setAlignment(Pos.BOTTOM_RIGHT);
         cardDisplay.setLayoutX(500);
         cardDisplay.setLayoutY(200);
-        settingsButton.setLayoutX(0);
-        settingsButton.setLayoutY(600);
         pane.getChildren().add(gameplay.getCurrentPlayer().getField());
         pane.getChildren().add(gameplay.getOpponentPlayer().getField());
         pane.getChildren().add(cardDisplay);
-        pane.getChildren().add(settingsButton);
         updateLPs();
         System.out.println(gameplay);
         hideOpponentHands(gameplay);
@@ -410,6 +403,7 @@ public class GameplayView extends Application implements SoundEffect {
                 }
             }
         });
+        cardDisplay.getChildren().add(settingsButton);
     }
 
     public void updateLPs() {
@@ -464,6 +458,24 @@ public class GameplayView extends Application implements SoundEffect {
                     }
                 }
         );
+
+        stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            public void handle(KeyEvent ke) {
+                if (ke.getCode() == KeyCode.ESCAPE) {
+                    if (GameplayController.getGameState() == GameState.NORMAL_MODE){
+                        ke.consume();
+                        return;
+                    }
+                    if (GameplayController.getGameState() != GameState.CHAIN_MODE && GameplayController.getGameState() != GameState.ATTACK_MODE) {
+                        if (GameplayController.getGameState() == GameState.RITUAL_SET_MODE || GameplayController.getGameState() == GameState.RITUAL_SUMMON_MODE || GameplayController.getGameState() == GameState.RITUAL_SPELL_ACTIVATED_MODE){
+                            GameplayController.getInstance().effectSpellAndTraps.clear();
+                        }
+                            GameplayController.setGameState(GameState.NORMAL_MODE);
+                    }
+                    ke.consume();
+                }
+            }
+        });
     }
 
     private void processCheatCode(String cheat) {

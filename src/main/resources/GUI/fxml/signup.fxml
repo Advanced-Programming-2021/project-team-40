@@ -11,7 +11,8 @@
           xmlns:fx="http://javafx.com/fxml"
           fx:controller="GUI.SignupMenu"
           prefHeight="600.0" prefWidth="750.0"
-          alignment="CENTER">
+          alignment="CENTER"
+          styleClass="greenBackground">
 
     <VBox alignment="CENTER" spacing="10">
         <HBox spacing="10">

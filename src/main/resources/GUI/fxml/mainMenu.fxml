@@ -11,7 +11,8 @@
           xmlns:fx="http://javafx.com/fxml"
           fx:controller="GUI.MainMenu"
           prefHeight="600.0" prefWidth="750.0"
-          alignment="CENTER">
+          alignment="CENTER"
+          styleClass="greenBackground">
 
     <VBox alignment="CENTER" spacing="10">
         <Button text="New Duel" onMouseClicked="#newDuel" prefHeight="50" prefWidth="150"/>

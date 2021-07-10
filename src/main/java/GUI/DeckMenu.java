@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -22,6 +23,7 @@ import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -135,6 +137,7 @@ public class DeckMenu extends Application implements AlertFunction {
         GridPane pane = new GridPane();
         pane.setVgap(10);
         pane.setHgap(10);
+        pane.setPrefHeight(180);
         pane.setMinWidth((MainMenu.currentUser.getDecks().size() + 1) * 80);
         int i = 0;
         for (Deck deck : MainMenu.currentUser.getDecks()) {
@@ -143,7 +146,6 @@ public class DeckMenu extends Application implements AlertFunction {
         pane.getChildren().add(getCreateDeckButton(i));
         decks.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         decks.setPannable(true);
-        pane.getStyleClass().add("lightBackground");
         decks.setContent(pane);
     }
 
