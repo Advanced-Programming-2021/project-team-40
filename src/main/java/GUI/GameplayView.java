@@ -461,15 +461,15 @@ public class GameplayView extends Application implements SoundEffect {
         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             public void handle(KeyEvent ke) {
                 if (ke.getCode() == KeyCode.ESCAPE) {
-                    if (GameplayController.getGameState() == GameState.NORMAL_MODE){
+                    if (GameplayController.getGameState() == GameState.NORMAL_MODE) {
                         ke.consume();
                         return;
                     }
                     if (GameplayController.getGameState() != GameState.CHAIN_MODE && GameplayController.getGameState() != GameState.ATTACK_MODE) {
-                        if (GameplayController.getGameState() == GameState.RITUAL_SET_MODE || GameplayController.getGameState() == GameState.RITUAL_SUMMON_MODE || GameplayController.getGameState() == GameState.RITUAL_SPELL_ACTIVATED_MODE){
+                        if (GameplayController.getGameState() == GameState.RITUAL_SET_MODE || GameplayController.getGameState() == GameState.RITUAL_SUMMON_MODE || GameplayController.getGameState() == GameState.RITUAL_SPELL_ACTIVATED_MODE) {
                             GameplayController.getInstance().effectSpellAndTraps.clear();
                         }
-                            GameplayController.setGameState(GameState.NORMAL_MODE);
+                        GameplayController.setGameState(GameState.NORMAL_MODE);
                     }
                     ke.consume();
                 }
@@ -640,7 +640,7 @@ public class GameplayView extends Application implements SoundEffect {
         }
         for (MonsterFieldArea monsterFieldArea :
                 gameplay.getCurrentPlayer().getField().getMonstersField()) {
-            if (!monsterFieldArea.visibility()) monsterFieldArea.getStats().setVisible(true);
+            monsterFieldArea.getStats().setVisible(true);
         }
         try {
             GameplayController.getInstance().deselectCard();
