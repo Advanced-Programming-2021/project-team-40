@@ -13,7 +13,6 @@ import java.util.regex.Matcher;
 
 public class GameplayView {
     private static GameplayView gameplayView;
-    private boolean isFirstOfGame = true;
 
     private GameplayView() {
 
@@ -341,14 +340,6 @@ public class GameplayView {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    public boolean isFirstOfGame() {
-        return isFirstOfGame;
-    }
-
-    public void setFirstOfGame(boolean firstOfGame) {
-        isFirstOfGame = firstOfGame;
     }
 
     public String[] ritualTribute() {

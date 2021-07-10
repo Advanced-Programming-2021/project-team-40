@@ -384,7 +384,6 @@ public class GameplayView extends Application implements SoundEffect {
             Optional<ButtonType> result = settingsDialog.showAndWait();
             if (result.isPresent()) {
                 if (result.get() == surrender) {
-                    //TODO add a menu here
                     try {
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -488,8 +487,6 @@ public class GameplayView extends Application implements SoundEffect {
             forceAddCardCheat(matcher);
         else if ((matcher = Regex.getCommandMatcher(cheat, Regex.setWinnerCheatCode)).matches())
             setWinnerCheat(matcher);
-            //TODO delete print
-        else System.out.println("invalid command");
     }
 
     private void nextPhase() {
@@ -698,7 +695,6 @@ public class GameplayView extends Application implements SoundEffect {
         try {
             GameplayController.getInstance().doPhaseAction();
         } catch (DeckEmptiedException e) {
-            //TODO fix
             e.printStackTrace();
             System.out.println("NOW WHAT?");
         }

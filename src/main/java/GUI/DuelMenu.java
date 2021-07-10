@@ -48,11 +48,9 @@ public class DuelMenu extends Application implements AlertFunction {
             if (userTwo.getActiveDeck() == null) throw new ActiveDeckNotFoundException(playerTwoUsername);
             if (DeckMenuController.getInstance().isDeckInvalid(MainMenu.currentUser.getActiveDeck())) throw new InvalidDeckException(MainMenu.currentUser.getUsername());
             if (DeckMenuController.getInstance().isDeckInvalid(userTwo.getActiveDeck())) throw new InvalidDeckException(playerTwoUsername);
-            //TODO implement round count
-            if (3 != 3) throw new InvalidRoundNumberException();
             ProgramController.getInstance().setCurrentMenu(Menu.GAMEPLAY);
             startGameMusic();
-            Gameplay gameplay = new Gameplay(new Player(MainMenu.currentUser),new Player(userTwo),Integer.parseInt("3"));
+            Gameplay gameplay = new Gameplay(new Player(MainMenu.currentUser),new Player(userTwo),Integer.parseInt("1"));
             GameplayController.getInstance().setGameplay(gameplay);
             new GameplayView().start(WelcomeMenu.stage);
         }catch (Exception e){

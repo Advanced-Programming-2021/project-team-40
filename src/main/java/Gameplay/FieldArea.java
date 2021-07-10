@@ -65,6 +65,10 @@ public class FieldArea extends VBox {
 
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
+        if (card == null) return;
+        if (visibility){
+            getCardView().setFill(card.getFill());
+        }
     }
 
     public boolean canBePutOnBoard() {
