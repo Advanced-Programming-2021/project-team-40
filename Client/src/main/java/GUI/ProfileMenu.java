@@ -52,6 +52,7 @@ public class ProfileMenu extends Application implements AlertFunction {
     }
 
     private void updateUser() {
+        User.clearUsers();
         String userString = ClientController.sendMessage(MainMenu.userToken + " get user");
         Gson gson = new GsonBuilder().create();
         EfficientUser efficientUser = gson.fromJson(userString, EfficientUser.class);
@@ -74,7 +75,8 @@ public class ProfileMenu extends Application implements AlertFunction {
         if (newNickName.isPresent()) {
             try {
                 if (newNickName.get().isEmpty()) throw new Exception("this is not a valid nickname");
-                String serverMessage = ClientController.sendMessage("profile change -n " + newNickName.get());
+                String serverMessage = ClientController.sendMessage(MainMenu.userToken + " profile change -n " + newNickName.get());
+                if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
                 updateUser();
                 showAlert("nickname changed successfully!", Alert.AlertType.INFORMATION);
             } catch (Exception e) {
@@ -111,6 +113,8 @@ public class ProfileMenu extends Application implements AlertFunction {
         Optional<String> newPassword = passwordDialog.showAndWait();
         if (newPassword.isPresent()) {
             try {
+                String serverMessage = ClientController.sendMessage(MainMenu.userToken + " profile change -p -c " + oldPassword.get() + " -n " + newPassword.get());
+                if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
                 ProfileMenuController.getInstance().changePassword(oldPassword.get(), newPassword.get(), currentUser);
                 updateUser();
                 showAlert("password changed successfully!", Alert.AlertType.INFORMATION);
@@ -133,12 +137,12 @@ public class ProfileMenu extends Application implements AlertFunction {
     }
 
     public void previousAvatar(MouseEvent mouseEvent) {
-        currentUser.setAvatarID(String.valueOf(Integer.parseInt(currentUser.getAvatarID()) - 1));
+        String serverMessage = ClientController.sendMessage(MainMenu.userToken + " prev avatar");
         updateUser();
     }
 
     public void nextAvatar(MouseEvent mouseEvent) {
-        currentUser.setAvatarID(String.valueOf(Integer.parseInt(currentUser.getAvatarID()) + 1));
+        String serverMessage = ClientController.sendMessage(MainMenu.userToken + " next avatar");
         updateUser();
     }
 }

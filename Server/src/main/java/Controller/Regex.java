@@ -15,10 +15,10 @@ public class Regex {
     public static String menuNavigation = "^menu enter (?<menuName>.+?)$";
     public static String exitMenu = "^menu exit$";
     public static String showCurrentMenu = "^menu show-current$";
-    public static String logout = "^user logout$";
+    public static String logout = "^(?<token>[A-Za-z0-9-]+) user logout$";
     public static String showScoreboard = "^scoreboard show$";
-    public static String changeNickname = "^profile change (?:--nickname|-n) (?<nickname>.+?)$";
-    public static String changePassword = "^profile change(?=.* --current|.* --c)(?=.* --password|.* -p)(?=.* --new|.* -n)" +
+    public static String changeNickname = "^(?<token>[A-Za-z0-9-]+) profile change (?:--nickname|-n) (?<nickname>.+?)$";
+    public static String changePassword = "^(?<token>[A-Za-z0-9-]+) profile change(?=.* --current|.* -c)(?=.* --password|.* -p)(?=.* --new|.* -n)" +
             "(?: (?:--password|-p)(?!.*?--password)|" +
             " (?:--current|-c) (?<currentPass>.+?)(?!.*?--current|.*?-c)|" +
             " (?:--new|-n) (?<newPass>.+?)(?!.*?--new|.*?-n)){3}$";
@@ -89,7 +89,11 @@ public class Regex {
     public static String cancelAction = "^cancel$";
     public static String sendMessage = "^(?<token>[A-Za-z0-9-]+) send message -m (?<message>.+)$";
     public static String requestMessages = "^(?<token>[A-Za-z0-9-]+) request messages$";
+    public static String requestEfficientUsers = "^(?<token>[A-Za-z0-9-]+) request efficient users$";
     public static String getUser = "^(?<token>[A-Za-z0-9-]+) get user$";
+    public static String prevAvatar = "^(?<token>[A-Za-z0-9-]+) prev avatar$";
+    public static String nextAvatar = "^(?<token>[A-Za-z0-9-]+) next avatar$";
+
 
     public static Matcher getCommandMatcher(String command, String regex) {
         Pattern pattern = Pattern.compile(regex);

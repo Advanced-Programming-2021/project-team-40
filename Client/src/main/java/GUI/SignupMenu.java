@@ -44,7 +44,7 @@ public class SignupMenu extends Application implements AlertFunction {
         try {
             String serverMessage = ClientController.sendMessage("user create -u " + username + " -p " + password + " -n " + nickname);
             if (serverMessage.isEmpty()) throw new Exception("SERVER RESPONSE NULL");
-            if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(5));
+            if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
             else new MainMenu(serverMessage).start(WelcomeMenu.stage);
         } catch (Exception e) {
             showAlert(e.getMessage(), Alert.AlertType.ERROR);
