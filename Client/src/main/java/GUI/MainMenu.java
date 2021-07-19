@@ -1,9 +1,13 @@
 package GUI;
 
+import Controller.ClientController;
 import Controller.DatabaseController.DatabaseController;
 import Controller.MenuController.MainMenuController;
+import Database.EfficientUser;
 import Database.User;
 import View.Exceptions.InvalidMenuNameException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -29,6 +33,11 @@ public class MainMenu extends Application {
 
     public MainMenu(String token){
         userToken = token;
+        String userString = ClientController.sendMessage(userToken + " get user");
+        Gson gson = new GsonBuilder().create();
+        EfficientUser efficientUser = gson.fromJson(userString, EfficientUser.class);
+        DatabaseController.getInstance().createUserFromEffUser(efficientUser);
+        currentUser = User.getUserByName(efficientUser.getUsername());
     }
     @Override
     public void start(Stage stage) throws Exception {

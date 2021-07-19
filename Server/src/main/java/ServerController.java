@@ -1,7 +1,4 @@
 import Controller.*;
-import Controller.Exceptions.RepetitiveNicknameException;
-import Controller.Exceptions.RepetitiveUsernameException;
-import Controller.Exceptions.WeakPasswordException;
 import Database.EfficientUser;
 import Database.Message;
 import Database.User;
@@ -53,12 +50,14 @@ public class ServerController {
         else if ((matcher = Regex.getCommandMatcher(message, Regex.login)).matches()) return loginUser(matcher);
         if (!tokenIsValid(message)) return "invalid token";
         else if ((matcher = Regex.getCommandMatcher(message, Regex.sendMessage)).matches()) return sendMessage(matcher);
-        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches()) return getMessages(matcher);
-        else if ((matcher = Regex.getCommandMatcher(message, Regex.getUser)).matches()) return getUser(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches()) return getMessages();
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.getUser)).matches()) return requestUser(matcher);
         return "";
     }
 
-    private String getMessages(Matcher matcher) {
+    private String getMessages() {
+        new Message("A","Kir mikhori?");
+        new Message("B","Aghaye dildo");
         Gson gson = new GsonBuilder().create();
         String allMessages = gson.toJson(Message.messageList);
         return allMessages;
@@ -66,8 +65,10 @@ public class ServerController {
 
     private String sendMessage(Matcher matcher) {
         String message = matcher.group("message");
-
-        return null;
+        User currentUser = getUserByToken(matcher.group("token"));
+        if (currentUser == null) return "ERROR";
+        new Message(currentUser.getUsername(),message);
+        return "SUCCESS";
     }
 
     private boolean tokenIsValid(String message) {
@@ -78,15 +79,19 @@ public class ServerController {
         return false;
     }
 
-    private String getUser(Matcher matcher){
-        String requestToken = matcher.group("token");
-        User user = null;
+    private User getUserByToken(String requestToken) {
         for (String token : loggedInUsers.keySet()) {
             if (requestToken.equals(token)){
-                user = loggedInUsers.get(token);
-                break;
+                return loggedInUsers.get(token);
             }
         }
+        return null;
+    }
+
+    private String requestUser(Matcher matcher){
+        String requestToken = matcher.group("token");
+        User user;
+        user = getUserByToken(requestToken);
         if (user == null) return "user not found";
         EfficientUser efficientUser = new EfficientUser(user);
         Gson gson = new GsonBuilder().create();
