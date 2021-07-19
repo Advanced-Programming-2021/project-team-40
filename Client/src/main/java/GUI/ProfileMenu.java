@@ -4,6 +4,7 @@ import Controller.ClientController;
 import Controller.DatabaseController.DatabaseController;
 import Controller.MenuController.DeckMenuController;
 import Controller.MenuController.ProfileMenuController;
+import Database.EfficientUser;
 import Database.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,6 +27,8 @@ import javafx.stage.Stage;
 import java.util.Optional;
 
 public class ProfileMenu extends Application implements AlertFunction {
+
+    public User currentUser;
 
     @FXML
     Label username;
@@ -51,11 +54,15 @@ public class ProfileMenu extends Application implements AlertFunction {
     private void updateUser() {
         String userString = ClientController.sendMessage(MainMenu.userToken + " get user");
         Gson gson = new GsonBuilder().create();
-        User user = gson.fromJson(userString, User.class);
+        EfficientUser efficientUser = gson.fromJson(userString, EfficientUser.class);
+        DatabaseController.getInstance().createUserFromEffUser(efficientUser);
+        User user = User.getUserByName(efficientUser.getUsername());
+        this.currentUser = user;
         avatar.setFill(new ImagePattern(user.getProfilePicture()));
         username.setText(user.getUsername());
         nickname.setText(user.getNickname());
         score.setText(Integer.toString(user.getScore()));
+        DatabaseController.getInstance().saveUser(currentUser);
     }
 
     public void changeNickname(MouseEvent mouseEvent) {
@@ -104,7 +111,7 @@ public class ProfileMenu extends Application implements AlertFunction {
         Optional<String> newPassword = passwordDialog.showAndWait();
         if (newPassword.isPresent()) {
             try {
-                ProfileMenuController.getInstance().changePassword(oldPassword.get(), newPassword.get(), MainMenu.currentUser);
+                ProfileMenuController.getInstance().changePassword(oldPassword.get(), newPassword.get(), currentUser);
                 updateUser();
                 showAlert("password changed successfully!", Alert.AlertType.INFORMATION);
             } catch (Exception e) {
@@ -126,12 +133,12 @@ public class ProfileMenu extends Application implements AlertFunction {
     }
 
     public void previousAvatar(MouseEvent mouseEvent) {
-        MainMenu.currentUser.setAvatarID(String.valueOf(Integer.parseInt(MainMenu.currentUser.getAvatarID()) - 1));
+        currentUser.setAvatarID(String.valueOf(Integer.parseInt(currentUser.getAvatarID()) - 1));
         updateUser();
     }
 
     public void nextAvatar(MouseEvent mouseEvent) {
-        MainMenu.currentUser.setAvatarID(String.valueOf(Integer.parseInt(MainMenu.currentUser.getAvatarID()) + 1));
+        currentUser.setAvatarID(String.valueOf(Integer.parseInt(currentUser.getAvatarID()) + 1));
         updateUser();
     }
 }

@@ -38,6 +38,7 @@ public class DatabaseController {
     }
 
     public void saveUser(User user) {
+        //TODO send message to server instead of saving locally
         File userFile = new File("./src/main/resources/Users/" + user.getUsername() + ".json");
         EfficientUser efficientUser = new EfficientUser(user);
         try {
@@ -57,7 +58,7 @@ public class DatabaseController {
 
     public void initializeSpellAndTrapCards() {
         try {
-            File spellAndTrapCards = new File("./src/main/resources/Cards/SpellTrap.csv");
+            File spellAndTrapCards = new File("./Server/src/main/resources/Cards/SpellTrap.csv");
             FileReader fileReader = new FileReader(spellAndTrapCards);
             CSVReader csvReader = new CSVReader(fileReader);
             csvReader.readNext();
@@ -80,7 +81,7 @@ public class DatabaseController {
 
     private void initializeMonsterCards() {
         try {
-            File monsterCards = new File("./src/main/resources/Cards/Monster.csv");
+            File monsterCards = new File("./Server/src/main/resources/Cards/Monster.csv");
             FileReader fileReader = new FileReader(monsterCards);
             CSVReader csvReader = new CSVReader(fileReader);
             csvReader.readNext();
@@ -142,7 +143,7 @@ public class DatabaseController {
     }
 
     private void initializeUsers() {
-        File userDirectory = new File("./src/main/resources/Users");
+        File userDirectory = new File("./Server/src/main/resources/Users");
         userDirectory.mkdir();
         if (userDirectory.listFiles() == null) return;
         for (File userFile : userDirectory.listFiles()) {
@@ -152,19 +153,23 @@ public class DatabaseController {
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 Gson gson = gsonBuilder.create();
                 EfficientUser tempUser = gson.fromJson(userJson, EfficientUser.class);
-                ArrayList<Deck> actualDecks = new ArrayList<>();
-                for (EfficientDeck deckName : tempUser.getDecks()) {
-                    actualDecks.add(createDeckFromStringArray(deckName.getName(), deckName.isActive(), deckName.getMainCards(), deckName.getSideCards()));
-                }
-                ArrayList<Card> actualInactiveCards = new ArrayList<>();
-                for (String cardName : tempUser.getInactiveCards())
-                    actualInactiveCards.add(Card.getCardByName(cardName));
-                new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getAvatarID(), tempUser.getScore(),
-                        tempUser.getBalance(), actualDecks, actualInactiveCards);
+                createUserFromEffUser(tempUser);
             } catch (FileNotFoundException e) {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    public void createUserFromEffUser(EfficientUser tempUser) {
+        ArrayList<Deck> actualDecks = new ArrayList<>();
+        for (EfficientDeck deckName : tempUser.getDecks()) {
+            actualDecks.add(createDeckFromStringArray(deckName.getName(), deckName.isActive(), deckName.getMainCards(), deckName.getSideCards()));
+        }
+        ArrayList<Card> actualInactiveCards = new ArrayList<>();
+        for (String cardName : tempUser.getInactiveCards())
+            actualInactiveCards.add(Card.getCardByName(cardName));
+        new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getAvatarID(), tempUser.getScore(),
+                tempUser.getBalance(), actualDecks, actualInactiveCards);
     }
 
     private Deck createDeckFromStringArray(String deckName, boolean isActive, ArrayList<String> mainCards, ArrayList<String> sideCards) {

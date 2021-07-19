@@ -52,7 +52,7 @@ public class DatabaseController {
     }
 
     public void saveUser(User user) {
-        File userFile = new File("./src/main/resources/Users/" + user.getUsername() + ".json");
+        File userFile = new File("./Client/src/main/resources/Users/" + user.getUsername() + ".json");
         EfficientUser efficientUser = new EfficientUser(user);
         try {
             userFile.createNewFile();
@@ -71,7 +71,7 @@ public class DatabaseController {
 
     public void initializeSpellAndTrapCards() {
         try {
-            File spellAndTrapCards = new File("./src/main/resources/Cards/SpellTrap.csv");
+            File spellAndTrapCards = new File("./Client/src/main/resources/Cards/SpellTrap.csv");
             FileReader fileReader = new FileReader(spellAndTrapCards);
             CSVReader csvReader = new CSVReader(fileReader);
             csvReader.readNext();
@@ -94,7 +94,7 @@ public class DatabaseController {
 
     private void initializeMonsterCards() {
         try {
-            File monsterCards = new File("./src/main/resources/Cards/Monster.csv");
+            File monsterCards = new File("./Client/src/main/resources/Cards/Monster.csv");
             FileReader fileReader = new FileReader(monsterCards);
             CSVReader csvReader = new CSVReader(fileReader);
             csvReader.readNext();
@@ -358,7 +358,8 @@ public class DatabaseController {
                         final HandFieldArea[] selectedHand = new HandFieldArea[1];
                         for (HandFieldArea handField :
                                 Effect.gameplay.getCurrentPlayer().getPlayingHand()) {
-                            if (!(handField.getCard() instanceof Monster) || ((Monster) handField.getCard()).getLevel() > 4) continue;
+                            if (!(handField.getCard() instanceof Monster) || ((Monster) handField.getCard()).getLevel() > 4)
+                                continue;
                             Rectangle cardView = new Rectangle(70, 100, handField.getCard().getFill());
                             cardView.setOnMouseClicked(mouseEvent -> {
                                 selectedHand[0] = handField;
@@ -717,7 +718,7 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.FIEND)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 200);
                                     myField.setAttackPoint(myField.getAttackPoint() + 200);
                                 } else if (myField.getCard() != null && ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.FAIRY)) {
@@ -728,7 +729,7 @@ public class DatabaseController {
                             for (MonsterFieldArea opponentField :
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
                                 if (opponentField.getCard() != null && (((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.FIEND)
-                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
+                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() + 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 200);
                                 } else if (opponentField.getCard() != null && ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.FAIRY)) {
@@ -747,8 +748,8 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.INSECT)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 200);
                                     myField.setAttackPoint(myField.getAttackPoint() + 200);
                                 }
@@ -756,8 +757,8 @@ public class DatabaseController {
                             for (MonsterFieldArea opponentField :
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
                                 if (opponentField.getCard() != null && (((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.INSECT)
-                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST)
+                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() + 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 200);
                                 }
@@ -777,7 +778,7 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 100 * counter);
                                     myField.setAttackPoint(myField.getAttackPoint() + 100 * counter);
                                 }
@@ -849,7 +850,7 @@ public class DatabaseController {
     }
 
     private void initializeUsers() {
-        File userDirectory = new File("./src/main/resources/Users");
+        File userDirectory = new File("./Client/src/main/resources/Users");
         userDirectory.mkdir();
         if (userDirectory.listFiles() == null) return;
         for (File userFile : userDirectory.listFiles()) {
@@ -859,19 +860,24 @@ public class DatabaseController {
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 Gson gson = gsonBuilder.create();
                 EfficientUser tempUser = gson.fromJson(userJson, EfficientUser.class);
-                ArrayList<Deck> actualDecks = new ArrayList<>();
-                for (EfficientDeck deckName : tempUser.getDecks()) {
-                    actualDecks.add(createDeckFromStringArray(deckName.getName(), deckName.isActive(), deckName.getMainCards(), deckName.getSideCards()));
-                }
-                ArrayList<Card> actualInactiveCards = new ArrayList<>();
-                for (String cardName : tempUser.getInactiveCards())
-                    actualInactiveCards.add(Card.getCardByName(cardName));
-                new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getAvatarID(), tempUser.getScore(),
-                        tempUser.getBalance(), actualDecks, actualInactiveCards);
+                createUserFromEffUser(tempUser);
             } catch (FileNotFoundException e) {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    public void createUserFromEffUser(EfficientUser tempUser) {
+        System.out.println(tempUser.getAvatarID());
+        ArrayList<Deck> actualDecks = new ArrayList<>();
+        for (EfficientDeck deckName : tempUser.getDecks()) {
+            actualDecks.add(createDeckFromStringArray(deckName.getName(), deckName.isActive(), deckName.getMainCards(), deckName.getSideCards()));
+        }
+        ArrayList<Card> actualInactiveCards = new ArrayList<>();
+        for (String cardName : tempUser.getInactiveCards())
+            actualInactiveCards.add(Card.getCardByName(cardName));
+        new User(tempUser.getUsername(), tempUser.getPassword(), tempUser.getNickname(), tempUser.getAvatarID(), tempUser.getScore(),
+                tempUser.getBalance(), actualDecks, actualInactiveCards);
     }
 
     private Deck createDeckFromStringArray(String deckName, boolean isActive, ArrayList<String> mainCards, ArrayList<String> sideCards) {

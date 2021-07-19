@@ -18,10 +18,10 @@ public class User {
     private ArrayList<Card> inactiveCards = new ArrayList<>();
 
     public User(String username, String password, String nickname, String avatarID, int score, int balance, ArrayList<Deck> decks, ArrayList<Card> inactiveCards) {
-        if (avatarID == null) avatarID = "1";
         setUsername(username.trim());
         setPassword(password.trim());
         setNickname(nickname.trim());
+        setAvatarID(avatarID);
         setScore(score);
         setBalance(balance);
         setDecks(decks);
@@ -121,7 +121,6 @@ public class User {
     }
 
     public String getAvatarID() {
-        if (avatarID == null) setAvatarID("3");
         return avatarID;
     }
 
@@ -185,6 +184,7 @@ public class User {
     }
 
     public Image getProfilePicture() {
+        System.out.println("Avatar ID: " + avatarID);
         return new Image(getClass().getResource("/Avatars/Chara001.dds" + avatarID + ".png").toExternalForm());
     }
 

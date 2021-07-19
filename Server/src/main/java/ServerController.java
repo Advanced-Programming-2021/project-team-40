@@ -2,6 +2,7 @@ import Controller.*;
 import Controller.Exceptions.RepetitiveNicknameException;
 import Controller.Exceptions.RepetitiveUsernameException;
 import Controller.Exceptions.WeakPasswordException;
+import Database.EfficientUser;
 import Database.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -71,8 +72,9 @@ public class ServerController {
             }
         }
         if (user == null) return "user not found";
+        EfficientUser efficientUser = new EfficientUser(user);
         Gson gson = new GsonBuilder().create();
-        String userString = gson.toJson(user);
+        String userString = gson.toJson(efficientUser);
         return userString;
     }
 
