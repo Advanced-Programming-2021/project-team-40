@@ -68,4 +68,8 @@ public class MainMenu extends Application {
 
     public void importExport(MouseEvent mouseEvent) {
     }
+
+    public void chat() throws Exception {
+        new ChatBox().start(WelcomeMenu.stage);
+    }
 }

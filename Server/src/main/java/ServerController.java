@@ -3,6 +3,7 @@ import Controller.Exceptions.RepetitiveNicknameException;
 import Controller.Exceptions.RepetitiveUsernameException;
 import Controller.Exceptions.WeakPasswordException;
 import Database.EfficientUser;
+import Database.Message;
 import Database.User;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -51,8 +52,22 @@ public class ServerController {
         if ((matcher = Regex.getCommandMatcher(message, Regex.createUser)).matches()) return createUser(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.login)).matches()) return loginUser(matcher);
         if (!tokenIsValid(message)) return "invalid token";
-        if (message.endsWith("get user")) return getUser(message);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.sendMessage)).matches()) return sendMessage(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches()) return getMessages(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.getUser)).matches()) return getUser(matcher);
         return "";
+    }
+
+    private String getMessages(Matcher matcher) {
+        Gson gson = new GsonBuilder().create();
+        String allMessages = gson.toJson(Message.messageList);
+        return allMessages;
+    }
+
+    private String sendMessage(Matcher matcher) {
+        String message = matcher.group("message");
+
+        return null;
     }
 
     private boolean tokenIsValid(String message) {
@@ -63,10 +78,11 @@ public class ServerController {
         return false;
     }
 
-    private String getUser(String message){
+    private String getUser(Matcher matcher){
+        String requestToken = matcher.group("token");
         User user = null;
         for (String token : loggedInUsers.keySet()) {
-            if (message.startsWith(token)){
+            if (requestToken.equals(token)){
                 user = loggedInUsers.get(token);
                 break;
             }

@@ -38,8 +38,7 @@ public class DatabaseController {
     }
 
     public void saveUser(User user) {
-        //TODO send message to server instead of saving locally
-        File userFile = new File("./src/main/resources/Users/" + user.getUsername() + ".json");
+        File userFile = new File("./Server/src/main/resources/Users/" + user.getUsername() + ".json");
         EfficientUser efficientUser = new EfficientUser(user);
         try {
             userFile.createNewFile();
