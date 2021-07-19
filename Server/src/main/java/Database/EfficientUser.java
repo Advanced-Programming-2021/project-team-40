@@ -3,6 +3,7 @@ package Database;
 import Database.Cards.Card;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class EfficientUser {
     private String username;
@@ -11,6 +12,7 @@ public class EfficientUser {
     private String avatarID;
     private int score;
     private int balance;
+    private int rank = 0;
     private ArrayList<EfficientDeck> decks = new ArrayList<>();
     private ArrayList<String> inactiveCards = new ArrayList<>();
 
@@ -23,6 +25,21 @@ public class EfficientUser {
         setDecks(user.getDecks());
         setInactiveCards(user.getInactiveCards());
         setAvatarID(user.getAvatarID());
+    }
+
+    public static void updateRanks(ArrayList<EfficientUser> listToRank) {
+        listToRank.sort(new Comparator<EfficientUser>() {
+            @Override
+            public int compare(EfficientUser o1, EfficientUser o2) {
+                return o2.getScore() - o1.getScore();
+            }
+        });
+        listToRank.get(0).setRank(1);
+        for (int i = 1; i < listToRank.size(); i++) {
+            if (listToRank.get(i).getScore() < listToRank.get(i - 1).getScore()) {
+                listToRank.get(i).setRank(i + 1);
+            } else listToRank.get(i).setRank(listToRank.get(i - 1).getRank());
+        }
     }
 
     public String getNickname() {
@@ -71,6 +88,14 @@ public class EfficientUser {
 
     public void setBalance(int balance) {
         this.balance = balance;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    public int getRank() {
+        return rank;
     }
 
     public ArrayList<EfficientDeck> getDecks() {

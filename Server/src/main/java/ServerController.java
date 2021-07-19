@@ -54,10 +54,10 @@ public class ServerController {
         if (!tokenIsValid(message)) return "invalid token";
         else if ((matcher = Regex.getCommandMatcher(message, Regex.sendMessage)).matches()) return sendMessage(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches())
-            return getMessages(matcher);
+            return getMessages();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestEfficientUsers)).matches())
             return requestEfficientUsers(matcher);
-        else if ((matcher = Regex.getCommandMatcher(message, Regex.getUser)).matches()) return getUser(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.getUser)).matches()) return requestUser(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.prevAvatar)).matches())
             return changeAvatar(matcher, -1);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.nextAvatar)).matches())
@@ -109,8 +109,7 @@ public class ServerController {
         new Message("A","Kir mikhori?");
         new Message("B","Aghaye dildo");
         Gson gson = new GsonBuilder().create();
-        String allMessages = gson.toJson(Message.messageList);
-        return allMessages;
+        return gson.toJson(Message.messageList);
     }
 
     private String requestEfficientUsers(Matcher matcher) {
@@ -119,8 +118,7 @@ public class ServerController {
         for (User user : User.getUsers()) {
             allEfficientUsers.add(new EfficientUser(user));
         }
-        String allUsers = gson.toJson(allEfficientUsers);
-        return allUsers;
+        return gson.toJson(allEfficientUsers);
     }
 
     private String sendMessage(Matcher matcher) {
@@ -139,14 +137,6 @@ public class ServerController {
         return false;
     }
 
-    private User getUserByToken(String requestToken) {
-        for (String token : loggedInUsers.keySet()) {
-            if (requestToken.equals(token)){
-                return loggedInUsers.get(token);
-            }
-        }
-        return null;
-    }
 
     private String requestUser(Matcher matcher){
         String requestToken = matcher.group("token");
@@ -155,8 +145,7 @@ public class ServerController {
         if (user == null) return "user not found";
         EfficientUser efficientUser = new EfficientUser(user);
         Gson gson = new GsonBuilder().create();
-        String userString = gson.toJson(efficientUser);
-        return userString;
+        return gson.toJson(efficientUser);
     }
 
     private String loginUser(Matcher matcher) {
