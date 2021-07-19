@@ -13,7 +13,7 @@
     <VBox>
         <HBox alignment="TOP_CENTER">
             <Button alignment="TOP_LEFT" text="BACK" onMouseClicked="#back"/>
-            <Label fx:id="pinnedMessage"/>
+            <Label fx:id="pinnedMessageLabel"/>
         </HBox>
         <ScrollPane fx:id="chatBox" layoutY="40" layoutX="30" prefHeight="350" prefWidth="600"/>
         <HBox alignment="BOTTOM_CENTER">

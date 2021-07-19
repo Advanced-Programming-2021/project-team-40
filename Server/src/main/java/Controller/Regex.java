@@ -18,7 +18,8 @@ public class Regex {
     public static String logout = "^user logout$";
     public static String showScoreboard = "^scoreboard show$";
     public static String changeNickname = "^profile change (?:--nickname|-n) (?<nickname>.+?)$";
-    public static String changePassword = "^profile change(?=.* --current|.* --c)(?=.* --password|.* -p)(?=.* --new|.* -n)" +
+
+    public static String changePassword = "^profile change(?=.* --current|.* -c)(?=.* --password|.* -p)(?=.* --new|.* -n)" +
             "(?: (?:--password|-p)(?!.*?--password)|" +
             " (?:--current|-c) (?<currentPass>.+?)(?!.*?--current|.*?-c)|" +
             " (?:--new|-n) (?<newPass>.+?)(?!.*?--new|.*?-n)){3}$";
@@ -87,9 +88,12 @@ public class Regex {
     public static String back = "^back$";
     public static String help = "^help$";
     public static String cancelAction = "^cancel$";
-    public static String sendMessage = "^(?<token>[A-Za-z0-9-]+) send message -m (?<message>.+)$";
+    public static String sendMessage = "^(?<token>[A-Za-z0-9-]+) send message -m (?<message>.+?)$";
     public static String requestMessages = "^(?<token>[A-Za-z0-9-]+) request messages$";
     public static String getUser = "^(?<token>[A-Za-z0-9-]+) get user$";
+    public static String pinMessage = "^(?<token>[A-Za-z0-9-]+) pin message -id (?<id>.+?)$";
+    public static String editMessage = "^(?<token>[A-Za-z0-9-]+) -r (?<replace>.+?) -id (?<id>.+?)$";
+    public static String deleteMessage = "^(?<token>[A-Za-z0-9-]+) delete message -id (?<id>.+?)$";
 
     public static Matcher getCommandMatcher(String command, String regex) {
         Pattern pattern = Pattern.compile(regex);

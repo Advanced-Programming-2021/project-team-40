@@ -1,4 +1,5 @@
-import Controller.*;
+import Controller.LoginController;
+import Controller.Regex;
 import Database.EfficientUser;
 import Database.Message;
 import Database.User;
@@ -52,22 +53,67 @@ public class ServerController {
         else if ((matcher = Regex.getCommandMatcher(message, Regex.sendMessage)).matches()) return sendMessage(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches()) return getMessages();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.getUser)).matches()) return requestUser(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.pinMessage)).matches()) return pinMessage(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.editMessage)).matches()) return editMessage(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.deleteMessage)).matches())
+            return deleteMessage(matcher);
         return "";
     }
 
-    private String getMessages() {
-        new Message("A","Kir mikhori?");
-        new Message("B","Aghaye dildo");
-        Gson gson = new GsonBuilder().create();
-        String allMessages = gson.toJson(Message.messageList);
-        return allMessages;
+    private String deleteMessage(Matcher matcher) {
+        int id;
+        try {
+            id = Integer.parseInt(matcher.group("id"));
+        } catch (Exception e) {
+            return "FAILED";
+        }
+        Message toDelete = Message.messageList.get(id);
+        User currentUser = getUserByToken(matcher.group("token"));
+        if (currentUser == null) return "ERROR token invalid for some reason";
+        if (!currentUser.getUsername().equals(toDelete.getSenderUserName()))
+            return "ERROR You Can't Delete This Message!";
+        if (Message.pinnedMessage == toDelete) Message.pinnedMessage = null;
+        Message.messageList.remove(toDelete);
+        return "SUCCESS";
     }
 
-    private String sendMessage(Matcher matcher) {
+    private String editMessage(Matcher matcher) {
+        String replace = matcher.group("replace");
+        int id;
+        try {
+            id = Integer.parseInt(matcher.group("id"));
+        } catch (Exception e) {
+            return "FAILED";
+        }
+        Message toEdit = Message.messageList.get(id);
+        User currentUser = getUserByToken(matcher.group("token"));
+        if (currentUser == null) return "ERROR token invalid for some reason";
+        if (!currentUser.getUsername().equals(toEdit.getSenderUserName())) return "ERROR You Can't Edit This Message!";
+        toEdit.setContent(replace);
+        return "SUCCESS";
+    }
+
+    private synchronized String pinMessage(Matcher matcher) {
+        int id;
+        try {
+            id = Integer.parseInt(matcher.group("id"));
+        } catch (Exception e) {
+            return "FAILED";
+        }
+        Message.pinnedMessage = Message.messageList.get(id);
+        return "SUCCESS";
+    }
+
+    private String getMessages() {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(Message.messageList);
+    }
+
+    private synchronized String sendMessage(Matcher matcher) {
         String message = matcher.group("message");
         User currentUser = getUserByToken(matcher.group("token"));
         if (currentUser == null) return "ERROR";
-        new Message(currentUser.getUsername(),message);
+        new Message(currentUser.getUsername(), message);
         return "SUCCESS";
     }
 
@@ -81,14 +127,14 @@ public class ServerController {
 
     private User getUserByToken(String requestToken) {
         for (String token : loggedInUsers.keySet()) {
-            if (requestToken.equals(token)){
+            if (requestToken.equals(token)) {
                 return loggedInUsers.get(token);
             }
         }
         return null;
     }
 
-    private String requestUser(Matcher matcher){
+    private String requestUser(Matcher matcher) {
         String requestToken = matcher.group("token");
         User user;
         user = getUserByToken(requestToken);
