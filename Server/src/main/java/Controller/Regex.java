@@ -87,6 +87,9 @@ public class Regex {
     public static String back = "^back$";
     public static String help = "^help$";
     public static String cancelAction = "^cancel$";
+    public static String sendMessage = "^(?<token>[A-Za-z0-9-]+) send message -m (?<message>.+)$";
+    public static String requestMessages = "^(?<token>[A-Za-z0-9-]+) request messages$";
+    public static String getUser = "^(?<token>[A-Za-z0-9-]+) get user$";
 
     public static Matcher getCommandMatcher(String command, String regex) {
         Pattern pattern = Pattern.compile(regex);

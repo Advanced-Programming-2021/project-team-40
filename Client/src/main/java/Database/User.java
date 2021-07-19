@@ -2,11 +2,13 @@ package Database;
 
 import Database.Cards.Card;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 import java.util.*;
 
 public class User {
     public static ArrayList<User> users = new ArrayList<>();
+    private HashMap<String, Color> randomColorToShowUser = new HashMap<>();
     private String username;
     private String password;
     private String nickname;
@@ -67,6 +69,22 @@ public class User {
 
     public static void clearUsers() {
         users.clear();
+    }
+
+    public HashMap<String, Color> getRandomColorToShowUser() {
+        return randomColorToShowUser;
+    }
+
+    public void setRandomColorToShowUser() {
+        if (!getRandomColorToShowUser().isEmpty()) return;
+        for (Message message:
+                Message.messageList) {
+            if (getRandomColorToShowUser().containsKey(message.getSenderUserName())) continue;
+            Color color;
+            //TODO must not match with the background color
+            color = Color.color((1 + Math.random()) / 2,(1 + Math.random()) / 2,(1 + Math.random()) / 2);
+            getRandomColorToShowUser().put(message.getSenderUserName(),color);
+        }
     }
 
     public HashMap<String, Integer> getCardHashMap() {

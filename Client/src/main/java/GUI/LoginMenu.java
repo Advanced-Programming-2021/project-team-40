@@ -39,7 +39,7 @@ public class LoginMenu extends Application implements AlertFunction {
             if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(5));
             else
                 new MainMenu(serverMessage).start(WelcomeMenu.stage);
-        } catch (InvalidLoginException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
             showAlert(e.getMessage(), Alert.AlertType.ERROR);
         }

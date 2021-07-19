@@ -22,6 +22,7 @@
         <Button text="Shop" onMouseClicked="#shop" prefHeight="50" prefWidth="150"/>
         <Button text="Import/Export" onMouseClicked="#importExport" prefHeight="50" prefWidth="150"/>
         <Button text="Logout" onMouseClicked="#logout" prefHeight="50" prefWidth="150"/>
+        <Button text="Chat" onMouseClicked="#chat" prefHeight="50" prefWidth="150"/>
     </VBox>
 
     <stylesheets>
