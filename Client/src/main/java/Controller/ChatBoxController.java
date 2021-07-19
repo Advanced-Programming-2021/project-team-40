@@ -2,7 +2,12 @@ package Controller;
 
 import Database.Message;
 import Database.User;
+import GUI.MainMenu;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChatBoxController {
@@ -32,8 +37,11 @@ public class ChatBoxController {
     }
 
     public List<Message> requestMessages() {
-        String serverMessage = ClientController.sendMessage("request messages");
-        //TODO
-        return null;
+        String serverMessage = ClientController.sendMessage(MainMenu.userToken + " request messages");
+        Type messageList = new TypeToken<List<Message>>() {}.getType();
+        Gson gson = new Gson();
+        List<Message> output = gson.fromJson(serverMessage,messageList);
+        System.out.println(output);
+        return output;
     }
 }

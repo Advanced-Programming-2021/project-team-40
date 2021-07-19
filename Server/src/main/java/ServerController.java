@@ -105,7 +105,9 @@ public class ServerController {
         return "SUCCESS";
     }
 
-    private String getMessages(Matcher matcher) {
+    private String getMessages() {
+        new Message("A","Kir mikhori?");
+        new Message("B","Aghaye dildo");
         Gson gson = new GsonBuilder().create();
         String allMessages = gson.toJson(Message.messageList);
         return allMessages;
@@ -123,8 +125,10 @@ public class ServerController {
 
     private String sendMessage(Matcher matcher) {
         String message = matcher.group("message");
-
-        return null;
+        User currentUser = getUserByToken(matcher.group("token"));
+        if (currentUser == null) return "ERROR";
+        new Message(currentUser.getUsername(),message);
+        return "SUCCESS";
     }
 
     private boolean tokenIsValid(String message) {
@@ -135,16 +139,20 @@ public class ServerController {
         return false;
     }
 
-    private String getUser(Matcher matcher) {
-        String requestToken = matcher.group("token");
-        User user = null;
+    private User getUserByToken(String requestToken) {
         for (String token : loggedInUsers.keySet()) {
-            if (requestToken.equals(token)) {
-                user = loggedInUsers.get(token);
-                break;
+            if (requestToken.equals(token)){
+                return loggedInUsers.get(token);
             }
         }
-        if (user == null) return "ERROR user not found";
+        return null;
+    }
+
+    private String requestUser(Matcher matcher){
+        String requestToken = matcher.group("token");
+        User user;
+        user = getUserByToken(requestToken);
+        if (user == null) return "user not found";
         EfficientUser efficientUser = new EfficientUser(user);
         Gson gson = new GsonBuilder().create();
         String userString = gson.toJson(efficientUser);
