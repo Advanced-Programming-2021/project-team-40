@@ -1,5 +1,6 @@
 package Controller.DatabaseController;
 
+import Controller.ShopController;
 import Database.*;
 import Database.Cards.*;
 import com.google.gson.Gson;
@@ -10,6 +11,7 @@ import com.opencsv.CSVReader;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -160,6 +162,8 @@ public class DatabaseController {
     }
 
     private void initializeChat() {
+        File chatFolder = new File("./Server/src/main/resources/Chat");
+        chatFolder.mkdir();
         File chatFile = new File("./Server/src/main/resources/Chat/Chat.json");
         try {
             Scanner fileScanner = new Scanner(chatFile);

@@ -1,5 +1,6 @@
 package Controller;
 
+import Controller.DatabaseController.DatabaseController;
 import Controller.Exceptions.*;
 import Controller.Exceptions.InvalidPasswordException;
 import Controller.Exceptions.RepetitiveNicknameException;
