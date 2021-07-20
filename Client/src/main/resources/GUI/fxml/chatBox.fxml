@@ -9,17 +9,17 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="GUI.ChatBox"
-            prefHeight="600.0" prefWidth="750.0">
+            prefHeight="600.0" prefWidth="500.0">
     <VBox>
         <HBox alignment="TOP_CENTER">
-            <Button alignment="TOP_LEFT" text="BACK" onMouseClicked="#back"/>
-            <Label fx:id="pinnedMessageLabel"/>
+            <Button alignment="TOP_LEFT" text="BACK" onMouseClicked="#back" textAlignment="JUSTIFY"/>
+            <Label fx:id="pinnedMessageLabel" alignment="CENTER" prefWidth="420"/>
         </HBox>
-        <ScrollPane fx:id="chatScrollPane" layoutY="40" layoutX="30" prefHeight="350" prefWidth="600">
+        <ScrollPane fx:id="chatScrollPane"  onMouseEntered="#updateEverything" onKeyPressed="#updateEverything" layoutY="40" layoutX="30" vbarPolicy="NEVER" hbarPolicy="NEVER" pannable="true" prefHeight="500" prefWidth="500">
             <VBox fx:id="chatVBox" spacing="5"/>
         </ScrollPane>
         <HBox alignment="BOTTOM_CENTER">
-            <TextField fx:id="messageToSend" text="Message" prefWidth="300"/>
+            <TextField fx:id="messageToSend" prefWidth="300"/>
             <Button text="SEND" prefWidth="50" onMouseClicked="#sendMessage"/>
         </HBox>
     </VBox>

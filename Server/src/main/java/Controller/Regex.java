@@ -90,6 +90,7 @@ public class Regex {
     public static String sendMessage = "^(?<token>[A-Za-z0-9-]+) send message -m (?<message>.+?)$";
     public static String requestMessages = "^(?<token>[A-Za-z0-9-]+) request messages$";
     public static String requestPinnedMessage = "^(?<token>[A-Za-z0-9-]+) request pinned message$";
+    public static String requestUserSummary = "^(?<token>[A-Za-z0-9-]+) request user summary -u (?<username>.+?)$";
     public static String requestEfficientUsers = "^(?<token>[A-Za-z0-9-]+) request efficient users$";
     public static String getUser = "^(?<token>[A-Za-z0-9-]+) get user$";
     public static String prevAvatar = "^(?<token>[A-Za-z0-9-]+) prev avatar$";

@@ -5,22 +5,28 @@ import java.util.Date;
 import java.util.List;
 
 public class Message {
-    //TODO load from Json in server and save on Exit
     public static Message pinnedMessage;
-    public static List<Message> messageList = new ArrayList<>();//TODO in server
-    private static int idCounter = 0;
+    public static List<Message> messageList = new ArrayList<>();
     private int id;
     private String content;
     private String senderUserName;
     private Date date;
-
-    public Message(String sender,String message) {
+    public Message(String sender, String message) {
         this.senderUserName = sender;
         this.content = message;
-        id = idCounter;
-        idCounter++;
+        id = getGreatestId();
         date = new Date(System.currentTimeMillis());
         messageList.add(this);
+    }
+
+    private static int getGreatestId() {
+        int i = -1;
+        for (Message message :
+                messageList) {
+            if (message.getId() > i) i = message.getId();
+        }
+        i++;
+        return i;
     }
 
     public static Message getMessageById(int id) {
@@ -30,17 +36,17 @@ public class Message {
         }
         return null;
     }
-    public void setContent(String content) {
-        this.content = content;
-    }
 
     public String getSenderUserName() {
         return senderUserName;
     }
 
-
     public String getContent() {
         return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public Date getDate() {
