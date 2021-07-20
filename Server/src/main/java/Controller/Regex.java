@@ -31,6 +31,8 @@ public class Regex {
     public static String requestPinnedMessage = "^(?<token>[A-Za-z0-9-]+) request pinned message$";
     public static String requestUserSummary = "^(?<token>[A-Za-z0-9-]+) request user summary -u (?<username>.+?)$";
     public static String requestEfficientUsers = "^(?<token>[A-Za-z0-9-]+) request efficient users$";
+    public static String requestOnlineCount = "^(?<token>[A-Za-z0-9-]+) request online count$";
+
     public static String requestCardStock = "^(?<token>[A-Za-z0-9-]+) request card stock";
     public static String requestUnavailableCards = "^(?<token>[A-Za-z0-9-]+) request unavailable cards";
 

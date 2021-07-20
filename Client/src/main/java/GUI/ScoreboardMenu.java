@@ -67,13 +67,14 @@ public class ScoreboardMenu extends Application {
                 while (!stopRefresh) {
                     int i = 0;
                     for (EfficientUser user : getEfficientUsers()) {
-                        table.getItems().remove(i);
+                        if (table.getItems().size() > i) table.getItems().remove(i);
                         table.getItems().add(i, user);
                         i++;
                     }
                     table.sort();
                     try {
                         Thread.sleep(1000);
+                        System.out.println(ClientController.sendMessage(MainMenu.userToken + " request online count"));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

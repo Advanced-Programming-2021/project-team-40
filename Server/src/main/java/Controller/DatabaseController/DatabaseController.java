@@ -265,25 +265,4 @@ public class DatabaseController {
         return deck;
     }
 
-    public void saveAllUsers() {
-        for (User user : User.getUsers()) {
-            saveUser(user);
-        }
-    }
-
-    public void saveCardStock(HashMap<String, Integer> stock) {
-        File stockFile = new File("./Server/src/main/resources/Cards/cardStock.json");
-        try {
-            stockFile.createNewFile();
-            Gson gson = new GsonBuilder().create();
-            String writeToFile = gson.toJson(stock);
-            FileWriter fw = new FileWriter(stockFile);
-            BufferedWriter out = new BufferedWriter(fw);
-            out.write(writeToFile);
-            out.close();
-            fw.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-    }
 }

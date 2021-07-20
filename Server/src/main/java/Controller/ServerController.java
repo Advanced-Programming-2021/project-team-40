@@ -78,6 +78,8 @@ public class ServerController {
             return getPinnedMessage();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestEfficientUsers)).matches())
             return requestEfficientUsers(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestOnlineCount)).matches())
+            return requestOnlineCount();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestCardStock)).matches())
             return requestCardStock();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestUnavailableCards)).matches())
@@ -274,6 +276,16 @@ public class ServerController {
     private String getMessages() {
         Gson gson = new GsonBuilder().create();
         return gson.toJson(Message.messageList);
+    }
+
+    private String requestOnlineCount() {
+        ArrayList<User > countedUsers = new ArrayList<>();
+        for (String token : loggedInUsers.keySet()) {
+            if (!countedUsers.contains(loggedInUsers.get(token))){
+                countedUsers.add(loggedInUsers.get(token));
+            }
+        }
+        return String.valueOf(countedUsers.size());
     }
 
     private synchronized String sendMessage(Matcher matcher) {
