@@ -2,7 +2,7 @@
 *.class
 
 #System based users
-src/main/resources/Users/*.json
+*.json
 
 # Log file
 *.log
