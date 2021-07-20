@@ -18,12 +18,12 @@ public class User {
     private ArrayList<Card> inactiveCards = new ArrayList<>();
 
     public User(String username, String password, String nickname, String avatarID, int score, int balance, ArrayList<Deck> decks, ArrayList<Card> inactiveCards) {
-        if (avatarID == null) avatarID = "1";
         setUsername(username.trim());
         setPassword(password.trim());
         setNickname(nickname.trim());
         setScore(score);
         setBalance(balance);
+        setAvatarID(avatarID);
         setDecks(decks);
         this.inactiveCards = inactiveCards;
         users.add(this);
@@ -121,7 +121,6 @@ public class User {
     }
 
     public String getAvatarID() {
-        if (avatarID == null) setAvatarID("3");
         return avatarID;
     }
 
