@@ -8,6 +8,7 @@ public class Message {
     //TODO load from Json in server and save on Exit
     public static Message pinnedMessage;
     public static List<Message> messageList = new ArrayList<>();//TODO in server
+    private static int idCounter = 0;
     private int id;
     private String content;
     private String senderUserName;
@@ -16,11 +17,19 @@ public class Message {
     public Message(String sender,String message) {
         this.senderUserName = sender;
         this.content = message;
-        id = messageList.size();
+        id = idCounter;
+        idCounter++;
         date = new Date(System.currentTimeMillis());
         messageList.add(this);
     }
 
+    public static Message getMessageById(int id) {
+        for (Message message :
+                messageList) {
+            if (message.getId() == id) return message;
+        }
+        return null;
+    }
     public void setContent(String content) {
         this.content = content;
     }

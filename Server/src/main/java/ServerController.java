@@ -1,3 +1,4 @@
+import Controller.DatabaseController.DatabaseController;
 import Controller.LoginController;
 import Controller.Regex;
 import Database.EfficientUser;
@@ -52,12 +53,20 @@ public class ServerController {
         if (!tokenIsValid(message)) return "invalid token";
         else if ((matcher = Regex.getCommandMatcher(message, Regex.sendMessage)).matches()) return sendMessage(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches()) return getMessages();
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestPinnedMessage)).matches())
+            return getPinnedMessage();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.getUser)).matches()) return requestUser(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.pinMessage)).matches()) return pinMessage(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.editMessage)).matches()) return editMessage(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.deleteMessage)).matches())
             return deleteMessage(matcher);
         return "";
+    }
+
+    private String getPinnedMessage() {
+        Gson gson = new GsonBuilder().create();
+        System.out.println(gson.toJson(Message.pinnedMessage));
+        return gson.toJson(Message.pinnedMessage);
     }
 
     private String deleteMessage(Matcher matcher) {
@@ -67,13 +76,15 @@ public class ServerController {
         } catch (Exception e) {
             return "FAILED";
         }
-        Message toDelete = Message.messageList.get(id);
+        Message toDelete = Message.getMessageById(id);
         User currentUser = getUserByToken(matcher.group("token"));
+        if (toDelete == null) return "ERROR invalid id for some reason";
         if (currentUser == null) return "ERROR token invalid for some reason";
         if (!currentUser.getUsername().equals(toDelete.getSenderUserName()))
             return "ERROR You Can't Delete This Message!";
         if (Message.pinnedMessage == toDelete) Message.pinnedMessage = null;
         Message.messageList.remove(toDelete);
+        DatabaseController.getInstance().saveChat();
         return "SUCCESS";
     }
 
@@ -85,11 +96,15 @@ public class ServerController {
         } catch (Exception e) {
             return "FAILED";
         }
-        Message toEdit = Message.messageList.get(id);
+        System.out.println("KIRRRR");
+        Message toEdit = Message.getMessageById(id);
         User currentUser = getUserByToken(matcher.group("token"));
+        if (toEdit == null) return "ERROR invalid id for some reason";
         if (currentUser == null) return "ERROR token invalid for some reason";
         if (!currentUser.getUsername().equals(toEdit.getSenderUserName())) return "ERROR You Can't Edit This Message!";
         toEdit.setContent(replace);
+        DatabaseController.getInstance().saveChat();
+        System.out.println("KIRRRR2");
         return "SUCCESS";
     }
 
@@ -100,7 +115,9 @@ public class ServerController {
         } catch (Exception e) {
             return "FAILED";
         }
-        Message.pinnedMessage = Message.messageList.get(id);
+        Message toPin = Message.getMessageById(id);
+        if (toPin == null) return "ERROR invalid id";
+        Message.pinnedMessage = toPin;
         return "SUCCESS";
     }
 
@@ -114,6 +131,7 @@ public class ServerController {
         User currentUser = getUserByToken(matcher.group("token"));
         if (currentUser == null) return "ERROR";
         new Message(currentUser.getUsername(), message);
+        DatabaseController.getInstance().saveChat();
         return "SUCCESS";
     }
 

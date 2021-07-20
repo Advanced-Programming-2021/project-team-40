@@ -1,6 +1,11 @@
 package GUI;
 
+import Controller.ClientController;
+import Database.EfficientUser;
+import Database.Message;
 import Database.User;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,9 +18,11 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 public class ScoreboardMenu extends Application {
 
@@ -47,11 +54,20 @@ public class ScoreboardMenu extends Application {
         rankColumn.setSortable(false);
         table.getColumns().addAll(rankColumn, nameColumn, scoreColumn);
         table.getSortOrder().add(rankColumn);
+        table.getSortOrder().add(nameColumn);
         table.setEditable(false);
-        for (User user : User.getUsers()) {
+        for (EfficientUser user : getEfficientUsers()) {
             table.getItems().add(user);
         }
         table.sort();
+    }
+
+    private ArrayList<EfficientUser> getEfficientUsers() {
+        String serverMessage = ClientController.sendMessage(MainMenu.userToken + " request efficient users");
+        Type efficientUserList = new TypeToken<ArrayList<EfficientUser>>() {}.getType();
+        Gson gson = new Gson();
+        ArrayList<EfficientUser> actualList = gson.fromJson(serverMessage,efficientUserList);
+        return actualList;
     }
 
     public void back(MouseEvent mouseEvent) throws Exception {

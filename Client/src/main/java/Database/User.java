@@ -83,7 +83,12 @@ public class User {
         for (Message message :
                 messageList) {
             if (getRandomColorToShowUser().containsKey(message.getSenderUserName())) continue;
-            Color color = Color.color((1 + Math.random()) / 2, (1 + Math.random()) / 2, (1 + Math.random()) / 2);
+            Color color;
+            while (true) {
+                color = Color.color((1 + Math.random()) / 2, (1 + Math.random()) / 2, (1 + Math.random()) / 2);
+                if (color.getBlue() > 0.95 && color.getRed() > 0.95 && color.getGreen() > 0.95) continue;
+                break;
+            }
             getRandomColorToShowUser().put(message.getSenderUserName(), color);
         }
     }

@@ -22,8 +22,9 @@ import java.util.Optional;
 
 public class ChatBox extends Application implements AlertFunction {
     public Label pinnedMessageLabel;
-    public ScrollPane chatBox;
+    public ScrollPane chatScrollPane;
     public TextField messageToSend;
+    public VBox chatVBox;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -38,11 +39,90 @@ public class ChatBox extends Application implements AlertFunction {
         Message pinnedMessage = ChatBoxController.getInstance().requestPinnedMessage();
         List<Message> messageList = ChatBoxController.getInstance().requestMessages();
         User loggedUser = MainMenu.currentUser;
-        VBox chatVBox = new VBox(5);
         pinnedMessageLabel.setAlignment(Pos.CENTER);
         pinnedMessageLabel.setPrefWidth(500);
         pinnedMessageLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, new CornerRadii(5), null)));
+        refreshPinLabel(pinnedMessage);
+        refreshChatVBox(messageList, loggedUser);
+        chatScrollPane.setPrefHeight(600);
+        chatScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        chatScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        chatScrollPane.setPannable(true);
+        chatScrollPane.setContent(chatVBox);
+    }
+
+    private void refreshPinLabel(Message pinnedMessage) {
         if (pinnedMessage != null) pinnedMessageLabel.setText(pinnedMessage.getContent());
+    }
+
+    private ContextMenu getContextMenu(Message message) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem edit = new MenuItem("Edit");
+        MenuItem pin = new MenuItem("Pin");
+        MenuItem delete = new MenuItem("Delete");
+        edit.setOnAction(actionEvent -> {
+            TextInputDialog dialog = new TextInputDialog(message.getContent());
+            dialog.setTitle("Edit Your Message");
+            dialog.setContentText("type your new Message:");
+            Optional<String> result = dialog.showAndWait();
+            String editedMessage;
+            if (result.isPresent()) {
+                editedMessage = result.get();
+                try {
+                    ChatBoxController.getInstance().editMessage(editedMessage, message);
+                    updateChatBox();
+                } catch (Exception e) {
+                    showAlert(e.getMessage(), Alert.AlertType.ERROR);
+                }
+            }
+        });
+        pin.setOnAction(actionEvent -> {
+            try {
+                ChatBoxController.getInstance().pinMessage(message);
+                updatePinLabel();
+            } catch (Exception e) {
+                showAlert(e.getMessage(), Alert.AlertType.ERROR);
+            }
+        });
+        delete.setOnAction(actionEvent -> {
+            try {
+                ChatBoxController.getInstance().deleteMessage(message);
+                updateChatBox();
+            } catch (Exception e) {
+                showAlert(e.getMessage(), Alert.AlertType.ERROR);
+            }
+        });
+        contextMenu.getItems().addAll(pin, edit, delete);
+        return contextMenu;
+    }
+
+    public void back() throws Exception {
+        new MainMenu().start(WelcomeMenu.stage);
+    }
+
+    public void sendMessage() {
+        if (messageToSend.getText().equals("")) return;
+        try {
+            ChatBoxController.getInstance().sendMessage(messageToSend.getText());
+            updateChatBox();
+            messageToSend.setText("");
+        } catch (Exception e) {
+            showAlert(e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    private void updateChatBox() {
+        List<Message> messageList = ChatBoxController.getInstance().requestMessages();
+        chatVBox = new VBox(5);
+        refreshChatVBox(messageList, MainMenu.currentUser);
+        chatScrollPane.setContent(chatVBox);
+    }
+
+    private void updatePinLabel() {
+        Message pinnedMessage = ChatBoxController.getInstance().requestPinnedMessage();
+        refreshPinLabel(pinnedMessage);
+    }
+    private void refreshChatVBox(List<Message> messageList, User loggedUser) {
         messageList.sort(Comparator.comparing(Message::getDate));
         loggedUser.setRandomColorToShowUser(messageList);
         for (Message message :
@@ -75,59 +155,6 @@ public class ChatBox extends Application implements AlertFunction {
             }
             chatVBox.getChildren().add(hBox);
         }
-        chatBox.setPrefHeight(600);
-        chatBox.setContent(chatVBox);
-        chatBox.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        chatBox.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        chatBox.setPannable(true);
-        chatBox.setContent(chatVBox);
-    }
-
-    private ContextMenu getContextMenu(Message message) {
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem edit = new MenuItem("Edit");
-        MenuItem pin = new MenuItem("Pin");
-        MenuItem delete = new MenuItem("Delete");
-        edit.setOnAction(actionEvent -> {
-            TextInputDialog dialog = new TextInputDialog(message.getContent());
-            dialog.setTitle("Edit Your Message");
-            dialog.setContentText("type your new Message:");
-            Optional<String> result = dialog.showAndWait();
-            String editedMessage;
-            if (result.isPresent()) {
-                editedMessage = result.get();
-                try {
-                    ChatBoxController.getInstance().editMessage(editedMessage, message);
-                } catch (Exception e) {
-                    showAlert(e.getMessage(), Alert.AlertType.ERROR);
-                }
-            }
-        });
-        pin.setOnAction(actionEvent -> {
-            try {
-                ChatBoxController.getInstance().pinMessage(message);
-            } catch (Exception e) {
-                showAlert(e.getMessage(), Alert.AlertType.ERROR);
-            }
-        });
-        delete.setOnAction(actionEvent -> {
-            try {
-                ChatBoxController.getInstance().deleteMessage(message);
-            } catch (Exception e) {
-                showAlert(e.getMessage(), Alert.AlertType.ERROR);
-            }
-        });
-        contextMenu.getItems().addAll(pin, edit, delete);
-        return contextMenu;
-    }
-
-    public void back() throws Exception {
-        new MainMenu().start(WelcomeMenu.stage);
-    }
-
-    public void sendMessage() {
-        if (messageToSend.getText().equals("")) return;
-        ChatBoxController.getInstance().sendMessage(messageToSend.getText());
     }
 
     @Override

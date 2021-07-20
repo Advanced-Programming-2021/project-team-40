@@ -90,9 +90,10 @@ public class Regex {
     public static String cancelAction = "^cancel$";
     public static String sendMessage = "^(?<token>[A-Za-z0-9-]+) send message -m (?<message>.+?)$";
     public static String requestMessages = "^(?<token>[A-Za-z0-9-]+) request messages$";
+    public static String requestPinnedMessage = "^(?<token>[A-Za-z0-9-]+) request pinned message$";
     public static String getUser = "^(?<token>[A-Za-z0-9-]+) get user$";
     public static String pinMessage = "^(?<token>[A-Za-z0-9-]+) pin message -id (?<id>.+?)$";
-    public static String editMessage = "^(?<token>[A-Za-z0-9-]+) -r (?<replace>.+?) -id (?<id>.+?)$";
+    public static String editMessage = "^(?<token>[A-Za-z0-9-]+) edit message -r (?<replace>.+?) -id (?<id>.+?)$";
     public static String deleteMessage = "^(?<token>[A-Za-z0-9-]+) delete message -id (?<id>.+?)$";
 
     public static Matcher getCommandMatcher(String command, String regex) {

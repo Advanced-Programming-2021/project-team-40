@@ -36,7 +36,7 @@ public class LoginMenu extends Application implements AlertFunction {
         try {
             String serverMessage = ClientController.sendMessage("user login -u " + username + " -p " + password);
             if (serverMessage.isEmpty()) throw new Exception("SERVER RESPONSE NULL");
-            if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(5));
+            if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
             else
                 new MainMenu(serverMessage).start(WelcomeMenu.stage);
         } catch (Exception e) {
