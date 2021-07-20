@@ -1,5 +1,6 @@
 package Controller.DatabaseController;
 
+import Controller.ShopController;
 import Database.Cards.*;
 import Database.Deck;
 import Database.EfficientDeck;
@@ -8,13 +9,11 @@ import Database.User;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVReader;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 
 public class DatabaseController {
@@ -35,6 +34,7 @@ public class DatabaseController {
         initializeMonsterCards();
         initializeSpellAndTrapCards();
         initializeUsers();
+        ShopController.initializeCardData();
     }
 
     public void saveUser(User user) {
@@ -185,6 +185,39 @@ public class DatabaseController {
     public void saveAllUsers() {
         for (User user : User.getUsers()) {
             saveUser(user);
+        }
+    }
+
+    public HashMap<String, Integer> getCardStock() {
+        File cardStockFile = new File("./Server/src/main/resources/Cards/cardStock.json");
+        try {
+            Scanner fileScanner = new Scanner(cardStockFile);
+            String cardStockJson = fileScanner.nextLine();
+            System.out.println(cardStockJson);
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            Gson gson = gsonBuilder.create();
+            return gson.fromJson(cardStockJson, new TypeToken<HashMap<String, Integer>>() {
+            }.getType());
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public void saveCardStock(HashMap<String, Integer> stock) {
+        File stockFile = new File("./Server/src/main/resources/Cards/cardStock.json");
+        try {
+            stockFile.createNewFile();
+            Gson gson = new GsonBuilder().create();
+            String writeToFile = gson.toJson(stock);
+            FileWriter fw = new FileWriter(stockFile);
+            BufferedWriter out = new BufferedWriter(fw);
+            out.write(writeToFile);
+            out.close();
+            fw.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 }
