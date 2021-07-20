@@ -11,7 +11,7 @@
 <?import java.net.URL?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="GUI.ShopMenu"
+            fx:controller="GUI.ShopAdminMenu"
             prefHeight="600.0" prefWidth="750.0">
 
     <ScrollPane fx:id="scrollPane" layoutY="30" layoutX="30" prefHeight="300" prefWidth="690"
@@ -23,18 +23,22 @@
         <HBox prefWidth="450" prefHeight="220">
             <Rectangle width="154" height="220" fx:id="cardLarge" fill="tan"/>
             <Text fx:id="cardDescription" translateX="20" wrappingWidth="350" styleClass="description"/>
-            <Button fx:id="buyButton" translateX="30" prefHeight="40" minWidth="120" styleClass="buyButton"
-                    onMouseClicked="#buy"
-                    disable="true" text="Buy"/>
-            <Button fx:id="sellButton" translateX="-90" translateY="50" prefHeight="40" minWidth="120" styleClass="sellButton"
-                    onMouseClicked="#sell"
-                    disable="true" text="Sell"/>
+            <Button fx:id="increase" translateX="30" prefHeight="40" minWidth="60"
+                    onMouseClicked="#increase"
+                    disable="true"
+                    text="+"/>
+            <Button fx:id="decrease" translateX="30" prefHeight="40" minWidth="60"
+                    onMouseClicked="#decrease"
+                    disable="true"
+                    text="-"/>
+            <Button fx:id="toggleLock" translateX="-90" translateY="50" prefHeight="40" minWidth="120"
+                    styleClass="sellButton"
+                    onMouseClicked="#toggleLock"
+                    disable="true" text="Lock"/>
             <Button translateX="-210" translateY="100" prefHeight="40" minWidth="120"
-                    onMouseClicked="#admin"
-                    text="Admin"/>
-            <Button translateX="-330" translateY="150" prefHeight="40" minWidth="120"
                     onMouseClicked="#back"
                     text="Back"/>
+
         </HBox>
     </Pane>
 

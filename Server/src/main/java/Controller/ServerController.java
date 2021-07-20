@@ -1,9 +1,7 @@
-import Controller.*;
+package Controller;
+
 import Controller.Exceptions.*;
-import Database.EfficientDeck;
 import Controller.DatabaseController.DatabaseController;
-import Controller.LoginController;
-import Controller.Regex;
 import Database.EfficientUser;
 import Database.Message;
 import Database.User;
@@ -71,6 +69,10 @@ public class ServerController {
             return getPinnedMessage();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestEfficientUsers)).matches())
             return requestEfficientUsers(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestCardStock)).matches())
+            return requestCardStock();
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestUnavailableCards)).matches())
+            return requestUnavailableCards();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.getUser)).matches()) return requestUser(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.pinMessage)).matches()) return pinMessage(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.editMessage)).matches()) return editMessage(matcher);
@@ -84,9 +86,70 @@ public class ServerController {
             return changePassword(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.changeNickname)).matches())
             return changeNickname(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.shopBuy)).matches())
+            return buyCard(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.shopSell)).matches())
+            return sellCard(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.shopAdmin)).matches())
+            return shopAdmin(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.shopIncrease)).matches())
+            return shopRestock(matcher, +1);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.shopDecrease)).matches())
+            return shopRestock(matcher, -1);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.logout)).matches())
             return logout(matcher);
         return "ERROR unknown command";
+    }
+
+    private String shopRestock(Matcher matcher, int i) {
+        if (!matcher.group("token").matches(ShopController.getAdminToken())) return "ERROR invalid token";
+        String cardName = matcher.group("cardName");
+        try {
+            ShopController.restock(cardName, i);
+            return "SUCCESS";
+        } catch (Exception e) {
+            return ("ERROR" + e.getMessage());
+        }
+    }
+
+    private String shopAdmin(Matcher matcher) {
+        if (matcher.group("keycode").matches("AmirrezaGoBRRRRRR")) {
+            ShopController.setAdminToken(matcher.group("token"));
+            return "SUCCESS";
+        }
+        return "ERROR invalid keycode";
+    }
+
+    private String requestUnavailableCards() {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(ShopController.getUnavailableCards());
+    }
+
+    private String requestCardStock() {
+        Gson gson = new GsonBuilder().create();
+        return gson.toJson(ShopController.getCardStock());
+    }
+
+    private String buyCard(Matcher matcher) {
+        String cardName = matcher.group("cardName");
+        User currentUser = ServerController.getInstance().getUserByToken(matcher.group("token"));
+        try {
+            ShopController.buyCard(cardName, currentUser);
+            return "SUCCESS";
+        } catch (Exception e) {
+            return ("ERROR " + e.getMessage());
+        }
+    }
+
+    private String sellCard(Matcher matcher) {
+        String cardName = matcher.group("cardName");
+        User currentUser = ServerController.getInstance().getUserByToken(matcher.group("token"));
+        try {
+            ShopController.sellCard(cardName, currentUser);
+            return "SUCCESS";
+        } catch (Exception e) {
+            return ("ERROR " + e.getMessage());
+        }
     }
 
     private String logout(Matcher matcher) {
@@ -211,9 +274,9 @@ public class ServerController {
         return false;
     }
 
-    private User getUserByToken(String requestToken) {
+    public User getUserByToken(String requestToken) {
         for (String token : loggedInUsers.keySet()) {
-            if (requestToken.equals(token)){
+            if (requestToken.equals(token)) {
                 return loggedInUsers.get(token);
             }
         }

@@ -33,8 +33,9 @@ public class DatabaseController {
         initializeMonsterCards();
         initializeSpellAndTrapCards();
         initializeUsers();
-        ShopController.initializeCardData();
         initializeChat();
+        initializeCardStock();
+        initializeUnavailableCards();
     }
 
     public void saveUser(User user) {
@@ -156,6 +157,7 @@ public class DatabaseController {
             System.out.println(e.getMessage());
         }
     }
+
     private void initializeChat() {
         File chatFile = new File("./Server/src/main/resources/Chat/Chat.json");
         try {
@@ -170,6 +172,53 @@ public class DatabaseController {
         }
 
     }
+
+    public void initializeCardStock() {
+        File cardStockFile = new File("./Server/src/main/resources/Cards/cardStock.json");
+        try {
+            Scanner fileScanner = new Scanner(cardStockFile);
+            String cardStockJson = fileScanner.nextLine();
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            Gson gson = gsonBuilder.create();
+            ShopController.setCardStock(gson.fromJson(cardStockJson, new TypeToken<HashMap<String, Integer>>() {
+            }.getType()));
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void updateCardStock() {
+        File cardStockFile = new File("./Server/src/main/resources/Cards/cardStock.json");
+        try {
+            cardStockFile.createNewFile();
+            Gson gson = new GsonBuilder().create();
+            String writeToFile = gson.toJson(ShopController.getCardStock());
+            FileWriter fw = new FileWriter(cardStockFile);
+            BufferedWriter out = new BufferedWriter(fw);
+            out.write(writeToFile);
+            out.close();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void initializeUnavailableCards() {
+        File unavailableCards = new File("./Server/src/main/resources/Cards/unavailableCards.json");
+        try {
+            Scanner fileScanner = new Scanner(unavailableCards);
+            String cardStockJson = fileScanner.nextLine();
+            GsonBuilder gsonBuilder = new GsonBuilder();
+            Gson gson = gsonBuilder.create();
+            ShopController.setCardStock(gson.fromJson(cardStockJson, new TypeToken<ArrayList<String>>() {
+            }.getType()));
+
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private void initializeUsers() {
         File userDirectory = new File("./Server/src/main/resources/Users");
         userDirectory.mkdir();
@@ -215,23 +264,6 @@ public class DatabaseController {
         for (User user : User.getUsers()) {
             saveUser(user);
         }
-    }
-
-    public HashMap<String, Integer> getCardStock() {
-        File cardStockFile = new File("./Server/src/main/resources/Cards/cardStock.json");
-        try {
-            Scanner fileScanner = new Scanner(cardStockFile);
-            String cardStockJson = fileScanner.nextLine();
-            System.out.println(cardStockJson);
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            Gson gson = gsonBuilder.create();
-            return gson.fromJson(cardStockJson, new TypeToken<HashMap<String, Integer>>() {
-            }.getType());
-
-        } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
     }
 
     public void saveCardStock(HashMap<String, Integer> stock) {

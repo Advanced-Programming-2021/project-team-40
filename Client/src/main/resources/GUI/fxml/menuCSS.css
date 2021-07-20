@@ -19,6 +19,14 @@
     -fx-font-weight: BOLD;
 }
 
+#sellButton {
+    -fx-cursor: HAND;
+    -fx-background-color: #800000;
+    -fx-text-fill: WHITE;
+    -fx-font-size: 14;
+    -fx-font-weight: BOLD;
+}
+
 #buyButton:hover {
     -fx-background-color: #00c000;
 }

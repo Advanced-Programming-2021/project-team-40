@@ -4,6 +4,7 @@ import Database.Cards.Card;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 
 public class EfficientUser {
     private String username;
@@ -44,6 +45,25 @@ public class EfficientUser {
                 listToRank.get(i).setRank(i + 1);
             } else listToRank.get(i).setRank(listToRank.get(i - 1).getRank());
         }
+    }
+
+    public HashMap<String, Integer> getCardHashMap() {
+        HashMap<String, Integer> cardHashMap = new HashMap<>();
+        for (Card card : Card.getAllCards()) {
+            cardHashMap.put(card.getName(), 0);
+        }
+        for (EfficientDeck deck : decks) {
+            for (String cardName : deck.getMainCards()) {
+                cardHashMap.put(cardName, cardHashMap.get(cardName) + 1);
+            }
+            for (String cardName: deck.getSideCards()) {
+                cardHashMap.put(cardName, cardHashMap.get(cardName) + 1);
+            }
+        }
+        for (String cardName : getInactiveCards()) {
+            cardHashMap.put(cardName, cardHashMap.get(cardName) + 1);
+        }
+        return cardHashMap;
     }
 
     public String getNickname() {
@@ -121,5 +141,12 @@ public class EfficientUser {
         for (Card card: actualInactiveCards) {
             inactiveCards.add(card.getName());
         }
+    }
+
+    public boolean ownsCard(String name) {
+        for (String cardName : inactiveCards) {
+            if (cardName.matches(name)) return true;
+        }
+        return false;
     }
 }

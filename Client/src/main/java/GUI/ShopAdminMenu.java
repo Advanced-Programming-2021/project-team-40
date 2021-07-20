@@ -1,14 +1,9 @@
 package GUI;
 
 import Controller.ClientController;
-import Controller.Main;
-import Controller.MenuController.ShopController;
 import Database.Cards.Card;
 import Database.Cards.Monster;
 import Database.EfficientUser;
-import Database.User;
-import View.Exceptions.InvalidCardNameException;
-import View.Exceptions.NotEnoughMoneyException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -18,12 +13,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -31,10 +28,8 @@ import javafx.stage.Stage;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
-public class ShopMenu extends Application implements AlertFunction, SoundEffect {
+public class ShopAdminMenu extends Application implements AlertFunction {
 
     @FXML
     ScrollPane scrollPane;
@@ -43,9 +38,11 @@ public class ShopMenu extends Application implements AlertFunction, SoundEffect 
     @FXML
     Rectangle cardLarge;
     @FXML
-    Button buyButton;
+    Button increase;
     @FXML
-    Button sellButton;
+    Button decrease;
+    @FXML
+    Button toggleLock;
 
     private HashMap<String, Integer> cardsHashMap;
     private EfficientUser efficientUser;
@@ -53,7 +50,7 @@ public class ShopMenu extends Application implements AlertFunction, SoundEffect 
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("fxml/shopMenu.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("fxml/shopAdminMenu.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
@@ -115,6 +112,15 @@ public class ShopMenu extends Application implements AlertFunction, SoundEffect 
         return actualMap;
     }
 
+    private ArrayList<String> getUnavailableCards() {
+        String serverMessage = ClientController.sendMessage(MainMenu.userToken + " request unavailable cards");
+        Type cardArrayList = new TypeToken<ArrayList<String>>() {
+        }.getType();
+        Gson gson = new Gson();
+        ArrayList<String> actualList = gson.fromJson(serverMessage, cardArrayList);
+        return actualList;
+    }
+
     private void selectCard(Card card) {
         selectedCard = card;
         updateCardDetails();
@@ -125,69 +131,18 @@ public class ShopMenu extends Application implements AlertFunction, SoundEffect 
         cardDescription.setText("PRICE: " + selectedCard.getCardPrice() + "\n" + selectedCard.getDescription());
         if (selectedCard instanceof Monster)
             cardDescription.setText(cardDescription.getText() + "\nATK: " + ((Monster) selectedCard).getAttackPoints() + "\tDEF: " + ((Monster) selectedCard).getDefensePoints());
-        if (efficientUser.getBalance() > selectedCard.getCardPrice()) {
-            buyButton.disableProperty().set(false);
+        increase.disableProperty().set(false);
+        decrease.disableProperty().set(false);
+        toggleLock.disableProperty().set(false);
+        if (getUnavailableCards().contains(selectedCard.getName())) {
+            toggleLock.setText("Unlock");
         } else {
-            buyButton.disableProperty().set(true);
-        }
-        if (efficientUser.ownsCard(selectedCard.getName())) {
-            sellButton.disableProperty().set(false);
-        } else {
-            sellButton.disableProperty().set(true);
-        }
-    }
-
-    public void buy(MouseEvent mouseEvent) {
-        try {
-            String serverMessage = ClientController.sendMessage(MainMenu.userToken + " shop buy " + selectedCard.getName());
-            if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
-            else if (serverMessage.startsWith("SUCCESS")) {
-
-                addCards();
-                updateCardDetails();
-                playSoundEffect("buySoundEffect.mp3");
-                showAlert("card bought successfully", Alert.AlertType.INFORMATION);
-            } else throw new Exception("UNKNOWN SHOP ERROR");
-        } catch (Exception e) {
-            showAlert(e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    public void sell(MouseEvent mouseEvent) {
-        try {
-            String serverMessage = ClientController.sendMessage(MainMenu.userToken + " shop sell " + selectedCard.getName());
-            if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
-            else if (serverMessage.startsWith("SUCCESS")) {
-
-                addCards();
-                updateCardDetails();
-                playSoundEffect("buySoundEffect.mp3");
-                showAlert("card sold successfully", Alert.AlertType.INFORMATION);
-            } else throw new Exception("UNKNOWN SHOP ERROR");
-        } catch (Exception e) {
-            showAlert(e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    public void admin(MouseEvent mouseEvent) {
-        TextInputDialog inputDialog = new TextInputDialog();
-        inputDialog.setTitle("Shop Admin");
-        inputDialog.setHeaderText("Shop Admin");
-        inputDialog.setContentText("Input administrative keycode:");
-        Optional<String> adminKey = inputDialog.showAndWait();
-        if (adminKey.isPresent()) {
-            try {
-                String serverMessage = ClientController.sendMessage(MainMenu.userToken + " shop admin " + adminKey.get());
-                if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
-                new ShopAdminMenu().start(WelcomeMenu.stage);
-            } catch (Exception e) {
-                showAlert(e.getMessage(), Alert.AlertType.ERROR);
-            }
+            toggleLock.setText("Lock");
         }
     }
 
     public void back(MouseEvent mouseEvent) throws Exception {
-        new MainMenu().start(WelcomeMenu.stage);
+        new ShopMenu().start(WelcomeMenu.stage);
     }
 
     @Override
@@ -199,17 +154,13 @@ public class ShopMenu extends Application implements AlertFunction, SoundEffect 
         alert.show();
     }
 
-    @Override
-    public void playSoundEffect(String effectName) {
-        String mediaAddress = WelcomeMenu.class.getResource("/Audio/" + effectName).toExternalForm();
-        MediaPlayer mediaPlayer = new MediaPlayer(new Media(mediaAddress));
-        mediaPlayer.play();
-        soundEffects.add(mediaPlayer);
-        mediaPlayer.setOnEndOfMedia(new Runnable() {
-            @Override
-            public void run() {
-                soundEffects.remove(mediaPlayer);
-            }
-        });
+    public void increase(MouseEvent mouseEvent) {
+
+    }
+
+    public void decrease(MouseEvent mouseEvent) {
+    }
+
+    public void toggleLock(MouseEvent mouseEvent) {
     }
 }

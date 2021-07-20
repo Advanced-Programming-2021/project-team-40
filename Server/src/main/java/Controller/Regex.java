@@ -38,7 +38,12 @@ public class Regex {
     public static String showOneDeck = "^deck show(?=.* --deck-name|.* -d)" +
             "(?: (?:--deck-name|-d) (?<deckName>.+?)(?!.*?--deck-name|.*?-d)|" +
             "(?<isSide> (?:--side|-s))?(?!.*?--side|.*?-s)){2}$";
-    public static String shopBuy = "^shop buy (?<cardName>.+?)$";
+    public static String shopBuy = "^(?<token>[A-Za-z0-9-]+) shop buy (?<cardName>.+?)$";
+    public static String shopSell = "^(?<token>[A-Za-z0-9-]+) shop sell (?<cardName>.+?)$";
+    public static String shopAdmin = "^(?<token>[A-Za-z0-9-]+) shop admin (?<keycode>.+)";
+    public static String shopIncrease = "^(?<token>[A-Za-z0-9-]+) shop increase (?<cardName>.+?)$";
+    public static String shopDecrease = "^(?<token>[A-Za-z0-9-]+) shop decrease (?<cardName>.+?)$";
+
     public static String shopShowAll = "^shop show (?:--all|-a)$";
     public static String startPlayerDuel = "^duel(?=.* --second-player|.* -s)(?=.* --new|.* -n)(?=.* --rounds|.* -r)" +
             "(?: (?:--second-player|-s) (?<username>.+?)(?!.*?--second-player|.*-s)|" +
@@ -91,6 +96,9 @@ public class Regex {
     public static String requestMessages = "^(?<token>[A-Za-z0-9-]+) request messages$";
     public static String requestPinnedMessage = "^(?<token>[A-Za-z0-9-]+) request pinned message$";
     public static String requestEfficientUsers = "^(?<token>[A-Za-z0-9-]+) request efficient users$";
+    public static String requestCardStock = "^(?<token>[A-Za-z0-9-]+) request card stock";
+    public static String requestUnavailableCards = "^(?<token>[A-Za-z0-9-]+) request unavailable cards";
+
     public static String getUser = "^(?<token>[A-Za-z0-9-]+) get user$";
     public static String prevAvatar = "^(?<token>[A-Za-z0-9-]+) prev avatar$";
     public static String nextAvatar = "^(?<token>[A-Za-z0-9-]+) next avatar$";

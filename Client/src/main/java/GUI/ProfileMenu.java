@@ -115,7 +115,6 @@ public class ProfileMenu extends Application implements AlertFunction {
             try {
                 String serverMessage = ClientController.sendMessage(MainMenu.userToken + " profile change -p -c " + oldPassword.get() + " -n " + newPassword.get());
                 if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
-                ProfileMenuController.getInstance().changePassword(oldPassword.get(), newPassword.get(), currentUser);
                 updateUser();
                 showAlert("password changed successfully!", Alert.AlertType.INFORMATION);
             } catch (Exception e) {
