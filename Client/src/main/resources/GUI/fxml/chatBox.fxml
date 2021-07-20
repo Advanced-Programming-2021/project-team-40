@@ -13,9 +13,11 @@
     <VBox>
         <HBox alignment="TOP_CENTER">
             <Button alignment="TOP_LEFT" text="BACK" onMouseClicked="#back"/>
-            <Label fx:id="pinnedMessage"/>
+            <Label fx:id="pinnedMessageLabel"/>
         </HBox>
-        <ScrollPane fx:id="chatBox" layoutY="40" layoutX="30" prefHeight="350" prefWidth="600"/>
+        <ScrollPane fx:id="chatScrollPane" layoutY="40" layoutX="30" prefHeight="350" prefWidth="600">
+            <VBox fx:id="chatVBox" spacing="5"/>
+        </ScrollPane>
         <HBox alignment="BOTTOM_CENTER">
             <TextField fx:id="messageToSend" text="Message" prefWidth="300"/>
             <Button text="SEND" prefWidth="50" onMouseClicked="#sendMessage"/>

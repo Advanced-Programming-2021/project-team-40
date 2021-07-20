@@ -1,6 +1,9 @@
 import Controller.*;
 import Controller.Exceptions.*;
 import Database.EfficientDeck;
+import Controller.DatabaseController.DatabaseController;
+import Controller.LoginController;
+import Controller.Regex;
 import Database.EfficientUser;
 import Database.Message;
 import Database.User;
@@ -63,11 +66,16 @@ public class ServerController {
             return loginUser(matcher, thisClientsSocket);
         if (!tokenIsValid(message)) return "invalid token";
         else if ((matcher = Regex.getCommandMatcher(message, Regex.sendMessage)).matches()) return sendMessage(matcher);
-        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches())
-            return getMessages();
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches()) return getMessages();
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestPinnedMessage)).matches())
+            return getPinnedMessage();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestEfficientUsers)).matches())
             return requestEfficientUsers(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.getUser)).matches()) return requestUser(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.pinMessage)).matches()) return pinMessage(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.editMessage)).matches()) return editMessage(matcher);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.deleteMessage)).matches())
+            return deleteMessage(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.prevAvatar)).matches())
             return changeAvatar(matcher, -1);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.nextAvatar)).matches())
@@ -107,15 +115,6 @@ public class ServerController {
         }
     }
 
-    private User getUserByToken(String requestToken) {
-        for (String token : loggedInUsers.keySet()) {
-            if (requestToken.equals(token)) {
-                return loggedInUsers.get(token);
-            }
-        }
-        return null;
-    }
-
     private String changeAvatar(Matcher matcher, int change) {
         User requestedUser = getUserByToken(matcher.group("token"));
         if (requestedUser == null) return "ERROR user not found";
@@ -123,11 +122,76 @@ public class ServerController {
         return "SUCCESS";
     }
 
+    private String getPinnedMessage() {
+        Gson gson = new GsonBuilder().create();
+        System.out.println(gson.toJson(Message.pinnedMessage));
+        return gson.toJson(Message.pinnedMessage);
+    }
+
+    private String deleteMessage(Matcher matcher) {
+        int id;
+        try {
+            id = Integer.parseInt(matcher.group("id"));
+        } catch (Exception e) {
+            return "FAILED";
+        }
+        Message toDelete = Message.getMessageById(id);
+        User currentUser = getUserByToken(matcher.group("token"));
+        if (toDelete == null) return "ERROR invalid id for some reason";
+        if (currentUser == null) return "ERROR token invalid for some reason";
+        if (!currentUser.getUsername().equals(toDelete.getSenderUserName()))
+            return "ERROR You Can't Delete This Message!";
+        if (Message.pinnedMessage == toDelete) Message.pinnedMessage = null;
+        Message.messageList.remove(toDelete);
+        DatabaseController.getInstance().saveChat();
+        return "SUCCESS";
+    }
+
+    private String editMessage(Matcher matcher) {
+        String replace = matcher.group("replace");
+        int id;
+        try {
+            id = Integer.parseInt(matcher.group("id"));
+        } catch (Exception e) {
+            return "FAILED";
+        }
+        System.out.println("KIRRRR");
+        Message toEdit = Message.getMessageById(id);
+        User currentUser = getUserByToken(matcher.group("token"));
+        if (toEdit == null) return "ERROR invalid id for some reason";
+        if (currentUser == null) return "ERROR token invalid for some reason";
+        if (!currentUser.getUsername().equals(toEdit.getSenderUserName())) return "ERROR You Can't Edit This Message!";
+        toEdit.setContent(replace);
+        DatabaseController.getInstance().saveChat();
+        System.out.println("KIRRRR2");
+        return "SUCCESS";
+    }
+
+    private synchronized String pinMessage(Matcher matcher) {
+        int id;
+        try {
+            id = Integer.parseInt(matcher.group("id"));
+        } catch (Exception e) {
+            return "FAILED";
+        }
+        Message toPin = Message.getMessageById(id);
+        if (toPin == null) return "ERROR invalid id";
+        Message.pinnedMessage = toPin;
+        return "SUCCESS";
+    }
+
     private String getMessages() {
-        new Message("A", "Kir mikhori?");
-        new Message("B", "Aghaye dildo");
         Gson gson = new GsonBuilder().create();
         return gson.toJson(Message.messageList);
+    }
+
+    private synchronized String sendMessage(Matcher matcher) {
+        String message = matcher.group("message");
+        User currentUser = getUserByToken(matcher.group("token"));
+        if (currentUser == null) return "ERROR";
+        new Message(currentUser.getUsername(), message);
+        DatabaseController.getInstance().saveChat();
+        return "SUCCESS";
     }
 
     private String requestEfficientUsers(Matcher matcher) {
@@ -139,14 +203,6 @@ public class ServerController {
         return gson.toJson(allEfficientUsers);
     }
 
-    private String sendMessage(Matcher matcher) {
-        String message = matcher.group("message");
-        User currentUser = getUserByToken(matcher.group("token"));
-        if (currentUser == null) return "ERROR";
-        new Message(currentUser.getUsername(), message);
-        return "SUCCESS";
-    }
-
     private boolean tokenIsValid(String message) {
         String[] messageSplit = message.split(" ");
         for (String token : loggedInUsers.keySet()) {
@@ -155,6 +211,14 @@ public class ServerController {
         return false;
     }
 
+    private User getUserByToken(String requestToken) {
+        for (String token : loggedInUsers.keySet()) {
+            if (requestToken.equals(token)){
+                return loggedInUsers.get(token);
+            }
+        }
+        return null;
+    }
 
     private String requestUser(Matcher matcher) {
         String requestToken = matcher.group("token");

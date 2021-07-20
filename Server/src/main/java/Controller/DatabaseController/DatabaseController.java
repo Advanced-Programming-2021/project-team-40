@@ -1,11 +1,8 @@
 package Controller.DatabaseController;
 
+import Database.*;
 import Controller.ShopController;
 import Database.Cards.*;
-import Database.Deck;
-import Database.EfficientDeck;
-import Database.EfficientUser;
-import Database.User;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,6 +10,8 @@ import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVReader;
 
 import java.io.*;
+import java.lang.reflect.Type;
+import java.util.*;
 import java.util.*;
 import java.util.regex.Matcher;
 
@@ -35,6 +34,7 @@ public class DatabaseController {
         initializeSpellAndTrapCards();
         initializeUsers();
         ShopController.initializeCardData();
+        initializeChat();
     }
 
     public void saveUser(User user) {
@@ -141,6 +141,35 @@ public class DatabaseController {
         return null;
     }
 
+    public void saveChat() {
+        File chatFile = new File("./Server/src/main/resources/Chat/Chat.json");
+        try {
+            chatFile.createNewFile();
+            Gson gson = new GsonBuilder().create();
+            String writeToFile = gson.toJson(Message.messageList);
+            FileWriter fw = new FileWriter(chatFile);
+            BufferedWriter out = new BufferedWriter(fw);
+            out.write(writeToFile);
+            out.close();
+            fw.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    private void initializeChat() {
+        File chatFile = new File("./Server/src/main/resources/Chat/Chat.json");
+        try {
+            Scanner fileScanner = new Scanner(chatFile);
+            String chatJson = fileScanner.nextLine();
+            Type messageList = new TypeToken<List<Message>>() {
+            }.getType();
+            Gson gson = new Gson();
+            Message.messageList = gson.fromJson(chatJson, messageList);
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
     private void initializeUsers() {
         File userDirectory = new File("./Server/src/main/resources/Users");
         userDirectory.mkdir();

@@ -4,7 +4,10 @@ import Database.Cards.Card;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 public class User {
     public static ArrayList<User> users = new ArrayList<>();
@@ -75,15 +78,18 @@ public class User {
         return randomColorToShowUser;
     }
 
-    public void setRandomColorToShowUser() {
+    public void setRandomColorToShowUser(List<Message> messageList) {
         if (!getRandomColorToShowUser().isEmpty()) return;
-        for (Message message:
-                Message.messageList) {
+        for (Message message :
+                messageList) {
             if (getRandomColorToShowUser().containsKey(message.getSenderUserName())) continue;
             Color color;
-            //TODO must not match with the background color
-            color = Color.color((1 + Math.random()) / 2,(1 + Math.random()) / 2,(1 + Math.random()) / 2);
-            getRandomColorToShowUser().put(message.getSenderUserName(),color);
+            while (true) {
+                color = Color.color((1 + Math.random()) / 2, (1 + Math.random()) / 2, (1 + Math.random()) / 2);
+                if (color.getBlue() > 0.95 && color.getRed() > 0.95 && color.getGreen() > 0.95) continue;
+                break;
+            }
+            getRandomColorToShowUser().put(message.getSenderUserName(), color);
         }
     }
 
@@ -114,28 +120,28 @@ public class User {
         return null;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getUsername() {
         return username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getNickname() {
         return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getAvatarID() {
@@ -150,12 +156,12 @@ public class User {
         this.avatarID = avatarID;
     }
 
-    public void setScore(int score) {
-        this.score = score;
-    }
-
     public int getScore() {
         return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public int getRank() {
@@ -174,12 +180,12 @@ public class User {
         score -= amount;
     }
 
-    public void setBalance(int balance) {
-        this.balance = balance;
-    }
-
     public int getBalance() {
         return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
 
     public void increaseBalance(int amount) {
@@ -194,11 +200,20 @@ public class User {
         return decks;
     }
 
+    public void setDecks(ArrayList<Deck> decks) {
+        this.decks = decks;
+    }
+
     public Deck getActiveDeck() {
         for (Deck deck : decks) {
             if (deck.isActive()) return deck;
         }
         return null;
+    }
+
+    public void setActiveDeck(Deck activeDeck) {
+        if (getActiveDeck() != null) inactivateDeck();
+        activeDeck.setActive(true);
     }
 
     public Image getProfilePicture() {
@@ -208,15 +223,6 @@ public class User {
 
     public void inactivateDeck() {
         getActiveDeck().setActive(false);
-    }
-
-    public void setActiveDeck(Deck activeDeck) {
-        if (getActiveDeck() != null) inactivateDeck();
-        activeDeck.setActive(true);
-    }
-
-    public void setDecks(ArrayList<Deck> decks) {
-        this.decks = decks;
     }
 
     public ArrayList<Card> getInactiveCards() {

@@ -1,13 +1,12 @@
 package Controller;
 
 import Database.Message;
-import Database.User;
 import GUI.MainMenu;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChatBoxController {
@@ -18,30 +17,41 @@ public class ChatBoxController {
         return chatBoxController;
     }
 
-    public void pinMessage(Message toPin) {
-        Message.pinnedMessage = toPin;
+    public void pinMessage(Message toPin) throws Exception {
+        String serverMessage = ClientController.sendMessage(MainMenu.userToken + " pin message -id " + toPin.getId());
+        if (serverMessage.startsWith("FAILED")) throw new Exception("WTF just happened?");
+        if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
     }
 
-    public void sendMessage(String message, User sender) {
-        String serverMessage = ClientController.sendMessage("send message -m " + message + " -u " + sender.getUsername());
+    public void sendMessage(String message) throws Exception {
+        String serverMessage = ClientController.sendMessage(MainMenu.userToken + " send message -m " + message);
+        if (serverMessage.startsWith("FAILED")) throw new Exception("WTF just happened?");
+        if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
     }
 
     public void editMessage(String toReplace, Message message) throws Exception {
-        String serverMessage = ClientController.sendMessage("edit message -r " + toReplace + " -id " + message.getId());
+        String serverMessage = ClientController.sendMessage(MainMenu.userToken + " edit message -r " + toReplace + " -id " + message.getId());
+        if (serverMessage.startsWith("FAILED")) throw new Exception("WTF just happened?");
+        if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
     }
 
-    public void deleteMessage(User deleteRequester, Message toDelete) throws Exception {
-        String serverMessage = ClientController.sendMessage("delete message -id " + toDelete.getId());
-        if (!toDelete.getSenderUserName().equals(deleteRequester)) throw new Exception("You Can't Delete This Message");
-        Message.messageList.remove(toDelete);
+    public void deleteMessage(Message toDelete) throws Exception {
+        String serverMessage = ClientController.sendMessage(MainMenu.userToken + " delete message -id " + toDelete.getId());
+        if (serverMessage.startsWith("FAILED")) throw new Exception("WTF just happened?");
+        if (serverMessage.startsWith("ERROR")) throw new Exception(serverMessage.substring(6));
     }
 
     public List<Message> requestMessages() {
         String serverMessage = ClientController.sendMessage(MainMenu.userToken + " request messages");
-        Type messageList = new TypeToken<List<Message>>() {}.getType();
+        Type messageList = new TypeToken<List<Message>>() {
+        }.getType();
         Gson gson = new Gson();
-        List<Message> output = gson.fromJson(serverMessage,messageList);
-        System.out.println(output);
-        return output;
+        return gson.fromJson(serverMessage, messageList);
+    }
+
+    public Message requestPinnedMessage() {
+        String serverMessage = ClientController.sendMessage(MainMenu.userToken + " request pinned message");
+        Gson gson = new GsonBuilder().create();
+        return gson.fromJson(serverMessage, Message.class);
     }
 }
