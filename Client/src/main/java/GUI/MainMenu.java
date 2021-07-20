@@ -28,7 +28,6 @@ public class MainMenu extends Application {
             DuelMenu.mediaPlayer.stop();
             WelcomeMenu.gameMusic();
         }
-
     }
 
     public MainMenu(String token){
@@ -49,6 +48,7 @@ public class MainMenu extends Application {
     }
 
     public void logout(MouseEvent mouseEvent) throws Exception {
+        ClientController.sendMessage(userToken + " user logout");
         userToken = null;
         MainMenuController.getInstance().toUpperMenu();
         new WelcomeMenu().start(WelcomeMenu.stage);

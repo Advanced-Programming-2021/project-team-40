@@ -15,11 +15,10 @@ public class Regex {
     public static String menuNavigation = "^menu enter (?<menuName>.+?)$";
     public static String exitMenu = "^menu exit$";
     public static String showCurrentMenu = "^menu show-current$";
-    public static String logout = "^user logout$";
+    public static String logout = "^(?<token>[A-Za-z0-9-]+) user logout$";
     public static String showScoreboard = "^scoreboard show$";
-    public static String changeNickname = "^profile change (?:--nickname|-n) (?<nickname>.+?)$";
-
-    public static String changePassword = "^profile change(?=.* --current|.* -c)(?=.* --password|.* -p)(?=.* --new|.* -n)" +
+    public static String changeNickname = "^(?<token>[A-Za-z0-9-]+) profile change (?:--nickname|-n) (?<nickname>.+?)$";
+    public static String changePassword = "^(?<token>[A-Za-z0-9-]+) profile change(?=.* --current|.* -c)(?=.* --password|.* -p)(?=.* --new|.* -n)" +
             "(?: (?:--password|-p)(?!.*?--password)|" +
             " (?:--current|-c) (?<currentPass>.+?)(?!.*?--current|.*?-c)|" +
             " (?:--new|-n) (?<newPass>.+?)(?!.*?--new|.*?-n)){3}$";

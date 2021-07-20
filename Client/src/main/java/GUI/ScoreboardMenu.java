@@ -29,6 +29,9 @@ public class ScoreboardMenu extends Application {
     @FXML
     TableView table;
 
+    public Thread tableRefreshThread;
+    public boolean stopRefresh = false;
+
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("fxml/scoreboard.fxml"));
@@ -39,7 +42,6 @@ public class ScoreboardMenu extends Application {
 
     public void initialize() {
         createTable();
-
     }
 
     private void createTable() {
@@ -56,21 +58,44 @@ public class ScoreboardMenu extends Application {
         table.getSortOrder().add(rankColumn);
         table.getSortOrder().add(nameColumn);
         table.setEditable(false);
-        for (EfficientUser user : getEfficientUsers()) {
-            table.getItems().add(user);
-        }
-        table.sort();
+        tableRefreshThread = new Thread() {
+            @Override
+            public void run() {
+                for (EfficientUser user : getEfficientUsers()) {
+                    table.getItems().add(user);
+                }
+                while (!stopRefresh) {
+                    int i = 0;
+                    for (EfficientUser user : getEfficientUsers()) {
+                        table.getItems().remove(i);
+                        table.getItems().add(i, user);
+                        i++;
+                    }
+                    table.sort();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        tableRefreshThread.start();
+
     }
 
     private ArrayList<EfficientUser> getEfficientUsers() {
         String serverMessage = ClientController.sendMessage(MainMenu.userToken + " request efficient users");
-        Type efficientUserList = new TypeToken<ArrayList<EfficientUser>>() {}.getType();
+        Type efficientUserList = new TypeToken<ArrayList<EfficientUser>>() {
+        }.getType();
         Gson gson = new Gson();
-        ArrayList<EfficientUser> actualList = gson.fromJson(serverMessage,efficientUserList);
+        ArrayList<EfficientUser> actualList = gson.fromJson(serverMessage, efficientUserList);
+        EfficientUser.updateRanks(actualList);
         return actualList;
     }
 
     public void back(MouseEvent mouseEvent) throws Exception {
+        stopRefresh = true;
         new MainMenu().start(WelcomeMenu.stage);
     }
 
