@@ -27,6 +27,10 @@
     -fx-font-weight: BOLD;
 }
 
+#sellButton:hover {
+    -fx-background-color: #c00000;
+}
+
 #buyButton:hover {
     -fx-background-color: #00c000;
 }

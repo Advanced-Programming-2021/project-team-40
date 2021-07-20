@@ -15,8 +15,6 @@ public class ShopController {
     private static String adminToken;
 
     public static ArrayList<String> getUnavailableCards() {
-        //TODO remove
-        unavailableCards.add("Battle OX");
         return unavailableCards;
     }
 
@@ -33,7 +31,7 @@ public class ShopController {
         if ((card = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         if (card.getCardPrice() > currentUser.getBalance()) throw new NotEnoughMoneyException();
         if ((cardStock.get(cardName) == 0)) throw new Exception("card is out of stock");
-        //TODO if ((unavailableCards.contains(cardName))) throw new Exception("admin doesn't allow buying this card");
+        if ((unavailableCards.contains(cardName))) throw new Exception("admin doesn't allow buying this card");
         cardStock.put(cardName, cardStock.get(cardName) - 1);
         currentUser.setBalance(currentUser.getBalance() - card.getCardPrice());
         currentUser.getInactiveCards().add(card);
@@ -41,7 +39,7 @@ public class ShopController {
         DatabaseController.getInstance().updateCardStock();
     }
 
-    public synchronized static void sellCard(String cardName, User currentUser) throws Exception{
+    public synchronized static void sellCard(String cardName, User currentUser) throws Exception {
         Card card;
         if ((card = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         cardStock.put(cardName, cardStock.get(cardName) + 1);
@@ -51,12 +49,18 @@ public class ShopController {
         DatabaseController.getInstance().updateCardStock();
     }
 
-    public synchronized static void restock(String cardName, int amount) throws Exception{
+    public synchronized static void restock(String cardName, int amount) throws Exception {
         Card card;
         if ((card = Card.getCardByName(cardName)) == null) throw new InvalidCardNameException(cardName);
         if (amount == -1 && cardStock.get(cardName) == 0) return;
         cardStock.put(cardName, cardStock.get(cardName) + amount);
         DatabaseController.getInstance().updateCardStock();
+    }
+
+    public static void toggle(String cardName) throws Exception {
+        if (Card.getCardByName(cardName) == null) throw new InvalidCardNameException(cardName);
+        if (unavailableCards.contains(cardName)) unavailableCards.remove(cardName);
+        else unavailableCards.add(cardName);
     }
 
     public static String getAdminToken() {
@@ -66,5 +70,4 @@ public class ShopController {
     public static void setAdminToken(String adminToken) {
         ShopController.adminToken = adminToken;
     }
-
 }

@@ -105,6 +105,8 @@ public class ServerController {
             return shopRestock(matcher, +1);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.shopDecrease)).matches())
             return shopRestock(matcher, -1);
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.shopToggle)).matches())
+            return shopToggle(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.logout)).matches())
             return logout(matcher);
         return "ERROR unknown command";
@@ -117,6 +119,17 @@ public class ServerController {
         EfficientUser tempUser = gson.fromJson(userJson, EfficientUser.class);
         DatabaseController.getInstance().saveEfficientUser(tempUser);
         return "SUCCESS";
+    }
+
+    private String shopToggle(Matcher matcher) {
+        if (!matcher.group("token").matches(ShopController.getAdminToken())) return "ERROR invalid token";
+        String cardName = matcher.group("cardName");
+        try {
+            ShopController.toggle(cardName);
+            return "SUCCESS";
+        } catch (Exception e) {
+            return ("ERROR" + e.getMessage());
+        }
     }
 
     private String shopRestock(Matcher matcher, int i) {

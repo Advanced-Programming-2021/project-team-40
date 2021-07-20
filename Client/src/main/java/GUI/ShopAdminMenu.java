@@ -45,6 +45,7 @@ public class ShopAdminMenu extends Application implements AlertFunction {
     Button toggleLock;
 
     private HashMap<String, Integer> cardsHashMap;
+    private HashMap<String, Integer> cardStock;
     private EfficientUser efficientUser;
     private Card selectedCard;
 
@@ -62,6 +63,7 @@ public class ShopAdminMenu extends Application implements AlertFunction {
 
     public void addCards() {
         cardsHashMap = getCardHashMap();
+        updateCardStock();
         GridPane pane = new GridPane();
         pane.setHgap(10);
         pane.setVgap(10);
@@ -89,7 +91,11 @@ public class ShopAdminMenu extends Application implements AlertFunction {
         Label name = new Label(card.getName());
         name.setMaxWidth(70);
         cardView.getStyleClass().add("cardItems");
-        Label count = new Label(cardsHashMap.get(card.getName()).toString() + "\nStock: " + getCardStock().get(card.getName()));
+        String cardAvailability;
+        if (getUnavailableCards().contains(card.getName())) {
+            cardAvailability = "UNAVAILABLE";
+        } else cardAvailability = "AVAILABLE";
+        Label count = new Label(cardAvailability + "\nStock: " + cardStock.get(card.getName()));
         vBox.getChildren().addAll(cardView, name, count);
         vBox.setTranslateX((i % 8) * 80 + 20);
         vBox.setTranslateY((i / 8) * 180 + 20);
@@ -103,13 +109,12 @@ public class ShopAdminMenu extends Application implements AlertFunction {
         return vBox;
     }
 
-    private HashMap<String, Integer> getCardStock() {
+    private void updateCardStock() {
         String serverMessage = ClientController.sendMessage(MainMenu.userToken + " request card stock");
         Type cardStockMap = new TypeToken<HashMap<String, Integer>>() {
         }.getType();
         Gson gson = new Gson();
-        HashMap<String, Integer> actualMap = gson.fromJson(serverMessage, cardStockMap);
-        return actualMap;
+        cardStock = gson.fromJson(serverMessage, cardStockMap);
     }
 
     private ArrayList<String> getUnavailableCards() {
@@ -127,6 +132,7 @@ public class ShopAdminMenu extends Application implements AlertFunction {
     }
 
     private void updateCardDetails() {
+        updateCardStock();
         cardLarge.setFill(selectedCard.getFill());
         cardDescription.setText("PRICE: " + selectedCard.getCardPrice() + "\n" + selectedCard.getDescription());
         if (selectedCard instanceof Monster)
@@ -155,12 +161,20 @@ public class ShopAdminMenu extends Application implements AlertFunction {
     }
 
     public void increase(MouseEvent mouseEvent) {
-
+        ClientController.sendMessage(MainMenu.userToken + " shop increase " + selectedCard.getName());
+        addCards();
+        updateCardDetails();
     }
 
     public void decrease(MouseEvent mouseEvent) {
+        ClientController.sendMessage(MainMenu.userToken + " shop decrease " + selectedCard.getName());
+        addCards();
+        updateCardDetails();
     }
 
     public void toggleLock(MouseEvent mouseEvent) {
+        ClientController.sendMessage(MainMenu.userToken + " shop toggle " + selectedCard.getName());
+        addCards();
+        updateCardDetails();
     }
 }
