@@ -1,8 +1,10 @@
-import Controller.*;
-import Controller.Exceptions.*;
-import Database.EfficientDeck;
 import Controller.DatabaseController.DatabaseController;
+import Controller.Exceptions.InvalidPasswordException;
+import Controller.Exceptions.RepetitiveNicknameException;
+import Controller.Exceptions.RepetitivePasswordException;
+import Controller.Exceptions.WeakPasswordException;
 import Controller.LoginController;
+import Controller.ProfileController;
 import Controller.Regex;
 import Database.EfficientUser;
 import Database.Message;
@@ -12,6 +14,7 @@ import com.google.gson.GsonBuilder;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -65,6 +68,7 @@ public class ServerController {
         else if ((matcher = Regex.getCommandMatcher(message, Regex.login)).matches())
             return loginUser(matcher, thisClientsSocket);
         if (!tokenIsValid(message)) return "invalid token";
+        else if ((matcher = Regex.getCommandMatcher(message, Regex.saveUser)).matches()) return saveUser(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.sendMessage)).matches()) return sendMessage(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches()) return getMessages();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestPinnedMessage)).matches())
@@ -87,6 +91,15 @@ public class ServerController {
         else if ((matcher = Regex.getCommandMatcher(message, Regex.logout)).matches())
             return logout(matcher);
         return "ERROR unknown command";
+    }
+
+    private String saveUser(Matcher matcher) {
+        String userJson = matcher.group("userJson");
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+        EfficientUser tempUser = gson.fromJson(userJson, EfficientUser.class);
+        DatabaseController.getInstance().saveEfficientUser(tempUser);
+        return "SUCCESS";
     }
 
     private String logout(Matcher matcher) {
@@ -210,7 +223,7 @@ public class ServerController {
 
     private User getUserByToken(String requestToken) {
         for (String token : loggedInUsers.keySet()) {
-            if (requestToken.equals(token)){
+            if (requestToken.equals(token)) {
                 return loggedInUsers.get(token);
             }
         }

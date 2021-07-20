@@ -1,5 +1,6 @@
 package Controller.DatabaseController;
 
+import Controller.ClientController;
 import Controller.DuelController.GameplayController;
 import Controller.ProgramController.ProgramController;
 import Controller.ProgramController.Regex;
@@ -8,6 +9,7 @@ import Database.Deck;
 import Database.EfficientDeck;
 import Database.EfficientUser;
 import Database.User;
+import GUI.MainMenu;
 import Gameplay.*;
 import View.Exceptions.*;
 import View.GameplayView;
@@ -24,11 +26,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 
 public class DatabaseController {
@@ -48,25 +51,12 @@ public class DatabaseController {
     private void initialize() {
         initializeMonsterCards();
         initializeSpellAndTrapCards();
-        initializeUsers();
     }
 
     public void saveUser(User user) {
-        File userFile = new File("./Client/src/main/resources/Users/" + user.getUsername() + ".json");
         EfficientUser efficientUser = new EfficientUser(user);
-        try {
-            userFile.createNewFile();
-            Gson gson = new GsonBuilder().create();
-            String writeToFile = gson.toJson(efficientUser);
-            FileWriter fw = new FileWriter(userFile);
-            BufferedWriter out = new BufferedWriter(fw);
-            out.write(writeToFile);
-            out.close();
-            fw.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
+        Gson gson = new GsonBuilder().create();
+        ClientController.sendMessage(MainMenu.userToken + " save user " + gson.toJson(efficientUser));
     }
 
     public void initializeSpellAndTrapCards() {
@@ -718,7 +708,7 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.FIEND)
-                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
+                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 200);
                                     myField.setAttackPoint(myField.getAttackPoint() + 200);
                                 } else if (myField.getCard() != null && ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.FAIRY)) {
@@ -729,7 +719,7 @@ public class DatabaseController {
                             for (MonsterFieldArea opponentField :
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
                                 if (opponentField.getCard() != null && (((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.FIEND)
-                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
+                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.SPELLCASTER))) {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() + 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 200);
                                 } else if (opponentField.getCard() != null && ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.FAIRY)) {
@@ -748,8 +738,8 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.INSECT)
-                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
+                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 200);
                                     myField.setAttackPoint(myField.getAttackPoint() + 200);
                                 }
@@ -757,8 +747,8 @@ public class DatabaseController {
                             for (MonsterFieldArea opponentField :
                                     GameplayController.getInstance().getGameplay().getOpponentPlayer().getField().getMonstersField()) {
                                 if (opponentField.getCard() != null && (((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.INSECT)
-                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST)
+                                                                        || ((Monster) opponentField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     opponentField.setDefensePoint(opponentField.getDefensePoint() + 200);
                                     opponentField.setAttackPoint(opponentField.getAttackPoint() + 200);
                                 }
@@ -778,7 +768,7 @@ public class DatabaseController {
                             for (MonsterFieldArea myField :
                                     GameplayController.getInstance().getGameplay().getCurrentPlayer().getField().getMonstersField()) {
                                 if (myField.getCard() != null && (((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST)
-                                        || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
+                                                                  || ((Monster) myField.getCard()).getMonsterType().equals(MonsterType.BEAST_WARRIOR))) {
                                     myField.setDefensePoint(myField.getDefensePoint() + 100 * counter);
                                     myField.setAttackPoint(myField.getAttackPoint() + 100 * counter);
                                 }
@@ -847,24 +837,6 @@ public class DatabaseController {
             if (name.matches(CardType.values()[i].toString())) return CardType.values()[i];
         }
         return null;
-    }
-
-    private void initializeUsers() {
-        File userDirectory = new File("./Client/src/main/resources/Users");
-        userDirectory.mkdir();
-        if (userDirectory.listFiles() == null) return;
-        for (File userFile : userDirectory.listFiles()) {
-            try {
-                Scanner fileScanner = new Scanner(userFile);
-                String userJson = fileScanner.nextLine();
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                Gson gson = gsonBuilder.create();
-                EfficientUser tempUser = gson.fromJson(userJson, EfficientUser.class);
-                createUserFromEffUser(tempUser);
-            } catch (FileNotFoundException e) {
-                System.out.println(e.getMessage());
-            }
-        }
     }
 
     public void createUserFromEffUser(EfficientUser tempUser) {
