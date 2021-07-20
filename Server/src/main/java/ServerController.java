@@ -69,8 +69,6 @@ public class ServerController {
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches()) return getMessages();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestPinnedMessage)).matches())
             return getPinnedMessage();
-        else if ((matcher = Regex.getCommandMatcher(message, Regex.requestMessages)).matches())
-            return getMessages();
         else if ((matcher = Regex.getCommandMatcher(message, Regex.requestEfficientUsers)).matches())
             return requestEfficientUsers(matcher);
         else if ((matcher = Regex.getCommandMatcher(message, Regex.getUser)).matches()) return requestUser(matcher);
