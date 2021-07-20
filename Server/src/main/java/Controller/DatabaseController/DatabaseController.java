@@ -1,9 +1,7 @@
 package Controller.DatabaseController;
 
 import Database.*;
-import Controller.ShopController;
 import Database.Cards.*;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -11,9 +9,9 @@ import com.opencsv.CSVReader;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.util.*;
-import java.util.*;
-import java.util.regex.Matcher;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class DatabaseController {
 
@@ -39,8 +37,12 @@ public class DatabaseController {
     }
 
     public void saveUser(User user) {
-        File userFile = new File("./Server/src/main/resources/Users/" + user.getUsername() + ".json");
         EfficientUser efficientUser = new EfficientUser(user);
+        saveEfficientUser(efficientUser);
+    }
+
+    public void saveEfficientUser(EfficientUser efficientUser) {
+        File userFile = new File("./Server/src/main/resources/Users/" + efficientUser.getUsername() + ".json");
         try {
             userFile.createNewFile();
             Gson gson = new GsonBuilder().create();
@@ -53,7 +55,6 @@ public class DatabaseController {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     public void initializeSpellAndTrapCards() {

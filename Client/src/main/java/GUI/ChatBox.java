@@ -4,14 +4,20 @@ import Controller.ChatBoxController;
 import Database.Message;
 import Database.User;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -38,17 +44,9 @@ public class ChatBox extends Application implements AlertFunction {
     public void initialize() {
         Message pinnedMessage = ChatBoxController.getInstance().requestPinnedMessage();
         List<Message> messageList = ChatBoxController.getInstance().requestMessages();
-        User loggedUser = MainMenu.currentUser;
-        pinnedMessageLabel.setAlignment(Pos.CENTER);
-        pinnedMessageLabel.setPrefWidth(500);
         pinnedMessageLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, new CornerRadii(5), null)));
         refreshPinLabel(pinnedMessage);
-        refreshChatVBox(messageList, loggedUser);
-        chatScrollPane.setPrefHeight(600);
-        chatScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        chatScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        chatScrollPane.setPannable(true);
-        chatScrollPane.setContent(chatVBox);
+        refreshChatVBox(messageList);
     }
 
     private void refreshPinLabel(Message pinnedMessage) {
@@ -70,7 +68,7 @@ public class ChatBox extends Application implements AlertFunction {
                 editedMessage = result.get();
                 try {
                     ChatBoxController.getInstance().editMessage(editedMessage, message);
-                    updateChatBox();
+                    updateEverything();
                 } catch (Exception e) {
                     showAlert(e.getMessage(), Alert.AlertType.ERROR);
                 }
@@ -79,7 +77,7 @@ public class ChatBox extends Application implements AlertFunction {
         pin.setOnAction(actionEvent -> {
             try {
                 ChatBoxController.getInstance().pinMessage(message);
-                updatePinLabel();
+                updateEverything();
             } catch (Exception e) {
                 showAlert(e.getMessage(), Alert.AlertType.ERROR);
             }
@@ -87,7 +85,7 @@ public class ChatBox extends Application implements AlertFunction {
         delete.setOnAction(actionEvent -> {
             try {
                 ChatBoxController.getInstance().deleteMessage(message);
-                updateChatBox();
+                updateEverything();
             } catch (Exception e) {
                 showAlert(e.getMessage(), Alert.AlertType.ERROR);
             }
@@ -100,11 +98,16 @@ public class ChatBox extends Application implements AlertFunction {
         new MainMenu().start(WelcomeMenu.stage);
     }
 
+    @FXML
+    private void updateEverything() {
+        updateChatBox();
+        updatePinLabel();
+    }
     public void sendMessage() {
         if (messageToSend.getText().equals("")) return;
         try {
             ChatBoxController.getInstance().sendMessage(messageToSend.getText());
-            updateChatBox();
+            updateEverything();
             messageToSend.setText("");
         } catch (Exception e) {
             showAlert(e.getMessage(), Alert.AlertType.ERROR);
@@ -114,7 +117,7 @@ public class ChatBox extends Application implements AlertFunction {
     private void updateChatBox() {
         List<Message> messageList = ChatBoxController.getInstance().requestMessages();
         chatVBox = new VBox(5);
-        refreshChatVBox(messageList, MainMenu.currentUser);
+        refreshChatVBox(messageList);
         chatScrollPane.setContent(chatVBox);
     }
 
@@ -122,39 +125,54 @@ public class ChatBox extends Application implements AlertFunction {
         Message pinnedMessage = ChatBoxController.getInstance().requestPinnedMessage();
         refreshPinLabel(pinnedMessage);
     }
-    private void refreshChatVBox(List<Message> messageList, User loggedUser) {
+
+    private void refreshChatVBox(List<Message> messageList) {
         messageList.sort(Comparator.comparing(Message::getDate));
+        User loggedUser = MainMenu.currentUser;
         loggedUser.setRandomColorToShowUser(messageList);
         for (Message message :
                 messageList) {
-            Label label = new Label(message.getContent());
-            Label userLabel = new Label(message.getSenderUserName());
-            userLabel.setFont(new Font(10));
-            userLabel.setAlignment(Pos.CENTER);
-            Color color = loggedUser.getRandomColorToShowUser().get(message.getSenderUserName());
-            Circle avatar = new Circle(20);
-//            avatar.setFill(new ImagePattern(MainMenu.currentUser.getProfilePicture()));
-            VBox vBox = new VBox(avatar, userLabel);
-            vBox.setAlignment(Pos.CENTER);
-            label.setPadding(new Insets(2, 5, 2, 5));
-            label.setMaxWidth(150);
-            label.setWrapText(true);
-            label.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), null)));
-            label.setOnContextMenuRequested(contextMenuEvent -> {
-                ContextMenu contextMenu = getContextMenu(message);
-                contextMenu.show(label, contextMenuEvent.getScreenX(), contextMenuEvent.getScreenY());
-            });
-            HBox hBox = new HBox();
-            hBox.setPrefWidth(500);
-            if (message.getSenderUserName().equals(loggedUser.getUsername())) {
-                hBox.setAlignment(Pos.CENTER_LEFT);
-                hBox.getChildren().addAll(vBox, label);
-            } else {
-                hBox.setAlignment(Pos.CENTER_RIGHT);
-                hBox.getChildren().addAll(label, vBox);
-            }
+            HBox hBox = getMessageHBox(message);
             chatVBox.getChildren().add(hBox);
         }
+    }
+
+    private HBox getMessageHBox(Message message) {
+        User loggedUser = MainMenu.currentUser;
+        Label label = new Label(message.getContent());
+        Label userLabel = new Label(message.getSenderUserName());
+        userLabel.setFont(new Font(10));
+        userLabel.setAlignment(Pos.CENTER);
+        Color color = loggedUser.getRandomColorToShowUser().get(message.getSenderUserName());
+        Circle avatar = new Circle(20);
+        avatar.setFill(new ImagePattern(ChatBoxController.getInstance().getAvatarId(message.getSenderUserName())));
+        avatar.setOnMouseClicked(mouseEvent -> {
+            ContextMenu contextMenu = new ContextMenu();
+            String userInfo = ChatBoxController.getInstance().requestUserInfo(message.getSenderUserName());
+            showUserInfo(userInfo);
+            contextMenu.show(avatar, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        });
+        VBox vBox = new VBox(avatar, userLabel);
+        vBox.setAlignment(Pos.CENTER);
+        label.setPadding(new Insets(2, 5, 2, 5));
+        label.setMaxWidth(150);
+        label.setWrapText(true);
+        label.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), null)));
+        label.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton() != MouseButton.SECONDARY) return;
+            ContextMenu contextMenu = getContextMenu(message);
+            contextMenu.show(label, mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        });
+        HBox hBox = new HBox();
+        if (message.getSenderUserName().equals(loggedUser.getUsername())) {
+            hBox.setAlignment(Pos.CENTER_LEFT);
+            hBox.getChildren().addAll(vBox, label);
+        } else {
+            hBox.setAlignment(Pos.CENTER_RIGHT);
+            hBox.getChildren().addAll(label, vBox);
+        }
+        hBox.setPrefWidth(500);
+        return hBox;
     }
 
     @Override
@@ -163,6 +181,14 @@ public class ChatBox extends Application implements AlertFunction {
         alert.setTitle("Alert");
         alert.getDialogPane().setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         alert.setContentText(text);
+        alert.show();
+    }
+
+    private void showUserInfo(String text) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("User Info");
+        alert.getDialogPane().setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        alert.setHeaderText(text);
         alert.show();
     }
 }

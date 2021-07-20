@@ -217,7 +217,6 @@ public class User {
     }
 
     public Image getProfilePicture() {
-        System.out.println("Avatar ID: " + avatarID);
         return new Image(getClass().getResource("/Avatars/Chara001.dds" + avatarID + ".png").toExternalForm());
     }
 

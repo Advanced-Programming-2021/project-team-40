@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 public class Message {
-    //TODO load from Json in server and save on Exit
+    public static Message pinnedMessage;
+    public static List<Message> messageList = new ArrayList<>();
     private int id;
     private String content;
     private String senderUserName;

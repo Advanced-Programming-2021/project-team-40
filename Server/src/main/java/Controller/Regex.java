@@ -95,6 +95,7 @@ public class Regex {
     public static String sendMessage = "^(?<token>[A-Za-z0-9-]+) send message -m (?<message>.+?)$";
     public static String requestMessages = "^(?<token>[A-Za-z0-9-]+) request messages$";
     public static String requestPinnedMessage = "^(?<token>[A-Za-z0-9-]+) request pinned message$";
+    public static String requestUserSummary = "^(?<token>[A-Za-z0-9-]+) request user summary -u (?<username>.+?)$";
     public static String requestEfficientUsers = "^(?<token>[A-Za-z0-9-]+) request efficient users$";
     public static String requestCardStock = "^(?<token>[A-Za-z0-9-]+) request card stock";
     public static String requestUnavailableCards = "^(?<token>[A-Za-z0-9-]+) request unavailable cards";
@@ -105,6 +106,7 @@ public class Regex {
     public static String pinMessage = "^(?<token>[A-Za-z0-9-]+) pin message -id (?<id>.+?)$";
     public static String editMessage = "^(?<token>[A-Za-z0-9-]+) edit message -r (?<replace>.+?) -id (?<id>.+?)$";
     public static String deleteMessage = "^(?<token>[A-Za-z0-9-]+) delete message -id (?<id>.+?)$";
+    public static String saveUser = "^(?<token>[A-Za-z0-9-]+) save user (?<userJson>.+)$";
 
     public static Matcher getCommandMatcher(String command, String regex) {
         Pattern pattern = Pattern.compile(regex);
