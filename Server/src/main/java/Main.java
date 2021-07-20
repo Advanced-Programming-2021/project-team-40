@@ -31,12 +31,14 @@ public class Main {
 
                 dataInputStream = new DataInputStream(socket.getInputStream());
                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                ServerController.getInstance().newClient(dataInputStream, dataOutputStream);
+                ServerController.getInstance().newClient(socket, dataInputStream, dataOutputStream);
 
             } catch (IOException e) {
                 try {
                     assert dataInputStream != null;
                     dataInputStream.close();
+                    ServerController.getLoggedInUsers().remove(ServerController.getLoggedInSockets().get(socket));
+                    ServerController.getLoggedInSockets().remove(socket);
                     socket.close();
                     System.out.println("a client disconnected!");
                 } catch (IOException ioException) {

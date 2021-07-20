@@ -31,7 +31,11 @@ public class EfficientUser {
         listToRank.sort(new Comparator<EfficientUser>() {
             @Override
             public int compare(EfficientUser o1, EfficientUser o2) {
-                return o2.getScore() - o1.getScore();
+                int comparison = o2.getScore() - o1.getScore();
+                if (comparison == 0) {
+                    comparison = o1.getNickname().compareTo(o2.getNickname());
+                }
+                return comparison;
             }
         });
         listToRank.get(0).setRank(1);
