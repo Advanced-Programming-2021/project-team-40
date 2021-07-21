@@ -74,7 +74,6 @@ public class ScoreboardMenu extends Application {
                     table.sort();
                     try {
                         Thread.sleep(1000);
-                        System.out.println(ClientController.sendMessage(MainMenu.userToken + " request online count"));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
