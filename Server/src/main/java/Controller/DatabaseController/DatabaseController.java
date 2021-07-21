@@ -216,11 +216,27 @@ public class DatabaseController {
             String cardStockJson = fileScanner.nextLine();
             GsonBuilder gsonBuilder = new GsonBuilder();
             Gson gson = gsonBuilder.create();
-            ShopController.setCardStock(gson.fromJson(cardStockJson, new TypeToken<ArrayList<String>>() {
+            ShopController.setUnavailableCards(gson.fromJson(cardStockJson, new TypeToken<ArrayList<String>>() {
             }.getType()));
 
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    public void updateUnavailableCards() {
+        File cardStockFile = new File("./Server/src/main/resources/Cards/unavailableCards.json");
+        try {
+            cardStockFile.createNewFile();
+            Gson gson = new GsonBuilder().create();
+            String writeToFile = gson.toJson(ShopController.getUnavailableCards());
+            FileWriter fw = new FileWriter(cardStockFile);
+            BufferedWriter out = new BufferedWriter(fw);
+            out.write(writeToFile);
+            out.close();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

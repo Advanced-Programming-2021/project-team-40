@@ -11,12 +11,8 @@ import java.util.regex.Matcher;
 
 public class ShopController {
     private static HashMap<String, Integer> cardStock;
-    private static ArrayList<String> unavailableCards = new ArrayList<>();
+    private static ArrayList<String> unavailableCards;
     private static String adminToken;
-
-    public static ArrayList<String> getUnavailableCards() {
-        return unavailableCards;
-    }
 
     public static HashMap<String, Integer> getCardStock() {
         return cardStock;
@@ -24,6 +20,14 @@ public class ShopController {
 
     public static void setCardStock(HashMap<String, Integer> cardStock) {
         ShopController.cardStock = cardStock;
+    }
+
+    public static ArrayList<String> getUnavailableCards() {
+        return unavailableCards;
+    }
+
+    public static void setUnavailableCards(ArrayList<String> unavailableCards) {
+        ShopController.unavailableCards = unavailableCards;
     }
 
     public synchronized static void buyCard(String cardName, User currentUser) throws Exception {
@@ -61,6 +65,7 @@ public class ShopController {
         if (Card.getCardByName(cardName) == null) throw new InvalidCardNameException(cardName);
         if (unavailableCards.contains(cardName)) unavailableCards.remove(cardName);
         else unavailableCards.add(cardName);
+        DatabaseController.getInstance().updateUnavailableCards();
     }
 
     public static String getAdminToken() {
