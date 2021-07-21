@@ -80,7 +80,11 @@ public class ChatBoxController {
         return "Username: " + requestedUser.getUsername() + "\nNickname: " + requestedUser.getNickname() + "\n" + "Score: " + requestedUser.getScore();
     }
 
-    public Image getAvatarId(String username) {
+    public String requestOnlineCount() {
+        return ClientController.sendMessage(MainMenu.userToken + " request online count");
+    }
+
+    public Image getProfilePicture(String username) {
         List<EfficientUser> users = loadUsers();
         EfficientUser requestedUser = null;
         for (EfficientUser user :

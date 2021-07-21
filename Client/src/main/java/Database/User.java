@@ -86,7 +86,7 @@ public class User {
             Color color;
             while (true) {
                 color = Color.color((1 + Math.random()) / 2, (1 + Math.random()) / 2, (1 + Math.random()) / 2);
-                if (color.getBlue() > 0.95 && color.getRed() > 0.95 && color.getGreen() > 0.95) continue;
+                if (color.getBlue() > 0.9 && color.getRed() > 0.9 && color.getGreen() > 0.9) continue;
                 break;
             }
             getRandomColorToShowUser().put(message.getSenderUserName(), color);

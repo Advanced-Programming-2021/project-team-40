@@ -4,8 +4,6 @@ import Controller.ChatBoxController;
 import Database.Message;
 import Database.User;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -14,7 +12,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -31,6 +28,8 @@ public class ChatBox extends Application implements AlertFunction {
     public ScrollPane chatScrollPane;
     public TextField messageToSend;
     public VBox chatVBox;
+    public Label onlineCount;
+    public Circle greenCircle;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -44,9 +43,18 @@ public class ChatBox extends Application implements AlertFunction {
     public void initialize() {
         Message pinnedMessage = ChatBoxController.getInstance().requestPinnedMessage();
         List<Message> messageList = ChatBoxController.getInstance().requestMessages();
+        String onlineCount = ChatBoxController.getInstance().requestOnlineCount();
         pinnedMessageLabel.setBackground(new Background(new BackgroundFill(Color.LIGHTBLUE, new CornerRadii(5), null)));
+        pinnedMessageLabel.setFont(new Font(20));
+        greenCircle.setFill(Color.LAWNGREEN);
+        chatScrollPane.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY,CornerRadii.EMPTY,null)));
         refreshPinLabel(pinnedMessage);
         refreshChatVBox(messageList);
+        refreshOnlineCount(onlineCount);
+    }
+
+    private void refreshOnlineCount(String onlineCount) {
+        this.onlineCount.setText(onlineCount);
     }
 
     private void refreshPinLabel(Message pinnedMessage) {
@@ -102,7 +110,14 @@ public class ChatBox extends Application implements AlertFunction {
     private void updateEverything() {
         updateChatBox();
         updatePinLabel();
+        updateOnlineCount();
     }
+
+    private void updateOnlineCount() {
+        String onlineCount = ChatBoxController.getInstance().requestOnlineCount();
+        refreshOnlineCount(onlineCount);
+    }
+
     public void sendMessage() {
         if (messageToSend.getText().equals("")) return;
         try {
@@ -144,8 +159,8 @@ public class ChatBox extends Application implements AlertFunction {
         userLabel.setFont(new Font(10));
         userLabel.setAlignment(Pos.CENTER);
         Color color = loggedUser.getRandomColorToShowUser().get(message.getSenderUserName());
-        Circle avatar = new Circle(20);
-        avatar.setFill(new ImagePattern(ChatBoxController.getInstance().getAvatarId(message.getSenderUserName())));
+        Circle avatar = new Circle(30);
+        avatar.setFill(new ImagePattern(ChatBoxController.getInstance().getProfilePicture(message.getSenderUserName())));
         avatar.setOnMouseClicked(mouseEvent -> {
             ContextMenu contextMenu = new ContextMenu();
             String userInfo = ChatBoxController.getInstance().requestUserInfo(message.getSenderUserName());
@@ -154,8 +169,9 @@ public class ChatBox extends Application implements AlertFunction {
         });
         VBox vBox = new VBox(avatar, userLabel);
         vBox.setAlignment(Pos.CENTER);
+        label.setFont(new Font(16));
         label.setPadding(new Insets(2, 5, 2, 5));
-        label.setMaxWidth(150);
+        label.setMaxWidth(200);
         label.setWrapText(true);
         label.setBackground(new Background(new BackgroundFill(color, new CornerRadii(10), null)));
         label.setOnMouseClicked(mouseEvent -> {
